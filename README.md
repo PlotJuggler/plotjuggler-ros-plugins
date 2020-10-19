@@ -12,7 +12,7 @@ ROS is supported through external plugins that can be found in this [repository]
 - **Re-publisher** similar to `rosbag play` (ROS only).
 
 
-## Install with Debinas
+## Install with Debians (TODO)
 
 Install PlotJuggler and its ROS plugins with:
 
