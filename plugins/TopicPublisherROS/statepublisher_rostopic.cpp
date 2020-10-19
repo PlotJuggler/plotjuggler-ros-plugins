@@ -21,6 +21,8 @@
 #include <QMessageBox>
 #include "publisher_select_dialog.h"
 
+using namespace PJ;
+
 TopicPublisherROS::TopicPublisherROS() :
   _enabled(false)
 , _node(nullptr)

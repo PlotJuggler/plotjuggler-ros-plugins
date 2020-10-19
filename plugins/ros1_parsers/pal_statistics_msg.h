@@ -77,11 +77,6 @@ public:
   {
   }
 
-  virtual const char* formatName() const override
-  {
-    return "pal_statistics_msgs/StatisticsNames";
-  }
-
   virtual bool parseMessage(MessageRef msg, double timestamp) override
   {
     PalStatisticsNames_ pal_names;
@@ -99,11 +94,6 @@ public:
   PalStatisticsValuesParser(const std::string& topic_name, PlotDataMapRef& plot_data)
     : RosMessageParser(topic_name, plot_data)
   {
-  }
-
-  virtual const char* formatName() const override
-  {
-    return "pal_statistics_msgs/StatisticsValues";
   }
 
   virtual bool parseMessage(MessageRef msg, double timestamp) override

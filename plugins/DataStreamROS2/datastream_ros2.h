@@ -14,7 +14,7 @@ class DataStreamROS2 : public DataStreamer
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "facontidavide.PlotJuggler3.ROS2DataStreamer")
-  Q_INTERFACES(DataStreamer)
+  Q_INTERFACES(PJ::DataStreamer)
 
 public:
   DataStreamROS2();

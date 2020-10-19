@@ -15,7 +15,7 @@ class DataLoadROS2 : public DataLoader
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "facontidavide.PlotJuggler3.ROS2DataLoader")
-  Q_INTERFACES(DataLoader)
+  Q_INTERFACES(PJ::DataLoader)
 
 public:
   DataLoadROS2();

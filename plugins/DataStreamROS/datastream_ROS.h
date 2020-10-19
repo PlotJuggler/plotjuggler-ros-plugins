@@ -13,11 +13,11 @@
 #include "dialog_select_ros_topics.h"
 #include "ros1_parsers/ros1_parser.h"
 
-class DataStreamROS : public DataStreamer
+class DataStreamROS : public PJ::DataStreamer
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "facontidavide.PlotJuggler3.DataStreamer")
-  Q_INTERFACES(DataStreamer)
+  Q_INTERFACES(PJ::DataStreamer)
 
 public:
   DataStreamROS();

@@ -12,11 +12,11 @@
 #include "shape_shifter_factory.hpp"
 #include <rosbag/bag.h>
 
-class TopicPublisherROS : public StatePublisher
+class TopicPublisherROS : public PJ::StatePublisher
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "facontidavide.PlotJuggler3.StatePublisher")
-  Q_INTERFACES(StatePublisher)
+  Q_INTERFACES(PJ::StatePublisher)
 
 public:
   TopicPublisherROS();

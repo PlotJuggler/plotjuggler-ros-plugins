@@ -11,12 +11,12 @@
 #include "dialog_select_ros_topics.h"
 #include "ros1_parsers/ros1_parser.h"
 
-class DataLoadROS : public DataLoader
+class DataLoadROS : public PJ::DataLoader
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "facontidavide.PlotJuggler3.DataLoader"
                         "../dataloader.json")
-  Q_INTERFACES(DataLoader)
+  Q_INTERFACES(PJ::DataLoader)
 
 public:
   DataLoadROS();
@@ -25,7 +25,8 @@ public:
 
   virtual const std::vector<const char*>& compatibleFileExtensions() const override;
 
-  virtual bool readDataFromFile(FileLoadInfo* fileload_info, PlotDataMapRef& destination) override;
+  virtual bool readDataFromFile(PJ::FileLoadInfo* fileload_info,
+                                PJ::PlotDataMapRef& destination) override;
 
   virtual const char* name() const override
   {

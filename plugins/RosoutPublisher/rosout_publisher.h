@@ -10,6 +10,8 @@
 #include <rosgraph_msgs/Log.h>
 #include "logwidget.hpp"
 
+using namespace PJ;
+
 class RosoutWindow : public QMainWindow
 {
   Q_OBJECT
@@ -17,9 +19,7 @@ public:
   RosoutWindow() : QMainWindow()
   {
   }
-  ~RosoutWindow()
-  {
-  }
+  ~RosoutWindow() override = default;
 
   void closeEvent(QCloseEvent*) override
   {
@@ -29,11 +29,11 @@ signals:
   void closed();
 };
 
-class RosoutPublisher : public StatePublisher
+class RosoutPublisher : public PJ::StatePublisher
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "facontidavide.PlotJuggler3.StatePublisher")
-  Q_INTERFACES(StatePublisher)
+  Q_INTERFACES(PJ::StatePublisher)
 
 public:
   RosoutPublisher();

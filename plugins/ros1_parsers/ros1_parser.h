@@ -6,6 +6,9 @@
 
 //----------------------------------
 
+using namespace PJ;
+
+
 enum LargeArrayPolicy : bool
 {
   DISCARD_LARGE_ARRAYS = true,
@@ -15,14 +18,22 @@ enum LargeArrayPolicy : bool
 class RosMessageParser: public MessageParser
 {
 public:
-  RosMessageParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  RosMessageParser(const std::string& topic_name, PlotDataMapRef& plot_data):
+    MessageParser(topic_name, plot_data),
+    _use_message_stamp(false)
   {
-    init(topic_name, &plot_data);
+
+  }
+
+  void setUseMessageStamp(bool use) {
+    _use_message_stamp = use;
   }
 
   virtual void setMaxArrayPolicy(LargeArrayPolicy, size_t)
   { }
 
+protected:
+  bool _use_message_stamp;
 };
 
 template <typename T>
@@ -32,11 +43,6 @@ public:
   BuiltinMessageParser(const std::string& topic_name, PlotDataMapRef& plot_data)
     : RosMessageParser(topic_name, plot_data)
   {
-  }
-
-  virtual const char* formatName() const override
-  {
-    return ros::message_traits::DataType<T>::value();
   }
 
   virtual bool parseMessage(MessageRef serialized_msg, double timestamp) override
@@ -62,11 +68,6 @@ public:
   {
     auto type = RosIntrospection::ROSType(topic_type);
     _parser.registerMessageDefinition(topic_name, type, definition);
-  }
-
-  virtual const char* formatName() const override
-  {
-    return "IntrospectionParser";
   }
 
   void setMaxArrayPolicy(LargeArrayPolicy policy, size_t max_size) override;
