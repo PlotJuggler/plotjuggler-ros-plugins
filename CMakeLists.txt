@@ -57,7 +57,6 @@ endif()
 
 cmake_policy (SET CMP0020 NEW)
 
-add_subdirectory( 3rdparty/fmt )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -119,6 +118,8 @@ include_directories(
     ${Qt5WebSockets_INCLUDE_DIRS}
     ${Qt5Svg_INCLUDE_DIRS}
 )
+
+add_definitions(-DFMT_HEADER_ONLY)
 
 #########################  INSTALL ####################################
 
