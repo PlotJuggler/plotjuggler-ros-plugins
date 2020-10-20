@@ -20,7 +20,7 @@ Install PlotJuggler and its ROS plugins with:
     
 And launch it with:
     
-    rosrun plotjuggler PlotJuggler
+    roslaunch plotjuggler_ros plotjuggler.launch
 
 ## How to compile PlotJuggler from source
 
@@ -41,6 +41,6 @@ Now, it is time to compile:
 Enjoy:
 
     source devel/setup.bash
-    rosrun plotjuggler PlotJuggler
+    roslaunch plotjuggler_ros plotjuggler.launch
     
      
