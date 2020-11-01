@@ -42,19 +42,25 @@ bool IntrospectionParser::parseMessage(MessageRef serialized_msg, double timesta
     }
   }
 
-  //  if(_use_header_stamp && _intropection_parser.topicInfo().has_header_stamp)
-  //  {
-  //    double sec  = _flat_msg.values[0].second;
-  //    double nsec = _flat_msg.values[1].second;
-  //    timestamp = sec + (nsec*1e-9);
-  //  }
-
   _parser.applyNameTransform(_topic_name, _flat_msg, &_renamed);
 
   for (const auto& it : _renamed)
   {
     const auto& key = it.first;
-    double value = it.second.convert<double>();
+    double value = 0;
+
+    if( it.second.getTypeID() ==  RosIntrospection::BuiltinType::INT64 )
+    {
+      uint64_t raw_value = it.second.extract<uint64_t>();
+      if( raw_value >= (1l<<53) )
+      {
+
+      }
+      value = static_cast<double>(raw_value);
+    }
+    else{
+      value = it.second.convert<double>();
+    }
 
     auto& series = getSeries(key);
 
