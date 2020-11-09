@@ -97,9 +97,9 @@ public:
 
 private:
 
-  boost::flyweight<std::string> md5_;
-  boost::flyweight<std::string> datatype_;
-  boost::flyweight<std::string> msg_def_;
+  std::string md5_;
+  std::string datatype_;
+  std::string msg_def_;
   bool typed_;
 
   mutable std::vector<uint8_t> msgBuf_;

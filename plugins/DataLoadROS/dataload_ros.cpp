@@ -48,8 +48,6 @@ std::vector<std::pair<QString, QString>> DataLoadROS::getAllTopics(const rosbag:
   std::vector<std::pair<QString, QString>> all_topics;
   rosbag::View bag_view(*bag, ros::TIME_MIN, ros::TIME_MAX, true);
 
-  RosIntrospectionFactory::reset();
-
   bool ignoreAll = false;
 
   for (auto& conn : bag_view.getConnections())
