@@ -169,7 +169,7 @@ void DataStreamROS::timerCallback()
   if (_running && ros::master::check() == false)
   {
     auto ret = QMessageBox::warning(nullptr, tr("Disconnected!"),
-                                    tr("The roscore master cannot is not reachable anymore.\n\n"
+                                    tr("The roscore master is not reachable anymore.\n\n"
                                        "Do you want to try reconnecting to it? \n"),
                                     tr("Stop Streaming"), tr("Try reconnect"), nullptr);
     if (ret == 1)
