@@ -8,7 +8,7 @@
 class OdometryMsgParser : public BuiltinMessageParser<nav_msgs::Odometry>
 {
 public:
-  OdometryMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  OdometryMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<nav_msgs::Odometry>(topic_name, plot_data)
     , _pose_parser(topic_name + "/pose", plot_data)
     , _twist_parser(topic_name + "/twist", plot_data)
@@ -32,5 +32,5 @@ public:
 private:
   PoseCovarianceMsgParser _pose_parser;
   TwistCovarianceMsgParser _twist_parser;
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 };

@@ -9,7 +9,7 @@ static std::unordered_map<unsigned, std::vector<std::string>> _plotjuggler_msgs_
 class PlotJugglerDictionaryParser : public BuiltinMessageParser<plotjuggler_msgs::msg::Dictionary>
 {
 public:
-  PlotJugglerDictionaryParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  PlotJugglerDictionaryParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<plotjuggler_msgs::msg::Dictionary>(topic_name, plot_data)
   {
   }
@@ -28,7 +28,7 @@ public:
 class PlotJugglerDataPointsParser : public BuiltinMessageParser<plotjuggler_msgs::msg::DataPoints>
 {
 public:
-  PlotJugglerDataPointsParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  PlotJugglerDataPointsParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<plotjuggler_msgs::msg::DataPoints>(topic_name, plot_data)
   {
     _prefix = topic_name + "/";

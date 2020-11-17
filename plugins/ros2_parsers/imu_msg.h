@@ -9,7 +9,7 @@
 class ImuMsgParser : public BuiltinMessageParser<sensor_msgs::msg::Imu>
 {
 public:
-  ImuMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  ImuMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<sensor_msgs::msg::Imu>(topic_name, plot_data)
     , _quat_parser(topic_name + "/orientation", plot_data)
     , _orientation_covariance(topic_name + "/orientation_covariance", plot_data)
@@ -57,5 +57,5 @@ private:
   CovarianceParser<3> _orientation_covariance;
   CovarianceParser<3> _lin_acc_covariance;
   CovarianceParser<3> _ang_vel_covariance;
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 };

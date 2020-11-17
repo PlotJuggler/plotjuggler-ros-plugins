@@ -28,23 +28,24 @@ class TopicPublisherROS2 : public PJ::StatePublisher
 
 public:
   TopicPublisherROS2();
+
   virtual ~TopicPublisherROS2() override;
 
-  virtual void updateState(double current_time) override;
+  void updateState(double current_time) override;
 
-  virtual const char* name() const override
+  const char* name() const override
   {
     return "ROS2 Topic Re-Publisher";
   }
 
-  virtual bool enabled() const override
+  bool enabled() const override
   {
     return _enabled;
   }
 
-  void setParentMenu(QMenu* menu, QAction* action) override;
+  const std::vector<QAction*>& availableActions() override;
 
-  virtual void play(double interval) override;
+  void play(double interval) override;
 
 public slots:
 
@@ -65,7 +66,6 @@ private:
 
   std::unordered_map<std::string, std::shared_ptr<GenericPublisher>> _publishers;
 
-  QAction* _enable_self_action;
   QAction* _select_topics_to_publish;
 
   std::unordered_map<std::string, bool> _topics_to_publish;
@@ -75,6 +75,8 @@ private:
   int _previous_play_index;
 
   std::vector<TopicInfo> _topics_info;
+
+  std::vector<QAction*> _available_actions;
 
   void broadcastTF(double current_time);
 

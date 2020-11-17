@@ -33,7 +33,7 @@ public:
 
   void publish(std::shared_ptr<rmw_serialized_message_t> message)
   {
-    auto return_code = rcl_publish_serialized_message(get_publisher_handle(), message.get(), NULL);
+    auto return_code = rcl_publish_serialized_message(get_publisher_handle().get(), message.get(), NULL);
 
     if (return_code != RCL_RET_OK)
     {
@@ -45,7 +45,9 @@ public:
                                                   const std::string& topic_name,
                                                   const std::string& topic_type)
   {
-    auto type_support = rosbag2::get_typesupport(topic_type, "rosidl_typesupport_cpp");
+    auto type_support = rosbag2_cpp::get_typesupport_handle(topic_type, "rosidl_typesupport_cpp",
+                                                            rosbag2_cpp::get_typesupport_library(topic_type, "rosidl_typesupport_cpp"));
+
     return std::make_shared<GenericPublisher>(node.get_node_base_interface().get(), topic_name, *type_support);
   }
 };

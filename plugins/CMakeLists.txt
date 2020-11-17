@@ -93,6 +93,7 @@ elseif(COMPILING_WITH_AMENT)
         plotjuggler_msgs
         tf2_msgs
         tf2_ros
+        plotjuggler
         )
 
     add_library( commonROS STATIC ${COMMON_SRC} ${COMMON_UI_SRC})
@@ -102,25 +103,22 @@ elseif(COMPILING_WITH_AMENT)
         ${Qt5Widgets_LIBRARIES}
         ${Qt5Xml_LIBRARIES}
         fastcdr
-        fmt::fmt-header-only )
+       )
     ament_target_dependencies( commonROS ${AMENT_DEPENDENCIES})
 
     #############
     add_library( DataLoadROS2 SHARED
-        DataLoadROS2/dataload_ros2.cpp
-        PlotJuggler/dataloader_base.h )
+        DataLoadROS2/dataload_ros2.cpp)
     target_link_libraries( DataLoadROS2 commonROS)
     ament_target_dependencies( DataLoadROS2 ${AMENT_DEPENDENCIES})
     #############
     add_library( DataStreamROS2 SHARED
-        DataStreamROS2/datastream_ros2.cpp
-        PlotJuggler/datastreamer_base.h )
+        DataStreamROS2/datastream_ros2.cpp)
     target_link_libraries( DataStreamROS2  commonROS)
     ament_target_dependencies( DataStreamROS2 ${AMENT_DEPENDENCIES})
     #############
     add_library( TopicPublisherROS2 SHARED
-        TopicPublisherROS2/publisher_ros2.cpp
-        PlotJuggler/statepublisher_base.h)
+        TopicPublisherROS2/publisher_ros2.cpp)
     target_link_libraries( TopicPublisherROS2 commonROS)
     ament_target_dependencies( TopicPublisherROS2 ${AMENT_DEPENDENCIES})
 endif()

@@ -12,7 +12,7 @@ public:
   using BaseParser = BuiltinMessageParser<TfMsgType>;
   using MessageParser::getSeries;
 
-  TfMsgParserImpl(const std::string& topic_name, PlotDataMapRef& plot_data) : BaseParser(topic_name, plot_data)
+  TfMsgParserImpl(const std::string& topic_name, PJ::PlotDataMapRef& plot_data) : BaseParser(topic_name, plot_data)
   {
   }
 

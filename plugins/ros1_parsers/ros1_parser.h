@@ -18,7 +18,7 @@ enum LargeArrayPolicy : bool
 class RosMessageParser: public MessageParser
 {
 public:
-  RosMessageParser(const std::string& topic_name, PlotDataMapRef& plot_data):
+  RosMessageParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data):
     MessageParser(topic_name, plot_data),
     _use_message_stamp(false)
   {
@@ -40,7 +40,7 @@ template <typename T>
 class BuiltinMessageParser : public RosMessageParser
 {
 public:
-  BuiltinMessageParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  BuiltinMessageParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : RosMessageParser(topic_name, plot_data)
   {
   }
@@ -63,7 +63,7 @@ class IntrospectionParser : public RosMessageParser
 {
 public:
   IntrospectionParser(const std::string& topic_name, const std::string& topic_type, const std::string& definition,
-                      PlotDataMapRef& plot_data)
+                      PJ::PlotDataMapRef& plot_data)
     : RosMessageParser(topic_name, plot_data), _max_size(999)
   {
     auto type = RosIntrospection::ROSType(topic_type);
@@ -104,5 +104,5 @@ private:
 
   bool _use_header_stamp;
 
-  PlotDataMapRef& _plot_data;
+  PJ::PlotDataMapRef& _plot_data;
 };

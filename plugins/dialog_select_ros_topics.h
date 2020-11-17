@@ -7,7 +7,6 @@
 #include <QStringList>
 #include <QCheckBox>
 #include <QShortcut>
-#include "PlotJuggler/optional.hpp"
 
 #ifndef DISABLE_RULE_EDITING
 #include "rule_editing.h"

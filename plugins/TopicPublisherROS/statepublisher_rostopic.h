@@ -20,6 +20,7 @@ class TopicPublisherROS : public PJ::StatePublisher
 
 public:
   TopicPublisherROS();
+
   virtual ~TopicPublisherROS() override;
 
   virtual void updateState(double current_time) override;

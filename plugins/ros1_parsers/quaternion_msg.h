@@ -7,7 +7,7 @@ class QuaternionMsgParser : public BuiltinMessageParser<geometry_msgs::Quaternio
 {
 
 private:
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
   double _pitch_offset;
   double _roll_offset;
   double _yaw_offset;
@@ -17,7 +17,7 @@ private:
   double _prev_yaw;
 
 public:
-  QuaternionMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  QuaternionMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::Quaternion>(topic_name, plot_data),
       _pitch_offset(0.0),
       _roll_offset(0.0),

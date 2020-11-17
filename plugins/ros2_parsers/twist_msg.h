@@ -9,7 +9,7 @@
 class TwistMsgParser : public BuiltinMessageParser<geometry_msgs::msg::Twist>
 {
 public:
-  TwistMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  TwistMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::msg::Twist>(topic_name, plot_data)
   {
     _data.push_back(&getSeries(plot_data, topic_name + "/linear/x"));
@@ -33,13 +33,13 @@ public:
   }
 
 private:
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 };
 
 class TwistStampedMsgParser : public BuiltinMessageParser<geometry_msgs::msg::TwistStamped>
 {
 public:
-  TwistStampedMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  TwistStampedMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::msg::TwistStamped>(topic_name, plot_data)
     , _twist_parser(topic_name, plot_data)
   {
@@ -62,13 +62,13 @@ public:
 
 private:
   TwistMsgParser _twist_parser;
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 };
 
 class TwistCovarianceMsgParser : public BuiltinMessageParser<geometry_msgs::msg::TwistWithCovariance>
 {
 public:
-  TwistCovarianceMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  TwistCovarianceMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::msg::TwistWithCovariance>(topic_name, plot_data)
     , _twist_parser(topic_name, plot_data)
     , _covariance(topic_name + "/covariance", plot_data)

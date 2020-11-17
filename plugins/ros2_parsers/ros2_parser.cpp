@@ -5,12 +5,12 @@
 #include "plotjuggler_msgs.h"
 
 
-void MessageParserBase::setUseHeaderStamp(bool use)
+void RosMessageParser::setUseHeaderStamp(bool use)
 {
   _use_header_stamp = use;
 }
 
-PlotData& MessageParserBase::getSeries(PlotDataMapRef& plot_data, const std::string key)
+PJ::PlotData& RosMessageParser::getSeries(PJ::PlotDataMapRef& plot_data, const std::string key)
 {
   auto plot_pair = plot_data.numeric.find(key);
   if (plot_pair == plot_data.numeric.end())
@@ -56,7 +56,7 @@ bool IntrospectionParser::parseMessage(const rcutils_uint8_array_t* serialized_m
 
 //-----------------------------------------
 
-CompositeParser::CompositeParser(PlotDataMapRef& plot_data)
+CompositeParser::CompositeParser(PJ::PlotDataMapRef& plot_data)
   : _discard_policy(LargeArrayPolicy::DISCARD_LARGE_ARRAYS)
   , _max_array_size(999)
   , _use_header_stamp(false)
@@ -85,7 +85,7 @@ void CompositeParser::setMaxArrayPolicy(LargeArrayPolicy policy, size_t max_size
 
 void CompositeParser::registerMessageType(const std::string& topic_name, const std::string& topic_type)
 {
-  std::shared_ptr<MessageParserBase> parser;
+  std::shared_ptr<RosMessageParser> parser;
   if (_parsers.count(topic_name) > 0)
   {
     return;

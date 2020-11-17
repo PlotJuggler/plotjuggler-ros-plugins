@@ -10,7 +10,7 @@
 class PoseMsgParser : public BuiltinMessageParser<geometry_msgs::msg::Pose>
 {
 public:
-  PoseMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  PoseMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::msg::Pose>(topic_name, plot_data)
     , _quat_parser(topic_name + "/orientation", plot_data)
   {
@@ -30,13 +30,13 @@ public:
 
 private:
   QuaternionMsgParser _quat_parser;
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 };
 
 class PoseStampedMsgParser : public BuiltinMessageParser<geometry_msgs::msg::PoseStamped>
 {
 public:
-  PoseStampedMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  PoseStampedMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::msg::PoseStamped>(topic_name, plot_data), _pose_parser(topic_name, plot_data)
   {
     _data.push_back(&getSeries(plot_data, topic_name + "/header/stamp/sec"));
@@ -57,13 +57,13 @@ public:
 
 private:
   PoseMsgParser _pose_parser;
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 };
 
 class PoseCovarianceMsgParser : public BuiltinMessageParser<geometry_msgs::msg::PoseWithCovariance>
 {
 public:
-  PoseCovarianceMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  PoseCovarianceMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::msg::PoseWithCovariance>(topic_name, plot_data)
     , _pose_parser(topic_name, plot_data)
     , _covariance(topic_name + "/covariance", plot_data)

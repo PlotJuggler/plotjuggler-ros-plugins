@@ -72,7 +72,7 @@ static std::unordered_map<uint32_t, std::vector<std::string>> _stored_pal_statis
 class PalStatisticsNamesParser : public RosMessageParser
 {
 public:
-  PalStatisticsNamesParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  PalStatisticsNamesParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : RosMessageParser(topic_name, plot_data)
   {
   }
@@ -91,7 +91,7 @@ public:
 class PalStatisticsValuesParser : public RosMessageParser
 {
 public:
-  PalStatisticsValuesParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  PalStatisticsValuesParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : RosMessageParser(topic_name, plot_data)
   {
   }
@@ -132,7 +132,7 @@ public:
   }
 
 private:
-  std::unordered_map<uint32_t, std::vector<PlotData*>> _data;
+  std::unordered_map<uint32_t, std::vector<PJ::PlotData*>> _data;
 };
 
 #endif  // PAL_STATISTICS_MSG_H

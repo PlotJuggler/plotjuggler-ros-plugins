@@ -141,11 +141,7 @@ ros::NodeHandlePtr RosManager::getNode()
     {
       // as a fallback strategy, launch the QNodeDialog
       QNodeDialog dialog;
-      int ret = dialog.exec();
-      if( ret != QDialog::Accepted)
-      {
-        return nullptr;
-      }
+      dialog.exec();
     }
   }
   if (ros::master::check() && ros::isInitialized())

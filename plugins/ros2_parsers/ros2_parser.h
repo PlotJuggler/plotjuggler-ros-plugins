@@ -3,11 +3,11 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rmw/rmw.h"
 #include "rmw/types.h"
-#include "rosbag2/typesupport_helpers.hpp"
+#include "rosbag2_cpp/typesupport_helpers.hpp"
 #include "rosidl_typesupport_introspection_cpp/message_introspection.hpp"
 #include "ros2_introspection/ros2_introspection.hpp"
 
-#include "PlotJuggler/plotdata.h"
+#include <PlotJuggler/plotdata.h>
 
 //----------------------------------
 
@@ -29,7 +29,7 @@ struct TopicInfo{
 class RosMessageParser
 {
 public:
-  RosMessageParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  RosMessageParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : _use_header_stamp(false), _topic_name(topic_name), _plot_data(plot_data)
   {
   }
@@ -44,21 +44,21 @@ public:
 
   virtual bool parseMessage(const MessageRef* serialized_msg, double timestamp) = 0;
 
-  static PlotData& getSeries(PlotDataMapRef& plot_data, const std::string key);
+  static PJ::PlotData& getSeries(PJ::PlotDataMapRef& plot_data, const std::string key);
 
   virtual const rosidl_message_type_support_t* typeSupport() const = 0;
 
 protected:
   bool _use_header_stamp;
   const std::string _topic_name;
-  PlotDataMapRef& _plot_data;
+  PJ::PlotDataMapRef& _plot_data;
 };
 
 template <typename T>
 class BuiltinMessageParser : public RosMessageParser
 {
 public:
-  BuiltinMessageParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  BuiltinMessageParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : RosMessageParser(topic_name, plot_data)
   {
     _type_support = rosidl_typesupport_cpp::get_message_type_support_handle<T>();
@@ -89,7 +89,7 @@ protected:
 class IntrospectionParser : public RosMessageParser
 {
 public:
-  IntrospectionParser(const std::string& topic_name, const std::string& topic_type, PlotDataMapRef& plot_data)
+  IntrospectionParser(const std::string& topic_name, const std::string& topic_type, PJ::PlotDataMapRef& plot_data)
     : RosMessageParser(topic_name, plot_data), _intropection_parser(topic_name, topic_type)
   {
   }
@@ -112,7 +112,7 @@ private:
 class CompositeParser
 {
 public:
-  CompositeParser(PlotDataMapRef& plot_data);
+  CompositeParser(PJ::PlotDataMapRef& plot_data);
 
   virtual void setUseHeaderStamp(bool use);
 
@@ -133,5 +133,5 @@ private:
 
   bool _use_header_stamp;
 
-  PlotDataMapRef& _plot_data;
+  PJ::PlotDataMapRef& _plot_data;
 };

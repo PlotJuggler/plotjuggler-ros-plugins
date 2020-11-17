@@ -17,6 +17,7 @@ DataStreamROS2::DataStreamROS2() : DataStreamer(), _node(nullptr), _running(fals
   auto exec_args = rclcpp::executor::ExecutorArgs();
   exec_args.context = _context;
   _executor = std::make_unique<rclcpp::executors::MultiThreadedExecutor>(exec_args, 2);
+
 }
 
 void DataStreamROS2::waitOneSecond()
@@ -170,9 +171,10 @@ DataStreamROS2::~DataStreamROS2()
   shutdown();
 }
 
-void DataStreamROS2::addActionsToParentMenu(QMenu* menu)
+const std::vector<QAction*> &DataStreamROS2::availableActions()
 {
-  // intentionally empty for the time being
+  static std::vector<QAction*> empty;
+  return empty;
 }
 
 void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::string& topic_type)
@@ -184,7 +186,7 @@ void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::
 
   _parser->registerMessageType(topic_name, topic_type);
 
-  auto bound_callback = [=](std::shared_ptr<rmw_serialized_message_t> msg) { messageCallback(topic_name, msg); };
+  auto bound_callback = [=](std::shared_ptr<rclcpp::SerializedMessage> msg) { messageCallback(topic_name, msg); };
 
   // double subscription, latching or not
   for (bool transient : { true, false })
@@ -197,12 +199,12 @@ void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::
   }
 }
 
-void DataStreamROS2::messageCallback(const std::string& topic_name, std::shared_ptr<rmw_serialized_message_t> msg)
+void DataStreamROS2::messageCallback(const std::string& topic_name, std::shared_ptr<rclcpp::SerializedMessage> msg)
 {
   double timestamp = _node->get_clock()->now().seconds();
 
   std::unique_lock<std::mutex> lock(mutex());
-  _parser->parseMessage(topic_name, msg.get(), timestamp);
+  _parser->parseMessage(topic_name, &(msg.get()->get_rcl_serialized_message()), timestamp);
 
   emit dataReceived();
 }

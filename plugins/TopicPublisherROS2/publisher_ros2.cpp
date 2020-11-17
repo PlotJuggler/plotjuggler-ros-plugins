@@ -15,7 +15,7 @@
 #include <unordered_map>
 #include <QMessageBox>
 #include <tf2_ros/qos.hpp>
-#include <rosbag2/types.hpp>
+#include <rosbag2_cpp/types.hpp>
 #include <rmw/rmw.h>
 #include <rmw/types.h>
 #include "publisher_select_dialog.h"
@@ -28,6 +28,12 @@ TopicPublisherROS2::TopicPublisherROS2() :  _node(nullptr), _enabled(false)
   auto exec_args = rclcpp::executor::ExecutorArgs();
   exec_args.context = _context;
   _executor = std::make_unique<rclcpp::executors::MultiThreadedExecutor>(exec_args, 2);
+
+  _select_topics_to_publish = new QAction(QString("Select topics to be published"));
+  connect(_select_topics_to_publish, &QAction::triggered,
+          this, &TopicPublisherROS2::filterDialog);
+
+  _available_actions.push_back(_select_topics_to_publish);
 }
 
 TopicPublisherROS2::~TopicPublisherROS2()
@@ -35,15 +41,10 @@ TopicPublisherROS2::~TopicPublisherROS2()
   _enabled = false;
 }
 
-void TopicPublisherROS2::setParentMenu(QMenu* menu, QAction* action)
+const std::vector<QAction*> &TopicPublisherROS2::availableActions()
 {
-  StatePublisher::setParentMenu(menu, action);
-
-  _enable_self_action = menu->actions().back();
-
-  _select_topics_to_publish = new QAction(QString("Select topics to be published"), _menu);
-  _menu->addAction(_select_topics_to_publish);
-  connect(_select_topics_to_publish, &QAction::triggered, this, &TopicPublisherROS2::filterDialog);
+  static std::vector<QAction*> empty;
+  return empty;
 }
 
 void TopicPublisherROS2::updatePublishers()
@@ -94,7 +95,7 @@ void TopicPublisherROS2::setEnabled(bool to_enable)
 
   if (_enabled)
   {
-    auto metadata_it = _datamap->user_defined.find("rosbag2::plotjuggler::topics_metadata");
+    auto metadata_it = _datamap->user_defined.find("rosbag2_cpp::plotjuggler::topics_metadata");
     if (metadata_it == _datamap->user_defined.end())
     {
       return;
@@ -133,7 +134,7 @@ void TopicPublisherROS2::setEnabled(bool to_enable)
 
 void TopicPublisherROS2::filterDialog()
 {
-  auto metadata_it = _datamap->user_defined.find("rosbag2::plotjuggler::topics_metadata");
+  auto metadata_it = _datamap->user_defined.find("rosbag2_cpp::plotjuggler::topics_metadata");
   if (metadata_it != _datamap->user_defined.end())
   {
     // I stored it in a one point timeseries... shoot me
@@ -207,14 +208,14 @@ void TopicPublisherROS2::broadcastTF(double current_time)
    for (const auto& data_it : _datamap->user_defined)
    {
      const std::string& topic_name = data_it.first;
-     const PlotDataAny& plot_any = data_it.second;
+     const PJ::PlotDataAny& plot_any = data_it.second;
 
      if (topic_name != "/tf_static" && topic_name != "/tf")
      {
        continue;
      }
 
-     const PlotDataAny* tf_data = &plot_any;
+     const PJ::PlotDataAny* tf_data = &plot_any;
      int last_index = tf_data->getIndexFromX(current_time);
      if (last_index < 0)
      {
@@ -309,17 +310,17 @@ void TopicPublisherROS2::updateState(double current_time)
   broadcastTF(current_time);
   //-----------------------------------------------
 
-  auto data_it = _datamap->user_defined.find("rosbag2::plotjuggler::consecutive_messages");
+  auto data_it = _datamap->user_defined.find("rosbag2_cpp::plotjuggler::consecutive_messages");
   if (data_it != _datamap->user_defined.end())
   {
-    const PlotDataAny& continuous_msgs = data_it->second;
+    const PJ::PlotDataAny& continuous_msgs = data_it->second;
     _previous_play_index = continuous_msgs.getIndexFromX(current_time);
   }
 
   for (const auto& data_it : _datamap->user_defined)
   {
     const std::string& topic_name = data_it.first;
-    const PlotDataAny& plot_any = data_it.second;
+    const PJ::PlotDataAny& plot_any = data_it.second;
 
     if (topic_name == "/tf" || topic_name == "tf_static")
     {
@@ -358,7 +359,7 @@ void TopicPublisherROS2::play(double current_time)
   {
     return;
   }
-  const PlotDataAny& continuous_msgs = data_it->second;
+  const PJ::PlotDataAny& continuous_msgs = data_it->second;
   int current_index = continuous_msgs.getIndexFromX(current_time);
 
   if (_previous_play_index > current_index)
@@ -369,7 +370,7 @@ void TopicPublisherROS2::play(double current_time)
   }
   else
   {
-    const PlotDataAny& consecutive_msg = data_it->second;
+    const PJ::PlotDataAny& consecutive_msg = data_it->second;
     for (int index = _previous_play_index + 1; index <= current_index; index++)
     {
       const auto& any_value = consecutive_msg.at(index).y;

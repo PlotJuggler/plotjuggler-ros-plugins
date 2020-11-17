@@ -35,7 +35,6 @@ elseif( DEFINED ENV{AMENT_PREFIX_PATH})
     message(STATUS "PlotJuggler is being built using AMENT. ROS2 plugins will be compiled")
     message(STATUS "---------------------------------------------------------------------")
 
-
     find_package(ament_cmake REQUIRED)
     find_package(rclcpp REQUIRED)
     find_package(rcpputils REQUIRED)

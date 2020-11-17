@@ -7,7 +7,7 @@
 class DiagnosticMsgParser : public BuiltinMessageParser<diagnostic_msgs::DiagnosticArray>
 {
 public:
-  DiagnosticMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  DiagnosticMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<diagnostic_msgs::DiagnosticArray>(topic_name, plot_data)
   {
     _data.emplace_back(&getSeries("/header/seq"));
@@ -51,5 +51,5 @@ public:
   }
 
 private:
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 };

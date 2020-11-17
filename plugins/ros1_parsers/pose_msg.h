@@ -11,7 +11,7 @@
 class PoseMsgParser : public BuiltinMessageParser<geometry_msgs::Pose>
 {
 public:
-  PoseMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  PoseMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::Pose>(topic_name, plot_data)
     , _quat_parser(topic_name + "/orientation", plot_data)
   {
@@ -31,13 +31,13 @@ public:
 
 private:
   QuaternionMsgParser _quat_parser;
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 };
 
 class PoseStampedMsgParser : public BuiltinMessageParser<geometry_msgs::PoseStamped>
 {
 public:
-  PoseStampedMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  PoseStampedMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::PoseStamped>(topic_name, plot_data), _pose_parser(topic_name, plot_data)
   {
     _data.emplace_back(&getSeries(topic_name + "/header/seq"));
@@ -57,13 +57,13 @@ public:
 
 private:
   PoseMsgParser _pose_parser;
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 };
 
 class PoseCovarianceMsgParser : public BuiltinMessageParser<geometry_msgs::PoseWithCovariance>
 {
 public:
-  PoseCovarianceMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  PoseCovarianceMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::PoseWithCovariance>(topic_name, plot_data)
     , _pose_parser(topic_name, plot_data)
     , _covariance(topic_name + "/covariance", plot_data)
@@ -84,7 +84,7 @@ private:
 class PoseCovarianceStampedMsgParser : public BuiltinMessageParser<geometry_msgs::PoseWithCovarianceStamped>
 {
 public:
-  PoseCovarianceStampedMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  PoseCovarianceStampedMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::PoseWithCovarianceStamped>(topic_name, plot_data)
     , _pose_cov_parser(topic_name, plot_data)
   {
@@ -105,5 +105,5 @@ public:
 
 private:
   PoseCovarianceMsgParser _pose_cov_parser;
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 };

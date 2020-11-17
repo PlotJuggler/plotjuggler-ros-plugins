@@ -6,7 +6,7 @@
 class JointStateMsgParser : public BuiltinMessageParser<sensor_msgs::JointState>
 {
 public:
-  JointStateMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  JointStateMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<sensor_msgs::JointState>(topic_name, plot_data)
   {
     _data.emplace_back(&getSeries(topic_name + "/header/seq"));
@@ -46,5 +46,5 @@ public:
   }
 
 private:
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 };

@@ -43,7 +43,8 @@ const std::vector<const char*>& DataLoadROS::compatibleFileExtensions() const
   return _extensions;
 }
 
-std::vector<std::pair<QString, QString>> DataLoadROS::getAllTopics(const rosbag::Bag* bag, CompositeParser& parser)
+std::vector<std::pair<QString, QString>>
+DataLoadROS::getAllTopics(const rosbag::Bag* bag, CompositeParser& parser)
 {
   std::vector<std::pair<QString, QString>> all_topics;
   rosbag::View bag_view(*bag, ros::TIME_MIN, ros::TIME_MAX, true);
@@ -103,7 +104,7 @@ std::vector<std::pair<QString, QString>> DataLoadROS::getAllTopics(const rosbag:
   return all_topics;
 }
 
-bool DataLoadROS::readDataFromFile(FileLoadInfo* info, PlotDataMapRef& plot_map)
+bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& plot_map)
 {
   auto temp_bag = std::make_shared<rosbag::Bag>();
 

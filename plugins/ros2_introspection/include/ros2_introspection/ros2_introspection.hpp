@@ -35,8 +35,8 @@
 
 #include <unordered_map>
 #include <ros2_introspection/stringtree.hpp>
-#include <rosbag2/typesupport_helpers.hpp>
-#include <rosbag2/types/introspection_message.hpp>
+#include <rosbag2_cpp/typesupport_helpers.hpp>
+#include <rosbag2_cpp/types/introspection_message.hpp>
 #include <rosidl_typesupport_cpp/identifier.hpp>
 #include <rosidl_typesupport_introspection_cpp/identifier.hpp>
 
@@ -70,7 +70,11 @@ struct TopicInfo{
 
   std::string topic_type;
   bool has_header_stamp;
+
+  std::shared_ptr<rcpputils::SharedLibrary> _introspection_library;
   const rosidl_message_type_support_t *introspection_support;
+
+  std::shared_ptr<rcpputils::SharedLibrary> _support_library;
   const rosidl_message_type_support_t *type_support;
 
   static rcutils_allocator_t allocator;

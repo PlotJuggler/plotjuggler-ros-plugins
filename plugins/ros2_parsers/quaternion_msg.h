@@ -6,7 +6,7 @@
 class QuaternionMsgParser : public BuiltinMessageParser<geometry_msgs::msg::Quaternion>
 {
 public:
-  QuaternionMsgParser(const std::string& topic_name, PlotDataMapRef& plot_data)
+  QuaternionMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::msg::Quaternion>(topic_name, plot_data)
   {
     _data.push_back(&getSeries(plot_data, topic_name + "/x"));
@@ -68,5 +68,5 @@ public:
   }
 
 private:
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 };

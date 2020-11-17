@@ -7,7 +7,7 @@ template <size_t N>
 class CovarianceParser
 {
 public:
-  CovarianceParser(const std::string& prefix, PlotDataMapRef& plot_data)
+  CovarianceParser(const std::string& prefix, PJ::PlotDataMapRef& plot_data)
   {
     for (int i = 0; i < N; i++)
     {
@@ -40,6 +40,6 @@ public:
   }
 
 private:
-  std::vector<PlotData*> _data;
+  std::vector<PJ::PlotData*> _data;
 
 };
