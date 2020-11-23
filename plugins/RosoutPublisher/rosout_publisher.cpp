@@ -1,5 +1,5 @@
 #include "rosout_publisher.h"
-#include "PlotJuggler/any.hpp"
+#include <PlotJuggler/any.hpp>
 #include "shape_shifter_factory.hpp"
 #include "qnodedialog.h"
 #include <QSettings>

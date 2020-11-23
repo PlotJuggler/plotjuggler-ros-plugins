@@ -1,8 +1,8 @@
 #pragma once
 
+#include <PlotJuggler/plotdata.h>
+#include <PlotJuggler/messageparser_base.h>
 #include "ros_type_introspection/ros_introspection.hpp"
-#include "PlotJuggler/plotdata.h"
-#include "PlotJuggler/messageparser_base.h"
 
 //----------------------------------
 

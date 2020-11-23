@@ -7,7 +7,7 @@
 #include <ros/ros.h>
 #include <rosbag/bag.h>
 
-#include "PlotJuggler/dataloader_base.h"
+#include <PlotJuggler/dataloader_base.h>
 #include "dialog_select_ros_topics.h"
 #include "ros1_parsers/ros1_parser.h"
 

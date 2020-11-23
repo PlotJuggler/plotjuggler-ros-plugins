@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <thread>
 #include <ros_type_introspection/utils/shape_shifter.hpp>
-#include "PlotJuggler/datastreamer_base.h"
+#include <PlotJuggler/datastreamer_base.h>
 #include <ros_type_introspection/ros_introspection.hpp>
 #include <rosgraph_msgs/Clock.h>
 #include "qnodedialog.h"

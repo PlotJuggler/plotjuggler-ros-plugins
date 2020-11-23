@@ -6,7 +6,7 @@
 #include <QMainWindow>
 #include <map>
 #include <ros/ros.h>
-#include "PlotJuggler/statepublisher_base.h"
+#include <PlotJuggler/statepublisher_base.h>
 #include <rosgraph_msgs/Log.h>
 #include "logwidget.hpp"
 

@@ -4,7 +4,7 @@
 #include <QtPlugin>
 #include <QTimer>
 
-#include "PlotJuggler/datastreamer_base.h"
+#include <PlotJuggler/datastreamer_base.h>
 
 #include "dialog_select_ros_topics.h"
 #include "ros2_parsers/ros2_parser.h"

@@ -2,7 +2,7 @@
 #define SHAPE_SHIFTER_FACTORY_HPP
 
 #include <ros_type_introspection/utils/shape_shifter.hpp>
-#include "PlotJuggler/any.hpp"
+#include <PlotJuggler/any.hpp>
 
 
 class RosIntrospectionFactory{

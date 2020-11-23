@@ -8,7 +8,7 @@
 #include <ros_type_introspection/ros_introspection.hpp>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/static_transform_broadcaster.h>
-#include "PlotJuggler/statepublisher_base.h"
+#include <PlotJuggler/statepublisher_base.h>
 #include "shape_shifter_factory.hpp"
 #include <rosbag/bag.h>
 

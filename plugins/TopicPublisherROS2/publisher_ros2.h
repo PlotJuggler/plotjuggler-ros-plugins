@@ -13,7 +13,7 @@
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/static_transform_broadcaster.h>
 
-#include "PlotJuggler/statepublisher_base.h"
+#include <PlotJuggler/statepublisher_base.h>
 #include "ros2_parser.h"
 #include "generic_publisher.h"
 

@@ -1,5 +1,5 @@
 #include "publisher_ros2.h"
-#include "PlotJuggler/any.hpp"
+#include <PlotJuggler/any.hpp>
 
 #include <QDialog>
 #include <QFormLayout>
