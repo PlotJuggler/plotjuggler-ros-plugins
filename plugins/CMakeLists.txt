@@ -131,7 +131,7 @@ if(COMPILING_WITH_CATKIN)
         DataStreamROS
         RosTopicPublisher
         RosoutPublisher
-        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/../plotjuggler
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/
         )
 elseif(COMPILING_WITH_AMENT)
     install(TARGETS
