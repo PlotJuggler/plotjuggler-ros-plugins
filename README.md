@@ -16,7 +16,7 @@ ROS is supported through external plugins that can be found in this [repository]
 
 Install PlotJuggler and its ROS plugins with:
 
-    sudo apt install ros-${ROS_DISTRO}-plotjuggler-ros
+    sudo apt install ros-${ROS_DISTRO}-plotjuggler
     
 And launch it with:
     
