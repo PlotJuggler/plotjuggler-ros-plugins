@@ -2,12 +2,23 @@
 #include "jointstates_msg.h"
 #include "imu_msg.h"
 #include "odometry_msg.h"
+#include "tf_msg.h"
 #include "plotjuggler_msgs.h"
-
+#include "diagnostic_msg.h"
 
 void RosMessageParser::setUseHeaderStamp(bool use)
 {
   _use_header_stamp = use;
+}
+
+PJ::PlotData& RosMessageParser::getSeries(const std::string key)
+{
+  auto plot_pair = _plot_data.numeric.find(key);
+  if (plot_pair == _plot_data.numeric.end())
+  {
+    plot_pair = _plot_data.addNumeric(key);
+  }
+  return plot_pair->second;
 }
 
 PJ::PlotData& RosMessageParser::getSeries(PJ::PlotDataMapRef& plot_data, const std::string key)
@@ -44,7 +55,7 @@ bool IntrospectionParser::parseMessage(const rcutils_uint8_array_t* serialized_m
     const auto& key = it.first;
     double value = it.second;
 
-    auto& series = getSeries(_plot_data, key);
+    auto& series = getSeries(key);
 
     if (!std::isnan(value) && !std::isinf(value))
     {
@@ -103,6 +114,14 @@ void CompositeParser::registerMessageType(const std::string& topic_name, const s
   if (type == "sensor_msgs/JointState")
   {
     parser.reset(new JointStateMsgParser(topic_name, _plot_data));
+  }
+  else if (type == "diagnostic_msgs/DiagnosticArray")
+  {
+    parser.reset(new DiagnosticMsgParser(topic_name, _plot_data));
+  }
+  else if (type == "tf2_msgs/TFMessage")
+  {
+    parser.reset(new TfMsgParser(topic_name, _plot_data));
   }
   else if (type == "geometry_msgs/Quaternion")
   {

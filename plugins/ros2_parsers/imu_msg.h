@@ -16,16 +16,16 @@ public:
     , _lin_acc_covariance(topic_name + "/linear_acceleration_covariance", plot_data)
     , _ang_vel_covariance(topic_name + "/angular_velocity_covariance", plot_data)
   {
-    _data.push_back(&getSeries(plot_data, topic_name + "/header/stamp/sec"));
-    _data.push_back(&getSeries(plot_data, topic_name + "/header/stamp/nanosec"));
+    _data.push_back(&getSeries(topic_name + "/header/stamp/sec"));
+    _data.push_back(&getSeries(topic_name + "/header/stamp/nanosec"));
 
-    _data.push_back(&getSeries(plot_data, topic_name + "/angular_velocity/x"));
-    _data.push_back(&getSeries(plot_data, topic_name + "/angular_velocity/y"));
-    _data.push_back(&getSeries(plot_data, topic_name + "/angular_velocity/z"));
+    _data.push_back(&getSeries(topic_name + "/angular_velocity/x"));
+    _data.push_back(&getSeries(topic_name + "/angular_velocity/y"));
+    _data.push_back(&getSeries(topic_name + "/angular_velocity/z"));
 
-    _data.push_back(&getSeries(plot_data, topic_name + "/linear_acceleration/x"));
-    _data.push_back(&getSeries(plot_data, topic_name + "/linear_acceleration/y"));
-    _data.push_back(&getSeries(plot_data, topic_name + "/linear_acceleration/z"));
+    _data.push_back(&getSeries(topic_name + "/linear_acceleration/x"));
+    _data.push_back(&getSeries(topic_name + "/linear_acceleration/y"));
+    _data.push_back(&getSeries(topic_name + "/linear_acceleration/z"));
   }
 
   void parseMessageImpl(const sensor_msgs::msg::Imu& msg, double timestamp) override
