@@ -2,6 +2,12 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge branch 'development' of https://github.com/PlotJuggler/plotjuggler-ros-plugins into development
+* fix compilation in ros2
+* Contributors: Davide Faconti
+
 1.0.1 (2020-12-18)
 ------------------
 * Added TF messages to the parser (issue `#366 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/366>`_)
