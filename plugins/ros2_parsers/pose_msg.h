@@ -14,9 +14,9 @@ public:
     : BuiltinMessageParser<geometry_msgs::msg::Pose>(topic_name, plot_data)
     , _quat_parser(topic_name + "/orientation", plot_data)
   {
-    _data.push_back(&getSeries(plot_data, topic_name + "/position/x"));
-    _data.push_back(&getSeries(plot_data, topic_name + "/position/y"));
-    _data.push_back(&getSeries(plot_data, topic_name + "/position/z"));
+    _data.push_back(&getSeries(topic_name + "/position/x"));
+    _data.push_back(&getSeries(topic_name + "/position/y"));
+    _data.push_back(&getSeries(topic_name + "/position/z"));
   }
 
   void parseMessageImpl(const geometry_msgs::msg::Pose& msg, double timestamp) override
@@ -39,8 +39,8 @@ public:
   PoseStampedMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::msg::PoseStamped>(topic_name, plot_data), _pose_parser(topic_name, plot_data)
   {
-    _data.push_back(&getSeries(plot_data, topic_name + "/header/stamp/sec"));
-    _data.push_back(&getSeries(plot_data, topic_name + "/header/stamp/nanosec"));
+    _data.push_back(&getSeries(topic_name + "/header/stamp/sec"));
+    _data.push_back(&getSeries(topic_name + "/header/stamp/nanosec"));
   }
 
   void parseMessageImpl(const geometry_msgs::msg::PoseStamped& msg, double timestamp) override

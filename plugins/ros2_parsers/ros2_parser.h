@@ -44,9 +44,16 @@ public:
 
   virtual bool parseMessage(const MessageRef* serialized_msg, double timestamp) = 0;
 
+  PJ::PlotData& getSeries(const std::string key);
+
   static PJ::PlotData& getSeries(PJ::PlotDataMapRef& plot_data, const std::string key);
 
   virtual const rosidl_message_type_support_t* typeSupport() const = 0;
+
+  PJ::PlotDataMapRef& plotData()
+  {
+    return _plot_data;
+  }
 
 protected:
   bool _use_header_stamp;

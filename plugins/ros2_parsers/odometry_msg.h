@@ -13,8 +13,8 @@ public:
     , _pose_parser(topic_name + "/pose", plot_data)
     , _twist_parser(topic_name + "/twist", plot_data)
   {
-    _data.push_back(&getSeries(plot_data, topic_name + "/header/stamp/sec"));
-    _data.push_back(&getSeries(plot_data, topic_name + "/header/stamp/nanosec"));
+    _data.push_back(&getSeries(topic_name + "/header/stamp/sec"));
+    _data.push_back(&getSeries(topic_name + "/header/stamp/nanosec"));
   }
 
   void parseMessageImpl(const nav_msgs::msg::Odometry& msg, double timestamp) override

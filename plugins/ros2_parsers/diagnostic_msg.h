@@ -1,27 +1,25 @@
 #pragma once
 
-#include <diagnostic_msgs/DiagnosticArray.h>
+#include <diagnostic_msgs/msg/diagnostic_array.hpp>
 #include <boost/spirit/include/qi.hpp>
+#include "ros2_parser.h"
 #include "fmt/format.h"
-#include "ros1_parser.h"
 
-class DiagnosticMsgParser : public BuiltinMessageParser<diagnostic_msgs::DiagnosticArray>
+class DiagnosticMsgParser : public BuiltinMessageParser<diagnostic_msgs::msg::DiagnosticArray>
 {
 public:
-  DiagnosticMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
-    : BuiltinMessageParser<diagnostic_msgs::DiagnosticArray>(topic_name, plot_data)
+ DiagnosticMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
+    : BuiltinMessageParser<diagnostic_msgs::msg::DiagnosticArray>(topic_name, plot_data)
   {
-    _data.emplace_back(&getSeries("/header/seq"));
-    _data.emplace_back(&getSeries("/header/stamp"));
   }
 
-  virtual void parseMessageImpl(const diagnostic_msgs::DiagnosticArray& msg, double timestamp) override
+  virtual void parseMessageImpl(const diagnostic_msgs::msg::DiagnosticArray& msg, double timestamp) override
   {
-    double header_stamp = msg.header.stamp.toSec();
-    timestamp = (_use_message_stamp && header_stamp > 0) ? header_stamp : timestamp;
+    double header_stamp = double(msg.header.stamp.sec) + double(msg.header.stamp.nanosec) * 1e-9;
+    timestamp = (_use_header_stamp && header_stamp > 0) ? header_stamp : timestamp;
 
-    _data[0]->pushBack({ timestamp, (double)msg.header.seq });
-    _data[1]->pushBack({ timestamp, header_stamp });
+    auto stamp_series = &getSeries("/header/seq");
+    stamp_series->pushBack( {timestamp, header_stamp} );
 
     std::string key;
 
@@ -52,6 +50,5 @@ public:
     }
   }
 
-private:
-  std::vector<PJ::PlotData*> _data;
 };
+

@@ -29,7 +29,7 @@ Create a catkin workspace and clone the repositories:
      mkdir -p ~/ws_plotjuggler/src
      cd ~/ws_plotjuggler/src
      git clone https://github.com/PlotJuggler/plotjuggler_msgs.git
-     git clone https://github.com/PlotJuggler/PlotJuggler.git
+     git clone https://github.com/facontidavide/PlotJuggler.git
      git clone https://github.com/PlotJuggler/plotjuggler-ros-plugins.git
      
 Now, it is time to compile:
