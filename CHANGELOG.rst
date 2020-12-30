@@ -2,8 +2,8 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.2 (2020-12-30)
+------------------
 * Merge branch 'development' of https://github.com/PlotJuggler/plotjuggler-ros-plugins into development
 * fix compilation in ros2
 * Contributors: Davide Faconti
