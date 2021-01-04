@@ -90,6 +90,7 @@ elseif(COMPILING_WITH_AMENT)
         sensor_msgs
         geometry_msgs
         nav_msgs
+        diagnostic_msgs
         plotjuggler_msgs
         tf2_msgs
         tf2_ros
