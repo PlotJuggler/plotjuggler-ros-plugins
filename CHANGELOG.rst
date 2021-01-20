@@ -2,6 +2,14 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix bug `#387 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/387>`_ in Plotjuggler repo
+* Merge pull request `#3 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/3>`_ from kefrobotics/development
+  Add diagnostic_msgs as ROS2 dependency in CMakeLists.txt files
+* Add diagnostic_msgs as ROS2 dependency in CMakeLists.txt files
+* Contributors: Davide Faconti, Paul Frivold
+
 1.0.2 (2020-12-30)
 ------------------
 * Merge branch 'development' of https://github.com/PlotJuggler/plotjuggler-ros-plugins into development
