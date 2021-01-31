@@ -55,6 +55,7 @@ private:
   void loadDefaultSettings();
 
   bool _running;
+  bool _first_warning;
 
   std::shared_ptr<ros::AsyncSpinner> _spinner;
 

@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
 
-cmake_policy(SET CMP0048 OLD)
 PROJECT(plotjuggler_ros)
 
 # http://answers.ros.org/question/230877/optionally-build-a-package-with-catkin/

@@ -49,6 +49,7 @@ private:
   std::unique_ptr<CompositeParser> _parser;
 
   bool _running;
+  bool _first_warning;
 
   std::thread _spinner;
 

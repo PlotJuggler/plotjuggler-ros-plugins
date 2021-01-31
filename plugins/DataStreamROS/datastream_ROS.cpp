@@ -29,6 +29,7 @@ DataStreamROS::DataStreamROS() : DataStreamer(), _node(nullptr)
 , _prev_clock_time(0)
 {
   _running = false;
+  _first_warning = true;
   _periodic_timer = new QTimer();
   connect(_periodic_timer, &QTimer::timeout, this, &DataStreamROS::timerCallback);
 
@@ -96,10 +97,22 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
 
   MessageRef buffer_view(buffer);
 
-  // before pushing, lock the mutex
-  std::lock_guard<std::mutex> lock(mutex());
-
-  _parser->parseMessage(topic_name, buffer_view, msg_time);
+  try
+  {
+      // before pushing, lock the mutex
+      std::lock_guard<std::mutex> lock(mutex());
+      _parser->parseMessage(topic_name, buffer_view, msg_time);
+  }
+  catch (std::runtime_error& ex)
+  {
+      if( _first_warning ) {
+          _first_warning = false;
+          QMessageBox::warning(nullptr, tr("Error"),
+                               QString("rosbag::open thrown an exception:\n") +
+                               QString(ex.what()) +
+                               "\nThis message will be shown only once.");
+      }
+  }
 
   const std::string prefixed_topic_name = _prefix + topic_name;
 
@@ -359,6 +372,7 @@ bool DataStreamROS::start(QStringList* selected_datasources)
   //-------------------------
   subscribe();
   _running = true;
+  _first_warning = true;
 
   extractInitialSamples();
 

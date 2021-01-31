@@ -3,11 +3,17 @@
 #include <QDebug>
 #include <QTimer>
 #include <QSettings>
+#include <QMessageBox>
 #include <QApplication>
 #include <QProgressDialog>
 #include "ros2_parsers/generic_subscription.hpp"
 
-DataStreamROS2::DataStreamROS2() : DataStreamer(), _node(nullptr), _running(false), _config()
+DataStreamROS2::DataStreamROS2() :
+    DataStreamer(),
+    _node(nullptr),
+    _running(false),
+    _first_warning(false),
+    _config()
 {
   loadDefaultSettings();
 
@@ -129,6 +135,7 @@ bool DataStreamROS2::start(QStringList* selected_datasources)
   _clock = rclcpp::Clock();
   _start_time = _clock.now().nanoseconds();
   _running = true;
+  _first_warning = true;
 
   _spinner = std::thread([this]() {
     while (_running)
@@ -202,9 +209,20 @@ void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::
 void DataStreamROS2::messageCallback(const std::string& topic_name, std::shared_ptr<rclcpp::SerializedMessage> msg)
 {
   double timestamp = _node->get_clock()->now().seconds();
-
-  std::unique_lock<std::mutex> lock(mutex());
-  _parser->parseMessage(topic_name, &(msg.get()->get_rcl_serialized_message()), timestamp);
+  try
+  {
+      std::unique_lock<std::mutex> lock(mutex());
+      _parser->parseMessage(topic_name, &(msg.get()->get_rcl_serialized_message()), timestamp);
+  }
+  catch (std::runtime_error& ex)
+  {
+      if( _first_warning ) {
+          _first_warning = false;
+          QMessageBox::warning(nullptr, tr("Error"),
+                               QString("rosbag::open thrown an exception:\n") +
+                               QString(ex.what()) + "\nThis message will be shown only once.");
+      }
+  }
 
   emit dataReceived();
 }
