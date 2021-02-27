@@ -49,14 +49,21 @@ bool IntrospectionParser::parseMessage(MessageRef serialized_msg, double timesta
     const auto& key = it.first;
     double value = 0;
 
-    if( it.second.getTypeID() ==  RosIntrospection::BuiltinType::INT64 )
+    if( it.second.getTypeID() ==  RosIntrospection::BuiltinType::UINT64 )
     {
-      uint64_t raw_value = it.second.extract<uint64_t>();
-      if( raw_value >= (1l<<53) )
-      {
-
-      }
-      value = static_cast<double>(raw_value);
+        uint64_t raw_value = it.second.extract<uint64_t>();
+        //      if( raw_value >= (1l<<53) ){
+        //        TODO: warn the user?
+        //      }
+        value = static_cast<double>(raw_value);
+    }
+    else if( it.second.getTypeID() ==  RosIntrospection::BuiltinType::INT64 )
+    {
+        int64_t raw_value = it.second.extract<int64_t>();
+        //      if( raw_value >= (1l<<53) ){
+        //        TODO: warn the user?
+        //      }
+        value = static_cast<double>(raw_value);
     }
     else{
       value = it.second.convert<double>();
