@@ -42,7 +42,7 @@
     <depend>binutils</depend>
     <depend>libqt5-svg-dev</depend>
     <depend>libqt5-websockets-dev</depend>
-    <depend>boost</depend>
+    <depend>libboost-dev</depend>
 
     <!-- The export tag contains other, unspecified, tags -->
     <export>
