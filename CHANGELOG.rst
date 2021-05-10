@@ -2,6 +2,15 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Mitigate proble with ros::ok()
+* prepare for newer PJ version
+* address issue with INT64
+* Update README.md
+* fix issue `#399 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/399>`_ and `#398 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/398>`_
+* Contributors: Davide Faconti
+
 1.1.0 (2021-01-31)
 ------------------
 
