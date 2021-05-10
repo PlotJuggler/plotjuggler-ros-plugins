@@ -3,6 +3,7 @@
 #include "qnodedialog.h"
 
 #include "ros_type_introspection/ros_introspection.hpp"
+#include <QDebug>
 #include <QDialog>
 #include <QFormLayout>
 #include <QCheckBox>

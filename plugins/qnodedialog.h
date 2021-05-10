@@ -15,7 +15,7 @@ class QNodeDialog : public QDialog
 
 public:
   ~QNodeDialog();
-  explicit QNodeDialog(QWidget* parent = 0);
+  explicit QNodeDialog(QWidget* parent = nullptr);
 
   static bool Connect(const std::string& ros_master_uri, const std::string& hostname = "localhost");
 
