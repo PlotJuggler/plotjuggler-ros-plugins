@@ -2,8 +2,8 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.1.1 (2021-05-10)
+------------------
 * Mitigate proble with ros::ok()
 * prepare for newer PJ version
 * address issue with INT64
