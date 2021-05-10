@@ -209,6 +209,14 @@ void DataStreamROS::timerCallback()
       emit closed();
     }
   }
+
+  if( !ros::ok() )
+  {
+    QMessageBox::warning(nullptr, tr("ROS Stopped"), "The plugin will be stopped");
+    this->shutdown();
+
+    emit closed();
+  }
 }
 
 void DataStreamROS::saveIntoRosbag()

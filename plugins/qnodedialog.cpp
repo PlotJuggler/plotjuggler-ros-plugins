@@ -49,7 +49,7 @@ bool QNodeDialog::Connect(const std::string& ros_master_uri, const std::string& 
   remappings["__hostname"] = hostname;
 
   static bool first_time = true;
-  if (first_time)
+  if (first_time || !ros::ok())
   {
     ros::init(remappings, "PlotJugglerListener", ros::init_options::AnonymousName);
     first_time = false;
@@ -58,6 +58,7 @@ bool QNodeDialog::Connect(const std::string& ros_master_uri, const std::string& 
   {
     ros::master::init(remappings);
   }
+  ros::start();
 
   bool connected = ros::master::check();
   if (!connected)
@@ -66,6 +67,7 @@ bool QNodeDialog::Connect(const std::string& ros_master_uri, const std::string& 
     msgBox.setText(QString("Could not connect to the ros master [%1]").arg(QString::fromStdString(ros_master_uri)));
     msgBox.exec();
   }
+
   return connected;
 }
 
@@ -134,7 +136,7 @@ ros::NodeHandlePtr RosManager::getNode()
 {
   RosManager& manager = RosManager::get();
 
-  if (!ros::isInitialized() || !ros::master::check())
+  if (!ros::isInitialized() || !ros::master::check() || !ros::ok())
   {
     bool connected = QNodeDialog::Connect(getDefaultMasterURI(), "localhost");
     if (!connected)
@@ -148,9 +150,7 @@ ros::NodeHandlePtr RosManager::getNode()
   {
     if (!manager._node)
     {
-      ros::start();
-      manager._node =
-          ros::NodeHandlePtr(new ros::NodeHandle, [](ros::NodeHandle* node) {
+      manager._node.reset(new ros::NodeHandle, [](ros::NodeHandle* node) {
             delete node;
             RosManager::get().stopROS();
           });
