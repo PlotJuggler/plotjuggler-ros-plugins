@@ -124,7 +124,7 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
     {
       plot_pair = _user_defined_buffers.emplace(std::piecewise_construct,
                                                 std::forward_as_tuple(prefixed_topic_name),
-                                                std::forward_as_tuple(prefixed_topic_name)).first;
+                                                std::forward_as_tuple(prefixed_topic_name, PlotGroup::Ptr())).first;
     }
     PlotDataAny& user_defined_data = plot_pair->second;
     user_defined_data.pushBack(PlotDataAny::Point(msg_time, nonstd::any(std::move(buffer))));
