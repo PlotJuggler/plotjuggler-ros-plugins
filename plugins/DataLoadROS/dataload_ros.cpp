@@ -185,7 +185,7 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
   QElapsedTimer timer;
   timer.start();
 
-  PlotDataAny& plot_consecutive = plot_map.addUserDefined("__consecutive_message_instances__")->second;
+  PlotDataAny& plot_consecutive = plot_map.addUserDefined("plotjuggler::rosbag1::consecutive_messages")->second;
 
   std::vector<uint8_t> buffer;
 

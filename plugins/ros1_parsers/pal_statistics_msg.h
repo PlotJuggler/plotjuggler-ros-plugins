@@ -77,7 +77,7 @@ public:
   {
   }
 
-  virtual bool parseMessage(MessageRef msg, double timestamp) override
+  virtual bool parseMessage(MessageRef msg, double& timestamp) override
   {
     PalStatisticsNames_ pal_names;
     ros::serialization::IStream is(const_cast<uint8_t*>(msg.data()), msg.size());
@@ -96,7 +96,7 @@ public:
   {
   }
 
-  virtual bool parseMessage(MessageRef msg, double timestamp) override
+  virtual bool parseMessage(MessageRef msg, double& timestamp) override
   {
     PalStatisticsValues_ pal_msg;
     ros::serialization::IStream is(const_cast<uint8_t*>(msg.data()), msg.size());

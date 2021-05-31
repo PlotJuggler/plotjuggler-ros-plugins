@@ -13,7 +13,7 @@ public:
   {
   }
 
-  virtual void parseMessageImpl(const diagnostic_msgs::msg::DiagnosticArray& msg, double timestamp) override
+  virtual void parseMessageImpl(const diagnostic_msgs::msg::DiagnosticArray& msg, double& timestamp) override
   {
     double header_stamp = double(msg.header.stamp.sec) + double(msg.header.stamp.nanosec) * 1e-9;
     timestamp = (_use_header_stamp && header_stamp > 0) ? header_stamp : timestamp;

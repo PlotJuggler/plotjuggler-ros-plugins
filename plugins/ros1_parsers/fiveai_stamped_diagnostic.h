@@ -69,7 +69,7 @@ public:
     return temp;
   }
 
-  virtual void pushMessageRef(const std::string&, const MessageRef& msg, double timestamp) override
+  virtual void pushMessageRef(const std::string&, const MessageRef& msg, double& timestamp) override
   {
     NodeDiagnostics_ diagnostic;
     ros::serialization::IStream is(const_cast<uint8_t*>(msg.data()), msg.size());

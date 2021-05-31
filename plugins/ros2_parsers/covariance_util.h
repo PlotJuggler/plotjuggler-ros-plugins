@@ -16,13 +16,13 @@ public:
     {
       for (int j = i; j < N; j++)
       {
-        auto str = fmt::format("{}[{},{}]", prefix, i, j);
+        auto str = fmt::format("{}[{};{}]", prefix, i, j);
         _data.push_back(&RosMessageParser::getSeries(plot_data, str));
       }
     }
   }
 
-  void parse(const std::array<double, N * N>& covariance, double timestamp)
+  void parse(const std::array<double, N * N>& covariance, double& timestamp)
   {
     size_t index = 0;
     for (int i = 0; i < N; i++)

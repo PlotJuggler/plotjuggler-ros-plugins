@@ -13,7 +13,7 @@ public:
   {
   }
 
-  void parseMessageImpl(const tf2_msgs::msg::TFMessage& msg, double timestamp) override
+  void parseMessageImpl(const tf2_msgs::msg::TFMessage& msg, double& timestamp) override
   {
     using namespace PJ;
 

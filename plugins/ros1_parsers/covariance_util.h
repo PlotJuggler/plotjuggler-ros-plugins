@@ -14,7 +14,7 @@ public:
       for (int j = i; j < N; j++)
       {
 
-        auto key = fmt::format("{}[{},{}]", prefix, i, j);
+        auto key = fmt::format("{}[{};{}]", prefix, i, j);
 
         auto plot_pair = plot_data.numeric.find(key);
         if (plot_pair == plot_data.numeric.end())
@@ -27,7 +27,7 @@ public:
     }
   }
 
-  void parse(const boost::array<double, N * N>& covariance, double timestamp)
+  void parse(const boost::array<double, N * N>& covariance, double& timestamp)
   {
     size_t index = 0;
     for (int i = 0; i < N; i++)

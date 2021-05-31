@@ -15,7 +15,7 @@ public:
     _data.emplace_back(&getSeries("/header/stamp"));
   }
 
-  virtual void parseMessageImpl(const diagnostic_msgs::DiagnosticArray& msg, double timestamp) override
+  virtual void parseMessageImpl(const diagnostic_msgs::DiagnosticArray& msg, double& timestamp) override
   {
     double header_stamp = msg.header.stamp.toSec();
     timestamp = (_use_message_stamp && header_stamp > 0) ? header_stamp : timestamp;

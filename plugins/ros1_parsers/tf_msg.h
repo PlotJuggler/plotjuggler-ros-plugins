@@ -16,7 +16,7 @@ public:
   {
   }
 
-  void parseMessageImpl(const TfMsgType& msg, double timestamp) override
+  void parseMessageImpl(const TfMsgType& msg, double& timestamp) override
   {
     for (const auto& trans : msg.transforms)
     {

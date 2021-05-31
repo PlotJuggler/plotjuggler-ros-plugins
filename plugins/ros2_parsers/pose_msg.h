@@ -19,7 +19,7 @@ public:
     _data.push_back(&getSeries(topic_name + "/position/z"));
   }
 
-  void parseMessageImpl(const geometry_msgs::msg::Pose& msg, double timestamp) override
+  void parseMessageImpl(const geometry_msgs::msg::Pose& msg, double& timestamp) override
   {
     _data[0]->pushBack({ timestamp, msg.position.x });
     _data[1]->pushBack({ timestamp, msg.position.y });
@@ -43,7 +43,7 @@ public:
     _data.push_back(&getSeries(topic_name + "/header/stamp/nanosec"));
   }
 
-  void parseMessageImpl(const geometry_msgs::msg::PoseStamped& msg, double timestamp) override
+  void parseMessageImpl(const geometry_msgs::msg::PoseStamped& msg, double& timestamp) override
   {
     if (_use_header_stamp)
     {
@@ -70,7 +70,7 @@ public:
   {
   }
 
-  void parseMessageImpl(const geometry_msgs::msg::PoseWithCovariance& msg, double timestamp) override
+  void parseMessageImpl(const geometry_msgs::msg::PoseWithCovariance& msg, double& timestamp) override
   {
     _pose_parser.parseMessageImpl(msg.pose, timestamp);
     _covariance.parse(msg.covariance, timestamp);

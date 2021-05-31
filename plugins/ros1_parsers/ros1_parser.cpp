@@ -14,7 +14,7 @@ void IntrospectionParser::setMaxArrayPolicy(LargeArrayPolicy discard_policy, siz
   _max_size = max_size;
 }
 
-bool IntrospectionParser::parseMessage(MessageRef serialized_msg, double timestamp)
+bool IntrospectionParser::parseMessage(MessageRef serialized_msg, double& timestamp)
 {
   RosIntrospection::Span<uint8_t> span( serialized_msg.data(), serialized_msg.size() );
   _parser.deserializeIntoFlatContainer(_topic_name, span, &_flat_msg, _max_size);
@@ -202,7 +202,7 @@ void CompositeParser::registerMessageType(const std::string& topic_name,
   _parsers.insert({ topic_name, parser });
 }
 
-bool CompositeParser::parseMessage(const std::string& topic_name, MessageRef serialized_msg, double timestamp)
+bool CompositeParser::parseMessage(const std::string& topic_name, MessageRef serialized_msg, double& timestamp)
 {
   auto it = _parsers.find(topic_name);
   if (it == _parsers.end())

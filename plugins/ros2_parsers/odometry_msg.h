@@ -17,7 +17,7 @@ public:
     _data.push_back(&getSeries(topic_name + "/header/stamp/nanosec"));
   }
 
-  void parseMessageImpl(const nav_msgs::msg::Odometry& msg, double timestamp) override
+  void parseMessageImpl(const nav_msgs::msg::Odometry& msg, double& timestamp) override
   {
     if (_use_header_stamp)
     {

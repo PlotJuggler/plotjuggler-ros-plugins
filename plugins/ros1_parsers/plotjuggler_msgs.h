@@ -14,7 +14,7 @@ public:
   {
   }
 
-  void parseMessageImpl(const plotjuggler_msgs::Dictionary& msg, double timestamp) override
+  void parseMessageImpl(const plotjuggler_msgs::Dictionary& msg, double& timestamp) override
   {
     _plotjuggler_msgs_dictionaries[msg.dictionary_uuid] = msg.names;
   }
@@ -30,7 +30,7 @@ public:
     _prefix = topic_name + "/";
   }
 
-  void parseMessageImpl(const plotjuggler_msgs::DataPoints& msg, double timestamp) override
+  void parseMessageImpl(const plotjuggler_msgs::DataPoints& msg, double& timestamp) override
   {
     auto it = _plotjuggler_msgs_dictionaries.find(msg.dictionary_uuid);
     if (it == _plotjuggler_msgs_dictionaries.end())

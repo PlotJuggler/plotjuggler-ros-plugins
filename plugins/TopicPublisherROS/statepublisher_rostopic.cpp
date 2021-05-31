@@ -352,7 +352,7 @@ void TopicPublisherROS::updateState(double current_time)
   broadcastTF(current_time);
   //-----------------------------------------------
 
-  auto data_it = _datamap->user_defined.find("__consecutive_message_instances__");
+  auto data_it = _datamap->user_defined.find("plotjuggler::rosbag1::consecutive_messages");
   if (data_it != _datamap->user_defined.end())
   {
     const PlotDataAny& continuous_msgs = data_it->second;
@@ -420,7 +420,7 @@ void TopicPublisherROS::play(double current_time)
     return;
   }
 
-  auto data_it = _datamap->user_defined.find("__consecutive_message_instances__");
+  auto data_it = _datamap->user_defined.find("plotjuggler::rosbag1::consecutive_messages");
   if (data_it == _datamap->user_defined.end())
   {
     return;

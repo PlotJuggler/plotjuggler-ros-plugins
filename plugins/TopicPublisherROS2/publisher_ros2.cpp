@@ -43,8 +43,7 @@ TopicPublisherROS2::~TopicPublisherROS2()
 
 const std::vector<QAction*> &TopicPublisherROS2::availableActions()
 {
-  static std::vector<QAction*> empty;
-  return empty;
+  return _available_actions;
 }
 
 void TopicPublisherROS2::updatePublishers()
@@ -95,7 +94,7 @@ void TopicPublisherROS2::setEnabled(bool to_enable)
 
   if (_enabled)
   {
-    auto metadata_it = _datamap->user_defined.find("rosbag2_cpp::plotjuggler::topics_metadata");
+    auto metadata_it = _datamap->user_defined.find("plotjuggler::rosbag2_cpp::topics_metadata");
     if (metadata_it == _datamap->user_defined.end())
     {
       return;
@@ -134,7 +133,7 @@ void TopicPublisherROS2::setEnabled(bool to_enable)
 
 void TopicPublisherROS2::filterDialog()
 {
-  auto metadata_it = _datamap->user_defined.find("rosbag2_cpp::plotjuggler::topics_metadata");
+  auto metadata_it = _datamap->user_defined.find("plotjuggler::rosbag2_cpp::topics_metadata");
   if (metadata_it != _datamap->user_defined.end())
   {
     // I stored it in a one point timeseries... shoot me
@@ -310,7 +309,7 @@ void TopicPublisherROS2::updateState(double current_time)
   broadcastTF(current_time);
   //-----------------------------------------------
 
-  auto data_it = _datamap->user_defined.find("rosbag2_cpp::plotjuggler::consecutive_messages");
+  auto data_it = _datamap->user_defined.find("plotjuggler::rosbag2_cpp::consecutive_messages");
   if (data_it != _datamap->user_defined.end())
   {
     const PJ::PlotDataAny& continuous_msgs = data_it->second;
@@ -351,10 +350,11 @@ void TopicPublisherROS2::updateState(double current_time)
 
 void TopicPublisherROS2::play(double current_time)
 {
-  if (!_enabled || !_node)
+  if (!_enabled || !_node){
     return;
+  }
 
-  auto data_it = _datamap->user_defined.find("__consecutive_message_instances__");
+  auto data_it = _datamap->user_defined.find("plotjuggler::rosbag2_cpp::consecutive_messages");
   if (data_it == _datamap->user_defined.end())
   {
     return;
