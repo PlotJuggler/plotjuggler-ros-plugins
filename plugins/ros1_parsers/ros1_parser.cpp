@@ -71,7 +71,7 @@ bool IntrospectionParser::parseMessage(MessageRef serialized_msg, double& timest
 
     auto& series = getSeries(key);
 
-    if (!std::isnan(value) && !std::isinf(value))
+    if (!std::isnan(static_cast<double>(value)) && !std::isinf(value))
     {
       series.pushBack({ timestamp, value });
     }
