@@ -2,8 +2,8 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.2.0 (2021-06-03)
+------------------
 * fix issue `#15 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/15>`_ for ROS1 too
 * Merge pull request `#4 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/4>`_ from Tobias-Fischer/patch-1
   Fix Windows compilation
