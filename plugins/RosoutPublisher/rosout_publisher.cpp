@@ -1,5 +1,4 @@
 #include "rosout_publisher.h"
-#include <PlotJuggler/any.hpp>
 #include "shape_shifter_factory.hpp"
 #include "qnodedialog.h"
 #include <QSettings>
@@ -117,7 +116,7 @@ void RosoutPublisher::syncWithTableModel(const std::vector<const PlotDataAny*>& 
       for (int i = first_index; i < type_erased_logs->size(); i++)
       {
         const auto& any_msg = type_erased_logs->at(i);
-        const nonstd::any& any_value = any_msg.y;
+        const std::any& any_value = any_msg.y;
 
         const bool isRawBuffer = any_value.type() == typeid(std::vector<uint8_t>);
         const bool isRosbagMessage = any_value.type() == typeid(rosbag::MessageInstance);
@@ -125,11 +124,11 @@ void RosoutPublisher::syncWithTableModel(const std::vector<const PlotDataAny*>& 
 
         if (isRawBuffer)
         {
-          raw_buffer = nonstd::any_cast<std::vector<uint8_t>>(any_value);
+          raw_buffer = std::any_cast<std::vector<uint8_t>>(any_value);
         }
         else if (isRosbagMessage)
         {
-          const rosbag::MessageInstance& msg_instance = nonstd::any_cast<rosbag::MessageInstance>(any_value);
+          const rosbag::MessageInstance& msg_instance = std::any_cast<rosbag::MessageInstance>(any_value);
           raw_buffer.resize(msg_instance.size());
           ros::serialization::OStream stream(raw_buffer.data(), raw_buffer.size());
           msg_instance.write(stream);

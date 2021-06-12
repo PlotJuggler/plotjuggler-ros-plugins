@@ -171,7 +171,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
       plot_map.addUserDefined("plotjuggler::rosbag2_cpp::topics_metadata")->second;
 
   // dirty trick. Store it in a one point timeseries
-  metadata_storage.pushBack( {0, nonstd::any(topics_info) } );
+  metadata_storage.pushBack( {0, std::any(topics_info) } );
 
   auto time_prev = std::chrono::high_resolution_clock::now();
 
@@ -203,7 +203,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     parser.parseMessage(topic_name, msg->serialized_data.get(), timestamp);
 
     //---- save msg reference in PlotAny ----
-    auto data_point = PJ::PlotDataAny::Point(timestamp, nonstd::any(msg));
+    auto data_point = PJ::PlotDataAny::Point(timestamp, std::any(msg));
     plot_consecutive.pushBack(data_point);
 
     auto plot_pair = plot_map.user_defined.find(topic_name);

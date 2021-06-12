@@ -224,7 +224,7 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
     ros_parser.parseMessage(topic_name, msg_serialized, tmp_timestamp);
 
     //------ save msg reference in PlotAny ----
-    auto data_point = PlotDataAny::Point(tmp_timestamp, nonstd::any(msg_instance));
+    auto data_point = PlotDataAny::Point(tmp_timestamp, std::any(msg_instance));
     plot_consecutive.pushBack(data_point);
 
     auto plot_pair = plot_map.user_defined.find(topic_name);
