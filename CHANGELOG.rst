@@ -2,8 +2,8 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.3.0 (2021-06-12)
+------------------
 * use std::any
 * temporary fix for 3.2
 * Contributors: Davide Faconti
