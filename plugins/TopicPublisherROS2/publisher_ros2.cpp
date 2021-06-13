@@ -1,6 +1,7 @@
 #include "publisher_ros2.h"
 #include <PlotJuggler/any.hpp>
 
+#include <QDebug>
 #include <QDialog>
 #include <QFormLayout>
 #include <QCheckBox>
