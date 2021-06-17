@@ -122,12 +122,13 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
     auto plot_pair = _user_defined_buffers.find(prefixed_topic_name);
     if (plot_pair == _user_defined_buffers.end())
     {
-      plot_pair = _user_defined_buffers.emplace(std::piecewise_construct,
-                                                std::forward_as_tuple(prefixed_topic_name),
-                                                std::forward_as_tuple(prefixed_topic_name)).first;
+      plot_pair = _user_defined_buffers.emplace(
+            std::piecewise_construct,
+            std::forward_as_tuple(prefixed_topic_name),
+            std::forward_as_tuple(prefixed_topic_name, PlotGroup::Ptr())).first;
     }
     PlotDataAny& user_defined_data = plot_pair->second;
-    user_defined_data.pushBack(PlotDataAny::Point(msg_time, nonstd::any(std::move(buffer))));
+    user_defined_data.pushBack(PlotDataAny::Point(msg_time, std::any(std::move(buffer))));
   }
 
   //------------------------------
@@ -261,7 +262,7 @@ void DataStreamROS::saveIntoRosbag()
       {
         const auto& point = plotdata.at(i);
         const double msg_time = point.x;
-        const nonstd::any& type_erased_buffer = point.y;
+        const std::any& type_erased_buffer = point.y;
 
         if (type_erased_buffer.type() != typeid(std::vector<uint8_t>))
         {
@@ -269,7 +270,7 @@ void DataStreamROS::saveIntoRosbag()
           continue;
         }
 
-        std::vector<uint8_t> raw_buffer = nonstd::any_cast<std::vector<uint8_t>>(type_erased_buffer);
+        std::vector<uint8_t> raw_buffer = std::any_cast<std::vector<uint8_t>>(type_erased_buffer);
         ros::serialization::IStream stream(raw_buffer.data(), raw_buffer.size());
         msg.read(stream);
 

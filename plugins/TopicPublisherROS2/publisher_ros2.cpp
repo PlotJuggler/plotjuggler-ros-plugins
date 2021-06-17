@@ -1,6 +1,7 @@
 #include "publisher_ros2.h"
 #include <PlotJuggler/any.hpp>
 
+#include <QDebug>
 #include <QDialog>
 #include <QFormLayout>
 #include <QCheckBox>
@@ -43,8 +44,7 @@ TopicPublisherROS2::~TopicPublisherROS2()
 
 const std::vector<QAction*> &TopicPublisherROS2::availableActions()
 {
-  static std::vector<QAction*> empty;
-  return empty;
+  return _available_actions;
 }
 
 void TopicPublisherROS2::updatePublishers()
@@ -95,14 +95,14 @@ void TopicPublisherROS2::setEnabled(bool to_enable)
 
   if (_enabled)
   {
-    auto metadata_it = _datamap->user_defined.find("rosbag2_cpp::plotjuggler::topics_metadata");
+    auto metadata_it = _datamap->user_defined.find("plotjuggler::rosbag2_cpp::topics_metadata");
     if (metadata_it == _datamap->user_defined.end())
     {
       return;
     }
     // I stored it in a one point timeseries... shoot me
     const auto any_metadata = metadata_it->second[0].y;
-    _topics_info = nonstd::any_cast<std::vector<TopicInfo>>(any_metadata);
+    _topics_info = std::any_cast<std::vector<TopicInfo>>(any_metadata);
 
     // select all the topics by default
     for(const auto& info: _topics_info)
@@ -134,12 +134,12 @@ void TopicPublisherROS2::setEnabled(bool to_enable)
 
 void TopicPublisherROS2::filterDialog()
 {
-  auto metadata_it = _datamap->user_defined.find("rosbag2_cpp::plotjuggler::topics_metadata");
+  auto metadata_it = _datamap->user_defined.find("plotjuggler::rosbag2_cpp::topics_metadata");
   if (metadata_it != _datamap->user_defined.end())
   {
     // I stored it in a one point timeseries... shoot me
     const auto any_metadata = metadata_it->second[0].y;
-    _topics_info = nonstd::any_cast<std::vector<TopicInfo>>(any_metadata);
+    _topics_info = std::any_cast<std::vector<TopicInfo>>(any_metadata);
   }
 
   PublisherSelectDialog *dialog =  new PublisherSelectDialog();
@@ -235,7 +235,7 @@ void TopicPublisherROS2::broadcastTF(double current_time)
 
      for (size_t index = std::max(0, initial_index); index <= last_index; index++)
      {
-       const nonstd::any& any_value = tf_data->at(index).y;
+       const std::any& any_value = tf_data->at(index).y;
 
        const bool isRosbagMessage = (any_value.type() == typeid(MessageRefPtr));
 
@@ -244,7 +244,7 @@ void TopicPublisherROS2::broadcastTF(double current_time)
          continue;
        }
 
-       const auto& msg_instance = nonstd::any_cast<MessageRefPtr>(any_value);
+       const auto& msg_instance = std::any_cast<MessageRefPtr>(any_value);
 
        auto tf_type_support = rosidl_typesupport_cpp::get_message_type_support_handle<tf2_msgs::msg::TFMessage>();
        tf2_msgs::msg::TFMessage tf_msg;
@@ -310,7 +310,7 @@ void TopicPublisherROS2::updateState(double current_time)
   broadcastTF(current_time);
   //-----------------------------------------------
 
-  auto data_it = _datamap->user_defined.find("rosbag2_cpp::plotjuggler::consecutive_messages");
+  auto data_it = _datamap->user_defined.find("plotjuggler::rosbag2_cpp::consecutive_messages");
   if (data_it != _datamap->user_defined.end())
   {
     const PJ::PlotDataAny& continuous_msgs = data_it->second;
@@ -343,7 +343,7 @@ void TopicPublisherROS2::updateState(double current_time)
 
     if (any_value.type() == typeid(MessageRefPtr))
     {
-      const auto& msg_instance = nonstd::any_cast<MessageRefPtr>(any_value);
+      const auto& msg_instance = std::any_cast<MessageRefPtr>(any_value);
       publisher_it->second->publish(msg_instance->serialized_data);
     }
   }
@@ -351,10 +351,11 @@ void TopicPublisherROS2::updateState(double current_time)
 
 void TopicPublisherROS2::play(double current_time)
 {
-  if (!_enabled || !_node)
+  if (!_enabled || !_node){
     return;
+  }
 
-  auto data_it = _datamap->user_defined.find("__consecutive_message_instances__");
+  auto data_it = _datamap->user_defined.find("plotjuggler::rosbag2_cpp::consecutive_messages");
   if (data_it == _datamap->user_defined.end())
   {
     return;
@@ -376,7 +377,7 @@ void TopicPublisherROS2::play(double current_time)
       const auto& any_value = consecutive_msg.at(index).y;
       if (any_value.type() == typeid(MessageRefPtr))
       {
-        const auto& msg_instance = nonstd::any_cast<MessageRefPtr>(any_value);
+        const auto& msg_instance = std::any_cast<MessageRefPtr>(any_value);
 
         auto publisher_it = _publishers.find(msg_instance->topic_name);
         if (publisher_it == _publishers.end())

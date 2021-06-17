@@ -13,7 +13,7 @@ public:
     _data.push_back(&getSeries(topic_name + "/header/stamp/nanosec"));
   }
 
-  void parseMessageImpl(const sensor_msgs::msg::JointState& msg, double timestamp) override
+  void parseMessageImpl(const sensor_msgs::msg::JointState& msg, double& timestamp) override
   {
     if (_use_header_stamp)
     {

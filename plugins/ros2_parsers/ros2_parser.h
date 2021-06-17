@@ -42,7 +42,7 @@ public:
   {
   }
 
-  virtual bool parseMessage(const MessageRef* serialized_msg, double timestamp) = 0;
+  virtual bool parseMessage(const MessageRef* serialized_msg, double& timestamp) = 0;
 
   PJ::PlotData& getSeries(const std::string key);
 
@@ -71,7 +71,7 @@ public:
     _type_support = rosidl_typesupport_cpp::get_message_type_support_handle<T>();
   }
 
-  virtual bool parseMessage(const MessageRef* serialized_msg, double timestamp) override
+  virtual bool parseMessage(const MessageRef* serialized_msg, double& timestamp) override
   {
     T msg;
     if (RMW_RET_OK != rmw_deserialize(serialized_msg, _type_support, &msg))
@@ -82,7 +82,7 @@ public:
     return true;
   }
 
-  virtual void parseMessageImpl(const T& msg, double timestamp) = 0;
+  virtual void parseMessageImpl(const T& msg, double& timestamp) = 0;
 
   const rosidl_message_type_support_t* typeSupport() const override
   {
@@ -103,7 +103,7 @@ public:
 
   void setMaxArrayPolicy(LargeArrayPolicy policy, size_t max_size) override;
 
-  virtual bool parseMessage(const MessageRef* serialized_msg, double timestamp) override;
+  virtual bool parseMessage(const MessageRef* serialized_msg, double& timestamp) override;
 
   const rosidl_message_type_support_t* typeSupport() const override
   {
@@ -127,7 +127,7 @@ public:
 
   void registerMessageType(const std::string& topic_name, const std::string& topic_type);
 
-  bool parseMessage(const std::string& topic_name, const MessageRef* serialized_msg, double timestamp);
+  bool parseMessage(const std::string& topic_name, const MessageRef* serialized_msg, double& timestamp);
 
   const rosidl_message_type_support_t* typeSupport(const std::string& topic_name) const;
 

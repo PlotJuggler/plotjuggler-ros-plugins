@@ -45,7 +45,7 @@ public:
   {
   }
 
-  virtual bool parseMessage(MessageRef serialized_msg, double timestamp) override
+  virtual bool parseMessage(MessageRef serialized_msg, double& timestamp) override
   {
     T msg;
     ros::serialization::IStream is(const_cast<uint8_t*>(serialized_msg.data()), serialized_msg.size());
@@ -54,7 +54,7 @@ public:
     return true;
   }
 
-  virtual void parseMessageImpl(const T& msg, double timestamp) = 0;
+  virtual void parseMessageImpl(const T& msg, double& timestamp) = 0;
 
 protected:
 };
@@ -62,8 +62,10 @@ protected:
 class IntrospectionParser : public RosMessageParser
 {
 public:
-  IntrospectionParser(const std::string& topic_name, const std::string& topic_type, const std::string& definition,
-                      PJ::PlotDataMapRef& plot_data)
+ IntrospectionParser(const std::string& topic_name,
+                     const std::string& topic_type,
+                     const std::string& definition,
+                     PJ::PlotDataMapRef& plot_data)
     : RosMessageParser(topic_name, plot_data), _max_size(999)
   {
     auto type = RosIntrospection::ROSType(topic_type);
@@ -72,7 +74,7 @@ public:
 
   void setMaxArrayPolicy(LargeArrayPolicy policy, size_t max_size) override;
 
-  virtual bool parseMessage(MessageRef serialized_msg, double timestamp) override;
+  virtual bool parseMessage(MessageRef serialized_msg, double& timestamp) override;
 
 private:
   RosIntrospection::Parser _parser;
@@ -92,7 +94,7 @@ public:
 
   void registerMessageType(const std::string& topic_name, const std::string& topic_type, const std::string& definition);
 
-  bool parseMessage(const std::string& topic_name, MessageRef serialized_msg, double timestamp);
+  bool parseMessage(const std::string& topic_name, MessageRef serialized_msg, double& timestamp);
 
 private:
 

@@ -185,7 +185,7 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
   QElapsedTimer timer;
   timer.start();
 
-  PlotDataAny& plot_consecutive = plot_map.addUserDefined("__consecutive_message_instances__")->second;
+  PlotDataAny& plot_consecutive = plot_map.addUserDefined("plotjuggler::rosbag1::consecutive_messages")->second;
 
   std::vector<uint8_t> buffer;
 
@@ -193,6 +193,12 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
   {
     const std::string& topic_name = msg_instance.getTopic();
     double msg_time = msg_instance.getTime().toSec();
+
+    //----- skip not selected -----------
+    if (topic_selected.find(topic_name) == topic_selected.end())
+    {
+      continue;
+    }
 
     //------ progress dialog --------------
     if (msg_count++ % 100 == 0)
@@ -206,8 +212,19 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
       }
     }
 
+    //----- parse! -----------
+    const size_t msg_size = msg_instance.size();
+    buffer.resize(msg_size);
+    ros::serialization::OStream stream(buffer.data(), msg_size);
+    msg_instance.write(stream);
+
+    MessageRef msg_serialized(buffer.data(), buffer.size());
+
+    double tmp_timestamp = msg_time;
+    ros_parser.parseMessage(topic_name, msg_serialized, tmp_timestamp);
+
     //------ save msg reference in PlotAny ----
-    auto data_point = PlotDataAny::Point(msg_time, nonstd::any(msg_instance));
+    auto data_point = PlotDataAny::Point(tmp_timestamp, std::any(msg_instance));
     plot_consecutive.pushBack(data_point);
 
     auto plot_pair = plot_map.user_defined.find(topic_name);
@@ -217,22 +234,6 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
     }
     PlotDataAny& plot_raw = plot_pair->second;
     plot_raw.pushBack(data_point);
-
-    //----- skip not selected -----------
-    if (topic_selected.find(topic_name) == topic_selected.end())
-    {
-      continue;
-    }
-
-    //----- parse! -----------
-    const size_t msg_size = msg_instance.size();
-    buffer.resize(msg_size);
-    ros::serialization::OStream stream(buffer.data(), msg_size);
-    msg_instance.write(stream);
-
-    MessageRef msg_serialized(buffer.data(), buffer.size());
-
-    ros_parser.parseMessage(topic_name, msg_serialized, msg_time);
   }
 
   qDebug() << "The loading operation took" << timer.elapsed() << "milliseconds";

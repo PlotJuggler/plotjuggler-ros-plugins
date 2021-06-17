@@ -13,7 +13,7 @@ public:
     _data.emplace_back(&getSeries(topic_name + "/header/stamp"));
   }
 
-  void parseMessageImpl(const sensor_msgs::JointState& msg, double timestamp) override
+  void parseMessageImpl(const sensor_msgs::JointState& msg, double& timestamp) override
   {
     double header_stamp = msg.header.stamp.toSec();
     timestamp = (_use_message_stamp && header_stamp > 0) ? header_stamp : timestamp;

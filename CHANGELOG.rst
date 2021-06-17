@@ -2,6 +2,23 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.3.0 (2021-06-12)
+------------------
+* use std::any
+* temporary fix for 3.2
+* Contributors: Davide Faconti
+
+1.2.0 (2021-06-03)
+------------------
+* fix issue `#15 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/15>`_ for ROS1 too
+* Merge pull request `#4 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/4>`_ from Tobias-Fischer/patch-1
+  Fix Windows compilation
+* fix bugs related to TopicPublishers (ros2)
+* Fix isnan issues on Win
+* Fix isnan compilation issue on Win
+* Fix double-defined ERROR
+* Contributors: Davide Faconti, Tobias Fischer
+
 1.1.1 (2021-05-10)
 ------------------
 * Mitigate proble with ros::ok()

@@ -10,6 +10,10 @@
 #include <unordered_map>
 #include <chrono>
 
+#ifdef _WIN32
+#undef ERROR
+#endif
+
 typedef std::chrono::high_resolution_clock::time_point TimePoint;
 
 

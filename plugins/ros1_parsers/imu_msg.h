@@ -28,7 +28,7 @@ public:
     _data.push_back(&getSeries(topic_name + "/linear_acceleration/z"));
   }
 
-  void parseMessageImpl(const sensor_msgs::Imu& msg, double timestamp) override
+  void parseMessageImpl(const sensor_msgs::Imu& msg, double& timestamp) override
   {
     double header_stamp = msg.header.stamp.toSec();
     timestamp = (_use_message_stamp && header_stamp > 0) ? header_stamp : timestamp;

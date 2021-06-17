@@ -126,6 +126,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
   //--- Swith the previous bag with this one
   // clean up previous MessageInstances
   plot_map.user_defined.clear();
+
   if (_bag_reader)
   {
     _bag_reader->reset();
@@ -165,10 +166,13 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
   progress_dialog.show();
   int msg_count = 0;
 
-  PJ::PlotDataAny& plot_consecutive = plot_map.addUserDefined("rosbag2_cpp::plotjuggler::consecutive_messages")->second;
-  PJ::PlotDataAny& metadata_storage = plot_map.addUserDefined("rosbag2_cpp::plotjuggler::topics_metadata")->second;
+  PJ::PlotDataAny& plot_consecutive =
+      plot_map.addUserDefined("plotjuggler::rosbag2_cpp::consecutive_messages")->second;
+  PJ::PlotDataAny& metadata_storage =
+      plot_map.addUserDefined("plotjuggler::rosbag2_cpp::topics_metadata")->second;
+
   // dirty trick. Store it in a one point timeseries
-  metadata_storage.pushBack( {0, nonstd::any(topics_info) } );
+  metadata_storage.pushBack( {0, std::any(topics_info) } );
 
   auto time_prev = std::chrono::high_resolution_clock::now();
 
@@ -176,7 +180,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
   {
     auto msg = _bag_reader->read_next();
     const std::string& topic_name = msg->topic_name;
-    double timestamp = 1e-9 * double(msg->time_stamp);  // nanoseconds to seconds
+    const double msg_timestamp = 1e-9 * double(msg->time_stamp);  // nanoseconds to seconds
 
     //------ progress dialog --------------
     if (msg_count++ % 100 == 0)
@@ -190,8 +194,17 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
       }
     }
 
+    //----- skip not selected -----------
+    if (topic_selected.find(topic_name) == topic_selected.end())
+    {
+      continue;
+    }
+    //----- parse! -----------
+    double timestamp = msg_timestamp;
+    parser.parseMessage(topic_name, msg->serialized_data.get(), timestamp);
+
     //---- save msg reference in PlotAny ----
-    auto data_point = PJ::PlotDataAny::Point(timestamp, nonstd::any(msg.get()));
+    auto data_point = PJ::PlotDataAny::Point(timestamp, std::any(msg));
     plot_consecutive.pushBack(data_point);
 
     auto plot_pair = plot_map.user_defined.find(topic_name);
@@ -201,14 +214,6 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     }
     PJ::PlotDataAny& plot_raw = plot_pair->second;
     plot_raw.pushBack(data_point);
-
-    //----- skip not selected -----------
-    if (topic_selected.find(topic_name) == topic_selected.end())
-    {
-      continue;
-    }
-    //----- parse! -----------
-    parser.parseMessage(topic_name, msg->serialized_data.get(), timestamp);
   }
 
   auto now = std::chrono::high_resolution_clock::now();

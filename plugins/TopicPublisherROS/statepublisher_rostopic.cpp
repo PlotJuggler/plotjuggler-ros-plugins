@@ -1,5 +1,4 @@
 #include "statepublisher_rostopic.h"
-#include <PlotJuggler/any.hpp>
 #include "qnodedialog.h"
 
 #include "ros_type_introspection/ros_introspection.hpp"
@@ -212,7 +211,7 @@ void TopicPublisherROS::broadcastTF(double current_time)
 
     for (size_t index = std::max(0, initial_index); index <= last_index; index++)
     {
-      const nonstd::any& any_value = tf_data->at(index).y;
+      const std::any& any_value = tf_data->at(index).y;
 
       const bool isRosbagMessage = any_value.type() == typeid(rosbag::MessageInstance);
 
@@ -221,7 +220,7 @@ void TopicPublisherROS::broadcastTF(double current_time)
         continue;
       }
 
-      const auto& msg_instance = nonstd::any_cast<rosbag::MessageInstance>(any_value);
+      const auto& msg_instance = std::any_cast<rosbag::MessageInstance>(any_value);
 
       raw_buffer.resize(msg_instance.size());
       ros::serialization::OStream ostream(raw_buffer.data(), raw_buffer.size());
@@ -352,7 +351,7 @@ void TopicPublisherROS::updateState(double current_time)
   broadcastTF(current_time);
   //-----------------------------------------------
 
-  auto data_it = _datamap->user_defined.find("__consecutive_message_instances__");
+  auto data_it = _datamap->user_defined.find("plotjuggler::rosbag1::consecutive_messages");
   if (data_it != _datamap->user_defined.end())
   {
     const PlotDataAny& continuous_msgs = data_it->second;
@@ -386,7 +385,7 @@ void TopicPublisherROS::updateState(double current_time)
 
     if (any_value.type() == typeid(rosbag::MessageInstance))
     {
-      const auto& msg_instance = nonstd::any_cast<rosbag::MessageInstance>(any_value);
+      const auto& msg_instance = std::any_cast<rosbag::MessageInstance>(any_value);
       publishAnyMsg(msg_instance);
     }
   }
@@ -420,7 +419,7 @@ void TopicPublisherROS::play(double current_time)
     return;
   }
 
-  auto data_it = _datamap->user_defined.find("__consecutive_message_instances__");
+  auto data_it = _datamap->user_defined.find("plotjuggler::rosbag1::consecutive_messages");
   if (data_it == _datamap->user_defined.end())
   {
     return;
@@ -442,7 +441,7 @@ void TopicPublisherROS::play(double current_time)
       const auto& any_value = consecutive_msg.at(index).y;
       if (any_value.type() == typeid(rosbag::MessageInstance))
       {
-        const auto& msg_instance = nonstd::any_cast<rosbag::MessageInstance>(any_value);
+        const auto& msg_instance = std::any_cast<rosbag::MessageInstance>(any_value);
 
         if (!toPublish(msg_instance.getTopic()))
         {

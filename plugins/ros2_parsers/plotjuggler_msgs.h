@@ -18,7 +18,7 @@ public:
   {
   }
 
-  void parseMessageImpl(const plotjuggler_msgs::msg::Dictionary& msg, double timestamp) override
+  void parseMessageImpl(const plotjuggler_msgs::msg::Dictionary& msg, double& timestamp) override
   {
     _plotjuggler_msgs_dictionaries[msg.dictionary_uuid] = msg.names;
   }
@@ -38,7 +38,7 @@ public:
   {
   }
 
-  void parseMessageImpl(const plotjuggler_msgs::msg::DataPoints& msg, double timestamp) override
+  void parseMessageImpl(const plotjuggler_msgs::msg::DataPoints& msg, double& timestamp) override
   {
     auto it = _plotjuggler_msgs_dictionaries.find(msg.dictionary_uuid);
     if (it == _plotjuggler_msgs_dictionaries.end())

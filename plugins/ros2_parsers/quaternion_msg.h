@@ -19,7 +19,7 @@ public:
     _data.push_back(&getSeries(topic_name + "/yaw_deg"));
   }
 
-  void parseMessageImpl(const geometry_msgs::msg::Quaternion& msg, double timestamp) override
+  void parseMessageImpl(const geometry_msgs::msg::Quaternion& msg, double& timestamp) override
   {
     _data[0]->pushBack({ timestamp, msg.x });
     _data[1]->pushBack({ timestamp, msg.y });
