@@ -49,7 +49,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     bagDir = finfo.dir().path();
   }
 
-  rosbag2_cpp::StorageOptions storageOptions;
+  rosbag2_storage::StorageOptions storageOptions;
   storageOptions.uri = bagDir.toStdString();
   storageOptions.storage_id = "sqlite3";
   rosbag2_cpp::ConverterOptions converterOptions;
