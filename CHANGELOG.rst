@@ -2,6 +2,12 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* remove obsolate headers
+* forget to install launch file for ROS1
+* Contributors: Davide Faconti, Kei Okada
+
 1.3.0 (2021-06-12)
 ------------------
 * use std::any
