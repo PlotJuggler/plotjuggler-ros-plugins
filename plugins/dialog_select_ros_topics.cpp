@@ -200,26 +200,6 @@ void DialogSelectRosTopics::on_pushButtonEditRules_pressed()
 #endif
 }
 
-/*
-nonstd::optional<double> FlatContainerContainHeaderStamp(const RosIntrospection::FlatMessage& flat_msg)
-{
-    for (const auto& it: flat_msg.value)
-    {
-        if( it.second.getTypeID() != RosIntrospection::TIME)
-        {
-            continue;
-        }
-        const RosIntrospection::StringTreeNode* leaf1 = it.first.node_ptr;
-        const RosIntrospection::StringTreeNode* leaf2 = leaf1->parent();
-        if( leaf2 && leaf2->value() == "header" && leaf1->value() == "stamp")
-        {
-            return it.second.convert<double>();
-        }
-    }
-    return nonstd::optional<double>();
-}
-*/
-
 void DialogSelectRosTopics::on_maximumSizeHelp_pressed()
 {
   QMessageBox msgBox;
