@@ -8,7 +8,7 @@
 
 #include "dialog_select_ros_topics.h"
 #include "ros2_parsers/ros2_parser.h"
-#include "ros2_parsers/generic_subscription.hpp"
+#include "rclcpp/generic_subscription.hpp"
 
 class DataStreamROS2 : public PJ::DataStreamer
 {
@@ -64,7 +64,7 @@ private:
 
   void loadDefaultSettings();
 
-  std::unordered_map<std::string, rosbag2_transport::GenericSubscription::Ptr> _subscriptions;
+  std::unordered_map<std::string, rclcpp::GenericSubscription::SharedPtr> _subscriptions;
 
   void subscribeToTopic(const std::string& topic_name, const std::string& topic_type);
   void waitOneSecond();
