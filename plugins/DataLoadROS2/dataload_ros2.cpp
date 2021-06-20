@@ -129,7 +129,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
 
   if (_bag_reader)
   {
-    _bag_reader->reset();
+    _bag_reader->close();
   }
   _bag_reader = temp_bag_reader;
   //---------------------------------------
