@@ -16,8 +16,7 @@ public:
     , _lin_acc_covariance(topic_name + "/linear_acceleration_covariance", plot_data)
     , _ang_vel_covariance(topic_name + "/angular_velocity_covariance", plot_data)
   {
-    _data.push_back(&getSeries(topic_name + "/header/stamp/sec"));
-    _data.push_back(&getSeries(topic_name + "/header/stamp/nanosec"));
+    _data.push_back(&getSeries(topic_name + "/header/stamp"));
 
     _data.push_back(&getSeries(topic_name + "/angular_velocity/x"));
     _data.push_back(&getSeries(topic_name + "/angular_velocity/y"));
@@ -30,20 +29,20 @@ public:
 
   void parseMessageImpl(const sensor_msgs::msg::Imu& msg, double& timestamp) override
   {
+    double header_stamp = double(msg.header.stamp.sec) + double(msg.header.stamp.nanosec) * 1e-9;
     if (_use_header_stamp)
     {
-      timestamp = double(msg.header.stamp.sec) + double(msg.header.stamp.nanosec) * 1e-9;
+      timestamp = header_stamp;
     }
-    _data[0]->pushBack({ timestamp, double(msg.header.stamp.sec) });
-    _data[1]->pushBack({ timestamp, double(msg.header.stamp.sec) });
+    _data[0]->pushBack({ timestamp, header_stamp });
 
-    _data[2]->pushBack({ timestamp, msg.angular_velocity.x });
-    _data[3]->pushBack({ timestamp, msg.angular_velocity.y });
-    _data[4]->pushBack({ timestamp, msg.angular_velocity.z });
+    _data[1]->pushBack({ timestamp, msg.angular_velocity.x });
+    _data[2]->pushBack({ timestamp, msg.angular_velocity.y });
+    _data[3]->pushBack({ timestamp, msg.angular_velocity.z });
 
-    _data[5]->pushBack({ timestamp, msg.linear_acceleration.x });
-    _data[6]->pushBack({ timestamp, msg.linear_acceleration.y });
-    _data[7]->pushBack({ timestamp, msg.linear_acceleration.z });
+    _data[4]->pushBack({ timestamp, msg.linear_acceleration.x });
+    _data[5]->pushBack({ timestamp, msg.linear_acceleration.y });
+    _data[6]->pushBack({ timestamp, msg.linear_acceleration.z });
 
     _quat_parser.parseMessageImpl(msg.orientation, timestamp);
 

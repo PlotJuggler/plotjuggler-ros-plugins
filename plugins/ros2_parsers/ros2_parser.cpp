@@ -5,6 +5,8 @@
 #include "tf_msg.h"
 #include "plotjuggler_msgs.h"
 #include "diagnostic_msg.h"
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string.hpp>
 
 void RosMessageParser::setUseHeaderStamp(bool use)
 {
@@ -41,25 +43,50 @@ bool IntrospectionParser::parseMessage(const rcutils_uint8_array_t* serialized_m
 {
   _intropection_parser.deserializeIntoFlatMessage(serialized_msg, &_flat_msg);
 
+  double header_stamp = 0.0;
+  if (_intropection_parser.topicInfo().has_header_stamp)
+  {
+    header_stamp = _flat_msg.values[0].second + _flat_msg.values[1].second * 1e-9;
+  }
   if (_use_header_stamp && _intropection_parser.topicInfo().has_header_stamp)
   {
-    double sec = _flat_msg.values[0].second;
-    double nsec = _flat_msg.values[1].second;
-    timestamp = sec + (nsec * 1e-9);
+    timestamp = header_stamp;
   }
 
   ConvertFlatMessageToRenamedValues(_flat_msg, _renamed);
+
+  std::string current_stamped_topic;
+  double sec = 0;
+  double nanosec = 0;
 
   for (const auto& it : _renamed)
   {
     const auto& key = it.first;
     double value = it.second;
 
-    auto& series = getSeries(key);
-
-    if (!std::isnan(value) && !std::isinf(value))
+    // if the msg has a header with a stamp, sum sec and nanosec * 1e-9
+    // (as in tf and other parsed msgs)
+    if (boost::algorithm::contains(key, "/header/stamp"))
     {
-      series.pushBack({ timestamp, value });
+      if (boost::algorithm::ends_with(key, "/header/stamp/sec")){
+        sec = value;
+        current_stamped_topic = key.substr(0, key.find("/header/stamp/sec"));
+      }
+      if (boost::algorithm::ends_with(key, "/header/stamp/nanosec")){
+        if (current_stamped_topic == key.substr(0, key.find("/header/stamp/nanosec")))
+        {
+          nanosec = value;
+          double header_stamp = sec + nanosec * 1e-9;
+          auto& series = getSeries(current_stamped_topic + "/stamp");
+          series.pushBack({ timestamp, header_stamp });
+        }
+      }
+    }else {
+      auto& series = getSeries(key);
+      if (!std::isnan(value) && !std::isinf(value))
+      {
+        series.pushBack({ timestamp, value });
+      }
     }
   }
   return true;
