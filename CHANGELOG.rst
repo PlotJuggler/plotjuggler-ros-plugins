@@ -2,8 +2,8 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.5.0 (2021-06-20)
+------------------
 * massive changes
   - include consistent timestamp (suggested by @doisyg )
   - lazy initialization in parsers.
