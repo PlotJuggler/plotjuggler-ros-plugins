@@ -44,20 +44,10 @@ public:
       series = &getSeries( prefix + "/translation/z");
       series->pushBack({ timestamp, trans.transform.translation.z });
 
-      series = &getSeries( prefix + "/rotation/x");
-      series->pushBack({ timestamp, trans.transform.rotation.x });
-
-      series = &getSeries( prefix + "/rotation/y");
-      series->pushBack({ timestamp, trans.transform.rotation.y });
-
-      series = &getSeries( prefix + "/rotation/z");
-      series->pushBack({ timestamp, trans.transform.rotation.z });
-
-      series = &getSeries( prefix + "/rotation/w");
-      series->pushBack({ timestamp, trans.transform.rotation.w });
+      QuaternionMsgParser quat_parser(prefix + "/rotation", this->plotData());
+      quat_parser.parseMessageImpl(trans.transform.rotation, timestamp);
     }
   }
 private:
-
 };
 
