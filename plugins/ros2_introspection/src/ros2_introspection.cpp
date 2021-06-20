@@ -264,18 +264,5 @@ const TopicInfo& Parser::topicInfo() const
   return _topic_info;
 }
 
-void ConvertFlatMessageToRenamedValues(const FlatMessage& flat, RenamedValues& renamed)
-{
-  const auto& values = flat.values;
-  renamed.resize(values.size());
-
-  for (size_t i = 0; i < values.size(); i++)
-  {
-    const auto& value = values[i];
-    auto& dest = renamed[i];
-    value.first.toStr(dest.first);
-    dest.second = value.second;
-  }
-}
 
 }  // namespace Ros2Introspection

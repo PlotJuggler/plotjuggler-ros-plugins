@@ -9,18 +9,22 @@ public:
   QuaternionMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::msg::Quaternion>(topic_name, plot_data)
   {
-    _data.push_back(&getSeries(topic_name + "/x"));
-    _data.push_back(&getSeries(topic_name + "/y"));
-    _data.push_back(&getSeries(topic_name + "/z"));
-    _data.push_back(&getSeries(topic_name + "/w"));
-
-    _data.push_back(&getSeries(topic_name + "/roll_deg"));
-    _data.push_back(&getSeries(topic_name + "/pitch_deg"));
-    _data.push_back(&getSeries(topic_name + "/yaw_deg"));
   }
 
   void parseMessageImpl(const geometry_msgs::msg::Quaternion& msg, double& timestamp) override
   {
+    if( !_initialized )
+    {
+      _initialized = true;
+      _data.push_back(&getSeries(_topic_name + "/x"));
+      _data.push_back(&getSeries(_topic_name + "/y"));
+      _data.push_back(&getSeries(_topic_name + "/z"));
+      _data.push_back(&getSeries(_topic_name + "/w"));
+
+      _data.push_back(&getSeries(_topic_name + "/roll_deg"));
+      _data.push_back(&getSeries(_topic_name + "/pitch_deg"));
+      _data.push_back(&getSeries(_topic_name + "/yaw_deg"));
+    }
     _data[0]->pushBack({ timestamp, msg.x });
     _data[1]->pushBack({ timestamp, msg.y });
     _data[2]->pushBack({ timestamp, msg.z });
@@ -69,4 +73,5 @@ public:
 
 private:
   std::vector<PJ::PlotData*> _data;
+  bool _initialized = false;
 };

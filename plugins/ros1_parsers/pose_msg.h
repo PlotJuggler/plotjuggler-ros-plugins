@@ -16,13 +16,6 @@ public:
     : BuiltinMessageParser<geometry_msgs::Pose>(topic_name, plot_data)
     , _quat_parser(topic_name + "/orientation", plot_data)
   {
-    _lazy_init = [=]()
-    {
-      _data.push_back(&getSeries(topic_name + "/position/x"));
-      _data.push_back(&getSeries(topic_name + "/position/y"));
-      _data.push_back(&getSeries(topic_name + "/position/z"));
-    };
-
   }
 
   void parseMessageImpl(const geometry_msgs::Pose& msg, double& timestamp) override
@@ -30,7 +23,9 @@ public:
     if( !_initialized )
     {
       _initialized = true;
-      _lazy_init();
+      _data.push_back(&getSeries(_topic_name + "/position/x"));
+      _data.push_back(&getSeries(_topic_name + "/position/y"));
+      _data.push_back(&getSeries(_topic_name + "/position/z"));
     }
 
     _data[0]->pushBack({ timestamp, msg.position.x });
@@ -43,8 +38,6 @@ public:
 private:
   QuaternionMsgParser _quat_parser;
   std::vector<PJ::PlotData*> _data;
-
-  std::function<void()> _lazy_init;
   bool _initialized = false;
 };
 
@@ -60,7 +53,7 @@ public:
 
   void parseMessageImpl(const geometry_msgs::PoseStamped& msg, double& timestamp) override
   {
-    _header_parser.parse(msg.header, timestamp, _use_message_stamp);
+    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
     _pose_parser.parseMessageImpl(msg.pose, timestamp);
   }
 
@@ -70,7 +63,8 @@ private:
   std::vector<PJ::PlotData*> _data;
 };
 
-class PoseCovarianceMsgParser : public BuiltinMessageParser<geometry_msgs::PoseWithCovariance>
+class PoseCovarianceMsgParser
+    : public BuiltinMessageParser<geometry_msgs::PoseWithCovariance>
 {
 public:
   PoseCovarianceMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
@@ -103,7 +97,7 @@ public:
 
   void parseMessageImpl(const geometry_msgs::PoseWithCovarianceStamped& msg, double& timestamp) override
   {
-    _header_parser.parse(msg.header, timestamp, _use_message_stamp);
+    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
     _pose_cov_parser.parseMessageImpl(msg.pose, timestamp);
   }
 

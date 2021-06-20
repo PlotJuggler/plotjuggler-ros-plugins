@@ -61,9 +61,6 @@ struct FlatMessage {
   std::vector< std::pair<StringTreeLeaf, BufferView> > blobs;
 };
 
-typedef std::vector< std::pair<std::string, double> > RenamedValues;
-
-
 struct TopicInfo{
 
   TopicInfo(const std::string& type);
@@ -113,8 +110,6 @@ private:
 
   TopicInfo _topic_info;
 };
-
-void ConvertFlatMessageToRenamedValues(const FlatMessage& flat, RenamedValues& renamed );
 
 bool TypeHasHeader(const rosidl_message_type_support_t* type_support);
 

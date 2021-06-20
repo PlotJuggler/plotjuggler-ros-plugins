@@ -19,7 +19,7 @@ bool IntrospectionParser::parseMessage(MessageRef serialized_msg, double& timest
   RosIntrospection::Span<uint8_t> span( serialized_msg.data(), serialized_msg.size() );
   _parser.deserializeIntoFlatContainer(_topic_name, span, &_flat_msg, _max_size);
 
-  if (_use_message_stamp)
+  if (_use_header_stamp)
   {
     for (const auto& it : _flat_msg.value)
     {

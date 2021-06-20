@@ -19,7 +19,7 @@ public:
 
   void parseMessageImpl(const nav_msgs::Odometry& msg, double& timestamp) override
   {
-    _header_parser.parse(msg.header, timestamp, _use_message_stamp);
+    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
     _pose_parser.parseMessageImpl(msg.pose, timestamp);
     _twist_parser.parseMessageImpl(msg.twist, timestamp);
   }
@@ -28,5 +28,4 @@ private:
   HeaderMsgParser _header_parser;
   PoseCovarianceMsgParser _pose_parser;
   TwistCovarianceMsgParser _twist_parser;
-  std::vector<PJ::PlotData*> _data;
 };

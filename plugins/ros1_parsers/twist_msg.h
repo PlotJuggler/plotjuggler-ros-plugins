@@ -13,16 +13,6 @@ public:
   TwistMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::Twist>(topic_name, plot_data)
   {
-    _lazy_init = [=]()
-    {
-      _data.push_back(&getSeries(topic_name + "/linear/x"));
-      _data.push_back(&getSeries(topic_name + "/linear/y"));
-      _data.push_back(&getSeries(topic_name + "/linear/z"));
-
-      _data.push_back(&getSeries(topic_name + "/angular/x"));
-      _data.push_back(&getSeries(topic_name + "/angular/y"));
-      _data.push_back(&getSeries(topic_name + "/angular/z"));
-    };
   }
 
   void parseMessageImpl(const geometry_msgs::Twist& msg, double& timestamp) override
@@ -30,7 +20,13 @@ public:
     if( !_initialized )
     {
       _initialized = true;
-      _lazy_init();
+      _data.push_back(&getSeries(_topic_name + "/linear/x"));
+      _data.push_back(&getSeries(_topic_name + "/linear/y"));
+      _data.push_back(&getSeries(_topic_name + "/linear/z"));
+
+      _data.push_back(&getSeries(_topic_name + "/angular/x"));
+      _data.push_back(&getSeries(_topic_name + "/angular/y"));
+      _data.push_back(&getSeries(_topic_name + "/angular/z"));
     }
     _data[0]->pushBack({ timestamp, msg.linear.x });
     _data[1]->pushBack({ timestamp, msg.linear.y });
@@ -43,7 +39,6 @@ public:
 
 private:
   std::vector<PJ::PlotData*> _data;
-  std::function<void()> _lazy_init;
   bool _initialized = false;
 };
 
@@ -51,21 +46,21 @@ class TwistStampedMsgParser : public BuiltinMessageParser<geometry_msgs::TwistSt
 {
 public:
   TwistStampedMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
-    : BuiltinMessageParser<geometry_msgs::TwistStamped>(topic_name, plot_data), _twist_parser(topic_name, plot_data)
-    , _header_parser(topic_name + "/header", plot_data)
+    : BuiltinMessageParser<geometry_msgs::TwistStamped>(topic_name, plot_data)
+       , _header_parser(topic_name + "/header", plot_data)
+       , _twist_parser(topic_name + "/twist", plot_data)
   {
   }
 
   void parseMessageImpl(const geometry_msgs::TwistStamped& msg, double& timestamp) override
   {
-    _header_parser.parse(msg.header, timestamp, _use_message_stamp);
+    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
     _twist_parser.parseMessageImpl(msg.twist, timestamp);
   }
 
 private:
   HeaderMsgParser _header_parser;
   TwistMsgParser _twist_parser;
-  std::vector<PJ::PlotData*> _data;
 };
 
 class TwistCovarianceMsgParser : public BuiltinMessageParser<geometry_msgs::TwistWithCovariance>

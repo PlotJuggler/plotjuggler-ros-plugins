@@ -17,7 +17,7 @@ public:
         for (int j = i; j < N; j++)
         {
           auto key = fmt::format("{}[{};{}]", prefix, i, j);
-          _data.push_back( &plot_data_ptr->getOrCreateNumberic(key) );
+          _data.push_back( &plot_data_ptr->getOrCreateNumeric(key) );
         }
       }
     };

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <geometry_msgs/Quaternion.h>
-#include "ros1_parser.h"
+#include <std_msgs/msg/header.hpp>
+#include "ros2_parser.h"
 
 class HeaderMsgParser
 {
@@ -11,26 +11,24 @@ class HeaderMsgParser
       : _topic_name( topic_name )
         , _plot_data( plot_data )
   {
-
   }
 
-  void parse(const std_msgs::Header& msg,
+  void parse(const std_msgs::msg::Header& msg,
              double& timestamp,
              bool use_header_stamp)
   {
     if( !_initialized )
     {
       _initialized = true;
-
-      _sequence = &plot_data_ptr->getOrCreateNumeric(topic_name + "/seq");
-      _stamp    = &plot_data_ptr->getOrCreateNumeric(topic_name + "/stamp");
-      _frame_id = &plot_data_ptr->getOrCreateStringSeries(topic_name + "/frame_id");
+      _stamp = &_plot_data.getOrCreateNumeric(_topic_name + "/stamp");
+      _frame_id = &_plot_data.getOrCreateStringSeries(_topic_name + "/frame_id");
     }
 
-    double header_stamp = msg.stamp.toSec();
+    double header_stamp = double(msg.stamp.sec) +
+                          double(msg.stamp.nanosec) * 1e-9;
+
     timestamp = (use_header_stamp && header_stamp > 0) ? header_stamp : timestamp;
 
-    _sequence->pushBack({ timestamp, double(msg.seq) });
     _stamp->pushBack({ timestamp, header_stamp });
     _frame_id->pushBack({ timestamp, msg.frame_id });
   }
@@ -41,6 +39,6 @@ class HeaderMsgParser
   bool _initialized = false;
 
   PJ::PlotData* _stamp;
-  PJ::PlotData* _sequence;
   PJ::StringSeries* _frame_id;
+
 };

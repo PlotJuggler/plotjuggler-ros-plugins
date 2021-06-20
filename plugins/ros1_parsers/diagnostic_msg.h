@@ -18,7 +18,7 @@ public:
   virtual void parseMessageImpl(const diagnostic_msgs::DiagnosticArray& msg,
                                 double& timestamp) override
   {
-    _header_parser.parse(msg.header, timestamp, _use_message_stamp);
+    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
 
     std::string key;
 
@@ -55,5 +55,4 @@ public:
 
 private:
   HeaderMsgParser _header_parser;
-  std::vector<PJ::PlotData*> _data;
 };

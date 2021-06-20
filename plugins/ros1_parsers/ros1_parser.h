@@ -20,20 +20,20 @@ class RosMessageParser: public MessageParser
 public:
   RosMessageParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data):
     MessageParser(topic_name, plot_data),
-    _use_message_stamp(false)
+    _use_header_stamp(false)
   {
 
   }
 
   void setUseMessageStamp(bool use) {
-    _use_message_stamp = use;
+    _use_header_stamp = use;
   }
 
   virtual void setMaxArrayPolicy(LargeArrayPolicy, size_t)
   { }
 
 protected:
-  bool _use_message_stamp;
+  bool _use_header_stamp;
 };
 
 template <typename T>

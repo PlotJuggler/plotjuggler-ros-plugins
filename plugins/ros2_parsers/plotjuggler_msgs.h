@@ -56,7 +56,7 @@ public:
       const auto& names = it->second;
       for (const auto& sample : msg.samples)
       {
-        auto& series = getSeries(_plot_data, _prefix + names[sample.name_index]);
+        auto& series = _plot_data.getOrCreateNumeric( _prefix + names[sample.name_index]);
         series.pushBack({ sample.stamp, sample.value });
       }
     }

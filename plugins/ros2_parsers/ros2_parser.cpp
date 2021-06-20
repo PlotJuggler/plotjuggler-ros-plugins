@@ -6,6 +6,9 @@
 #include "plotjuggler_msgs.h"
 #include "diagnostic_msg.h"
 
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string.hpp>
+
 void RosMessageParser::setUseHeaderStamp(bool use)
 {
   _use_header_stamp = use;
@@ -13,22 +16,12 @@ void RosMessageParser::setUseHeaderStamp(bool use)
 
 PJ::PlotData& RosMessageParser::getSeries(const std::string key)
 {
-  auto plot_pair = _plot_data.numeric.find(key);
-  if (plot_pair == _plot_data.numeric.end())
-  {
-    plot_pair = _plot_data.addNumeric(key);
-  }
-  return plot_pair->second;
+  return _plot_data.getOrCreateNumeric(key);
 }
 
-PJ::PlotData& RosMessageParser::getSeries(PJ::PlotDataMapRef& plot_data, const std::string key)
+PJ::StringSeries &RosMessageParser::getStringSeries(const std::string key)
 {
-  auto plot_pair = plot_data.numeric.find(key);
-  if (plot_pair == plot_data.numeric.end())
-  {
-    plot_pair = plot_data.addNumeric(key);
-  }
-  return plot_pair->second;
+  return _plot_data.getOrCreateStringSeries(key);
 }
 
 //-------------------------------------
@@ -48,20 +41,53 @@ bool IntrospectionParser::parseMessage(const rcutils_uint8_array_t* serialized_m
     timestamp = sec + (nsec * 1e-9);
   }
 
-  ConvertFlatMessageToRenamedValues(_flat_msg, _renamed);
+  std::string key;
+  bool header_found = false;
 
-  for (const auto& it : _renamed)
+  // special case: messages which start with header
+  if( _flat_msg.values.size() >= 2 )
   {
-    const auto& key = it.first;
+    _flat_msg.values[0].first.toStr(key);
+
+    if( boost::algorithm::ends_with(key, "/header/stamp/sec" ) )
+    {
+      _flat_msg.values[1].first.toStr(key);
+      if( boost::algorithm::ends_with(key, "/header/stamp/nanosec" ) )
+      {
+        header_found = true;
+        double header_stamp = _flat_msg.values[0].second +
+                              _flat_msg.values[1].second * 1e-9;
+
+        constexpr size_t suffix_length = sizeof("/nanosec") - 1;
+
+        auto new_name = key.substr(0, key.size() - suffix_length );
+        auto& series = getSeries(new_name);
+        series.pushBack({ timestamp, header_stamp });
+      }
+    }
+  }
+
+  for (size_t i = header_found ? 2:0; i < _flat_msg.values.size(); i++)
+  {
+    const auto& it = _flat_msg.values[i];
+
+    it.first.toStr(key);
     double value = it.second;
 
     auto& series = getSeries(key);
-
     if (!std::isnan(value) && !std::isinf(value))
     {
       series.pushBack({ timestamp, value });
     }
   }
+
+  for (const auto& it : _flat_msg.strings)
+  {
+    it.first.toStr(key);
+    auto& series = getStringSeries(key);
+    series.pushBack({ timestamp, it.second });
+  }
+
   return true;
 }
 

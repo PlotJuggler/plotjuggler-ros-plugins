@@ -46,7 +46,7 @@ public:
 
   PJ::PlotData& getSeries(const std::string key);
 
-  static PJ::PlotData& getSeries(PJ::PlotDataMapRef& plot_data, const std::string key);
+  PJ::StringSeries &getStringSeries(const std::string key);
 
   virtual const rosidl_message_type_support_t* typeSupport() const = 0;
 
@@ -113,7 +113,6 @@ public:
 private:
   Ros2Introspection::Parser _intropection_parser;
   Ros2Introspection::FlatMessage _flat_msg;
-  Ros2Introspection::RenamedValues _renamed;
 };
 
 class CompositeParser
