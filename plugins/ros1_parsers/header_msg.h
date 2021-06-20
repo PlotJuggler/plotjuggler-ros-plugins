@@ -9,7 +9,7 @@ class HeaderMsgParser
  public:
   HeaderMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
       : _topic_name( topic_name )
-        , _plot_data( plot_data )
+      , _plot_data( plot_data )
   {
 
   }
@@ -22,9 +22,9 @@ class HeaderMsgParser
     {
       _initialized = true;
 
-      _sequence = &plot_data_ptr->getOrCreateNumeric(topic_name + "/seq");
-      _stamp    = &plot_data_ptr->getOrCreateNumeric(topic_name + "/stamp");
-      _frame_id = &plot_data_ptr->getOrCreateStringSeries(topic_name + "/frame_id");
+      _sequence = &_plot_data.getOrCreateNumeric(_topic_name + "/seq");
+      _stamp    = &_plot_data.getOrCreateNumeric(_topic_name + "/stamp");
+      _frame_id = &_plot_data.getOrCreateStringSeries(_topic_name + "/frame_id");
     }
 
     double header_stamp = msg.stamp.toSec();

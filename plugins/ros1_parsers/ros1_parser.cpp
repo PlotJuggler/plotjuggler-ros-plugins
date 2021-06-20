@@ -69,7 +69,7 @@ bool IntrospectionParser::parseMessage(MessageRef serialized_msg, double& timest
         // special case for strings
         auto str = it.second.extract<std::string>();
         auto& series = _plot_data.getOrCreateStringSeries( key );
-        series.pushBack({ timestamp, {str.data(), str.size()} });
+        series.pushBack({ timestamp, str});
         continue;
     }
     else{
