@@ -2,6 +2,16 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* massive changes
+  - include consistent timestamp (suggested by @doisyg )
+  - lazy initialization in parsers.
+  - reusable Header parser
+  - string field added
+* add lazy parser inizialization and string field to ROS1
+* Contributors: Davide Faconti
+
 1.4.1 (2021-06-18)
 ------------------
 * remove obsolate headers
