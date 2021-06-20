@@ -588,8 +588,10 @@ inline void JoinStrings(const VectorType& vect, const char separator, std::strin
   std::memcpy(&buffer[buff_pos], vect.back().data(), vect.back().size());
 }
 
-void Parser::applyNameTransform(const std::string& msg_identifier, const FlatMessage& container,
-                                RenamedValues* renamed_value, bool skip_topicname)
+void Parser::applyNameTransform(const std::string& msg_identifier,
+                                const FlatMessage& container,
+                                RenamedValues* renamed_value,
+                                bool skip_topicname)
 {
   if (_rule_cache_dirty)
   {
@@ -600,7 +602,7 @@ void Parser::applyNameTransform(const std::string& msg_identifier, const FlatMes
   const size_t num_values = container.value.size();
   const size_t num_names = container.name.size();
 
-  renamed_value->resize(container.value.size());
+  renamed_value->resize( num_values + num_names );
   // DO NOT clear() renamed_value
 
   _alias_array_pos.resize(num_names);
@@ -762,6 +764,17 @@ void Parser::applyNameTransform(const std::string& msg_identifier, const FlatMes
       (*renamed_value)[value_index].second = value_leaf.second;
     }
   }
+
+  for (size_t str_index = 0; str_index < container.name.size(); str_index++)
+  {
+    const std::pair<StringTreeLeaf, Variant>& str_leaf = container.name[str_index];
+
+    size_t index = num_values + str_index;
+    std::string& destination = (*renamed_value)[ index ].first;
+    CreateStringFromTreeLeaf(str_leaf.first, skip_topicname, destination);
+    (*renamed_value)[index].second = str_leaf.second;
+  }
+
 }
 
 }  // namespace RosIntrospection

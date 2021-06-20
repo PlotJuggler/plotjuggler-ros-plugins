@@ -4,24 +4,21 @@
 #include <boost/spirit/include/qi.hpp>
 #include "fmt/format.h"
 #include "ros1_parser.h"
+#include "header_msg.h"
 
 class DiagnosticMsgParser : public BuiltinMessageParser<diagnostic_msgs::DiagnosticArray>
 {
 public:
   DiagnosticMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<diagnostic_msgs::DiagnosticArray>(topic_name, plot_data)
+    , _header_parser(topic_name + "/header", plot_data)
   {
-    _data.emplace_back(&getSeries("/header/seq"));
-    _data.emplace_back(&getSeries("/header/stamp"));
   }
 
-  virtual void parseMessageImpl(const diagnostic_msgs::DiagnosticArray& msg, double& timestamp) override
+  virtual void parseMessageImpl(const diagnostic_msgs::DiagnosticArray& msg,
+                                double& timestamp) override
   {
-    double header_stamp = msg.header.stamp.toSec();
-    timestamp = (_use_message_stamp && header_stamp > 0) ? header_stamp : timestamp;
-
-    _data[0]->pushBack({ timestamp, (double)msg.header.seq });
-    _data[1]->pushBack({ timestamp, header_stamp });
+    _header_parser.parse(msg.header, timestamp, _use_message_stamp);
 
     std::string key;
 
@@ -32,12 +29,6 @@ public:
         const char* start_ptr = kv.value.data();
         double val = 0;
 
-        bool parsed = boost::spirit::qi::parse(start_ptr, start_ptr + kv.value.size(),
-                                               boost::spirit::qi::double_, val);
-        if (!parsed){
-          continue;
-        }
-
         if (status.hardware_id.empty())
         {
           key = fmt::format("{}/{}/{}", _topic_name, status.name, kv.key);
@@ -46,12 +37,23 @@ public:
         {
           key = fmt::format("{}/{}/{}/{}", _topic_name, status.hardware_id, status.name, kv.key);
         }
-        auto& series = getSeries(key);
-        series.pushBack({ timestamp, val });
+
+        bool parsed = boost::spirit::qi::parse(start_ptr, start_ptr + kv.value.size(),
+                                               boost::spirit::qi::double_, val);
+        if (parsed)
+        {
+          auto& series = getSeries(key);
+          series.pushBack({ timestamp, val });
+        }
+        else{
+          auto& series = getStringSeries(key);
+          series.pushBack( { timestamp, kv.value} );
+        }
       }
     }
   }
 
 private:
+  HeaderMsgParser _header_parser;
   std::vector<PJ::PlotData*> _data;
 };

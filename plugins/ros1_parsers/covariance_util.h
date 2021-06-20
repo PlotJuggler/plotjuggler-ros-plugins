@@ -9,26 +9,28 @@ class CovarianceParser
 public:
   CovarianceParser(const std::string& prefix, PJ::PlotDataMapRef& plot_data)
   {
-    for (int i = 0; i < N; i++)
+    auto plot_data_ptr = &plot_data;
+    _lazy_init = [=]()
     {
-      for (int j = i; j < N; j++)
+      for (int i = 0; i < N; i++)
       {
-
-        auto key = fmt::format("{}[{};{}]", prefix, i, j);
-
-        auto plot_pair = plot_data.numeric.find(key);
-        if (plot_pair == plot_data.numeric.end())
+        for (int j = i; j < N; j++)
         {
-          plot_pair = plot_data.addNumeric(key);
+          auto key = fmt::format("{}[{};{}]", prefix, i, j);
+          _data.push_back( &plot_data_ptr->getOrCreateNumberic(key) );
         }
-        auto plot_data = &(plot_pair->second);
-        _data.push_back(plot_data);
       }
-    }
+    };
   }
 
   void parse(const boost::array<double, N * N>& covariance, double& timestamp)
   {
+    if( !_initialized )
+    {
+      _initialized = true;
+      _lazy_init();
+    }
+
     size_t index = 0;
     for (int i = 0; i < N; i++)
     {
@@ -41,5 +43,6 @@ public:
 
 private:
   std::vector<PJ::PlotData*> _data;
-
+  std::function<void()> _lazy_init;
+  bool _initialized = false;
 };

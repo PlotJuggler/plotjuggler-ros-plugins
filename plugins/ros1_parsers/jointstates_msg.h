@@ -2,24 +2,20 @@
 
 #include <sensor_msgs/JointState.h>
 #include "ros1_parser.h"
+#include "header_msg.h"
 
 class JointStateMsgParser : public BuiltinMessageParser<sensor_msgs::JointState>
 {
 public:
   JointStateMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<sensor_msgs::JointState>(topic_name, plot_data)
+    , _header_parser(topic_name + "/header", plot_data)
   {
-    _data.emplace_back(&getSeries(topic_name + "/header/seq"));
-    _data.emplace_back(&getSeries(topic_name + "/header/stamp"));
   }
 
   void parseMessageImpl(const sensor_msgs::JointState& msg, double& timestamp) override
   {
-    double header_stamp = msg.header.stamp.toSec();
-    timestamp = (_use_message_stamp && header_stamp > 0) ? header_stamp : timestamp;
-
-    _data[0]->pushBack({ timestamp, double(msg.header.seq) });
-    _data[1]->pushBack({ timestamp, header_stamp });
+    _header_parser.parse(msg.header, timestamp, _use_message_stamp);
 
     for (int i = 0; i < msg.name.size(); i++)
     {
@@ -46,5 +42,5 @@ public:
   }
 
 private:
-  std::vector<PJ::PlotData*> _data;
+  HeaderMsgParser _header_parser;
 };
