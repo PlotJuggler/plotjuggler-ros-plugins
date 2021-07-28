@@ -145,12 +145,12 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
 
   //--- Swith the previous bag with this one
   // clean up previous MessageInstances
-  plot_map.user_defined.clear();
-  if (_bag)
-  {
-    _bag->close();
-  }
-  _bag = temp_bag;
+  //plot_map.user_defined.clear();
+  //if (_bag)
+  //{
+  //  _bag->close();
+  //}
+  _bags.push_back(temp_bag);
   //---------------------------------------
 
   saveDefaultSettings();
@@ -175,7 +175,7 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
   progress_dialog.setLabelText("Loading... please wait");
   progress_dialog.setWindowModality(Qt::ApplicationModal);
 
-  rosbag::View bag_view(*_bag);
+  rosbag::View bag_view(*_bags.back());
 
   progress_dialog.setRange(0, bag_view.size() - 1);
   progress_dialog.show();

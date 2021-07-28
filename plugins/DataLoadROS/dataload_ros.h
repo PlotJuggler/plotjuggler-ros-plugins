@@ -40,7 +40,7 @@ public:
 protected:
   void loadSubstitutionRule(QStringList all_topic_names);
 
-  std::shared_ptr<rosbag::Bag> _bag;
+  std::vector<std::shared_ptr<rosbag::Bag>> _bags;
 
 private:
   std::vector<const char*> _extensions;
