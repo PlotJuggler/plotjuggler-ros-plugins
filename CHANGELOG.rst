@@ -2,8 +2,8 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.5.1 (2021-07-31)
+------------------
 * Merge branch 'rolling' of github.com:PlotJuggler/plotjuggler-ros-plugins into rolling
 * rosbag2 logging hpp change
 * compile with rolling
