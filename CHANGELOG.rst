@@ -2,6 +2,20 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge branch 'rolling' of github.com:PlotJuggler/plotjuggler-ros-plugins into rolling
+* rosbag2 logging hpp change
+* compile with rolling
+* Last galactic API build (`#19 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/19>`_)
+  * compile with rolling
+  * rosbag2 logging hpp change
+  * compils with galactic API
+  Co-authored-by: Davide Faconti <davide.faconti@gmail.com>
+* rosbag2 logging hpp change
+* compile with rolling
+* Contributors: Davide Faconti, G.Doisy, Guillaume Doisy
+
 1.5.0 (2021-06-20)
 ------------------
 * massive changes
