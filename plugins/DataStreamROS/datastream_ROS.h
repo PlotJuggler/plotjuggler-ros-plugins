@@ -73,6 +73,8 @@ private:
 
   QAction* _action_saveIntoRosbag;
 
+  QAction* _action_saveAny;
+
   std::vector<QAction*> _available_actions;
 
   std::map<std::string, int> _msg_index;

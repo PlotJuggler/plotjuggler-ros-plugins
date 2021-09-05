@@ -36,9 +36,23 @@ DataStreamROS::DataStreamROS() : DataStreamer(), _node(nullptr)
   loadDefaultSettings();
 
   _action_saveIntoRosbag = new QAction(QString("Save cached value in a rosbag"));
-  connect(_action_saveIntoRosbag, &QAction::triggered, this, [this]() { DataStreamROS::saveIntoRosbag(); });
+  connect(_action_saveIntoRosbag, &QAction::changed, this, [this]() {
+    DataStreamROS::saveIntoRosbag();
+  });
+
+  _action_saveAny = new QAction(QString("Store messages in memory for Re-publishing"));
+  connect(_action_saveAny, &QAction::triggered, this, [this]() {
+    QSettings settings;
+    settings.value("DataStreamROS/storemessagesInMemory", _action_saveAny->isChecked() );
+  });
+  _action_saveAny->setCheckable( true );
+
+  QSettings settings;
+  bool store_msg = settings.value("DataStreamROS/storemessagesInMemory", false).toBool();
+  _action_saveAny->setChecked( store_msg );
 
   _available_actions.push_back( _action_saveIntoRosbag );
+  _available_actions.push_back( _action_saveAny );
 }
 
 void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr& msg, const std::string& topic_name)
@@ -116,8 +130,10 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
 
   const std::string prefixed_topic_name = _prefix + topic_name;
 
+  bool save_any = _action_saveAny->isChecked();
   // adding raw serialized msg for future uses.
   // do this before msg_time normalization
+  if( save_any )
   {
     auto plot_pair = _user_defined_buffers.find(prefixed_topic_name);
     if (plot_pair == _user_defined_buffers.end())
@@ -132,6 +148,7 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
   }
 
   //------------------------------
+  if( save_any )
   {
     int& index = _msg_index[topic_name];
     index++;
