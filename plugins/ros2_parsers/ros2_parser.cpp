@@ -5,6 +5,7 @@
 #include "tf_msg.h"
 #include "plotjuggler_msgs.h"
 #include "diagnostic_msg.h"
+#include "pj_statistics_msg.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
@@ -192,6 +193,14 @@ void CompositeParser::registerMessageType(const std::string& topic_name, const s
   else if (type == "plotjuggler_msgs/DataPoints")
   {
     parser.reset(new PlotJugglerDataPointsParser(topic_name, _plot_data));
+  }
+  else if (type == "plotjuggler_msgs/StatisticsNames")
+  {
+    parser.reset(new StatisticsNamesParser(topic_name, _plot_data));
+  }
+  else if (type == "plotjuggler_msgs/StatisticsValues")
+  {
+    parser.reset(new StatisticsValuesParser(topic_name, _plot_data));
   }
   else
   {
