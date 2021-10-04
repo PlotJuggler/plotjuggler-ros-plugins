@@ -12,34 +12,31 @@
 
 static std::unordered_map<uint32_t, std::vector<std::string>> _stored_pj_statistics_names;
 
-using plotjuggler_msgs::msg::StatisticsNames;
-using plotjuggler_msgs::msg::StatisticsValues;
-
-class StatisticsNamesParser : public BuiltinMessageParser<StatisticsNames>
+class PJ_StatisticsNamesParser : public BuiltinMessageParser<plotjuggler_msgs::msg::StatisticsNames>
 {
 public:
-  StatisticsNamesParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
-    : BuiltinMessageParser<StatisticsNames>(topic_name, plot_data)
+  PJ_StatisticsNamesParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
+    : BuiltinMessageParser<plotjuggler_msgs::msg::StatisticsNames>(topic_name, plot_data)
   {
   }
 
-  void parseMessageImpl(const StatisticsNames& msg, double& timestamp) override
+  void parseMessageImpl(const plotjuggler_msgs::msg::StatisticsNames& msg, double& timestamp) override
   {
     _stored_pj_statistics_names.insert({ msg.names_version, msg.names });
   }
 };
 
 //-----------------------------------------------------
-class StatisticsValuesParser : public BuiltinMessageParser<StatisticsValues>
+class PJ_StatisticsValuesParser : public BuiltinMessageParser<plotjuggler_msgs::msg::StatisticsValues>
 {
 public:
-  StatisticsValuesParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
-    : BuiltinMessageParser<StatisticsValues>(topic_name, plot_data)
+  PJ_StatisticsValuesParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
+    : BuiltinMessageParser<plotjuggler_msgs::msg::StatisticsValues>(topic_name, plot_data)
     , _header_parser(topic_name + "/header", plot_data)
   {
   }
 
-  void parseMessageImpl(const StatisticsValues& msg, double& timestamp) override
+  void parseMessageImpl(const plotjuggler_msgs::msg::StatisticsValues& msg, double& timestamp) override
   {
     auto& values = _data[msg.names_version];
 

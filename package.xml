@@ -35,6 +35,7 @@
     <depend>tf2_ros</depend>
     <depend>tf2_msgs</depend>
     <depend>plotjuggler_msgs</depend>
+    <depend>pal_statistics_msgs</depend>
     <depend>plotjuggler</depend>
 
     <!-- common dependancies -->

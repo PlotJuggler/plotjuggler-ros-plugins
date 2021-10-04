@@ -95,7 +95,7 @@ inline rcl_subscription_options_t PermissiveOptions()
 inline rcl_subscription_options_t LatchingOptions()
 {
   rcl_subscription_options_t options = rcl_subscription_get_default_options();
-  options.qos.reliability = RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT;
+  options.qos.reliability = RMW_QOS_POLICY_RELIABILITY_RELIABLE;
   options.qos.durability = RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL;
   options.qos.liveliness = RMW_QOS_POLICY_LIVELINESS_AUTOMATIC;
   return options;
