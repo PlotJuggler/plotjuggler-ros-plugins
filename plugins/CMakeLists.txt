@@ -92,7 +92,8 @@ elseif(COMPILING_WITH_AMENT)
         nav_msgs
         diagnostic_msgs
         plotjuggler_msgs
-     #    pal_statistics_msgs
+        trajectory_msgs
+        moveit_msgs
         tf2_msgs
         tf2_ros
         plotjuggler

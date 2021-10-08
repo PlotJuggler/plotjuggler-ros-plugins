@@ -20,7 +20,8 @@ if( CATKIN_DEVEL_PREFIX OR catkin_FOUND OR CATKIN_BUILD_BINARY_PACKAGE)
         nav_msgs
         sensor_msgs
         plotjuggler_msgs
-       #  pal_statistics_msgs
+        trajectory_msgs
+        moveit_msgs
         plotjuggler )
 
     find_package(catkin REQUIRED COMPONENTS ${ROS_DEPENDENCIES} )
@@ -50,7 +51,8 @@ elseif( DEFINED ENV{AMENT_PREFIX_PATH})
     find_package(tf2_msgs REQUIRED)
     find_package(tf2_ros REQUIRED)
     find_package(plotjuggler REQUIRED)
-   #  find_package(pal_statistics_msgs REQUIRED)
+    find_package(trajectory_msgs REQUIRED)
+    find_package(moveit_msgs REQUIRED)
 
 else()
     message(FATAL_ERROR "PlotJuggler is being WITHOUT any ROS support")

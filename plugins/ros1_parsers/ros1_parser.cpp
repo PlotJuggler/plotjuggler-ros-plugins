@@ -6,7 +6,8 @@
 #include "pal_statistics_msg.h"
 #include "tf_msg.h"
 #include "plotjuggler_msgs.h"
-
+#include "joint_trajectories_msg.h"
+#include "moveit_display_trajectories.h"
 
 void IntrospectionParser::setMaxArrayPolicy(LargeArrayPolicy discard_policy, size_t max_size)
 {
@@ -198,6 +199,14 @@ void CompositeParser::registerMessageType(const std::string& topic_name,
   else if (type == "plotjuggler_msgs/DataPoints")
   {
     parser.reset(new PlotJugglerDataPointsParser(topic_name, _plot_data));
+  }
+  else if (type == "trajectory_msgs/JointTrajectory")
+  {
+    parser.reset(new JointStateMsgParser(topic_name, _plot_data));
+  }
+  else if (type == "moveit_msgs/DisplayTrajectory")
+  {
+    parser.reset(new Moveit_DisplayTrajectoryParser(topic_name, _plot_data));
   }
   else
   {
