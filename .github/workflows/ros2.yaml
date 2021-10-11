@@ -7,8 +7,7 @@ jobs:
     strategy:
       matrix:
         env:
-          - {ROS_DISTRO: foxy, ROS_REPO: development}
-          - {ROS_DISTRO: galactic, ROS_REPO: rolling}
+          - {ROS_DISTRO: foxy, ROS_REPO: main}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
