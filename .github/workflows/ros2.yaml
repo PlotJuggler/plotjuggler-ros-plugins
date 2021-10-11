@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         env:
-          - {ROS_DISTRO: foxy, ROS_REPO: main}
+          - {ROS_DISTRO: foxy, ROS_REPO: development}
           - {ROS_DISTRO: galactic, ROS_REPO: rolling}
     runs-on: ubuntu-latest
     steps:
