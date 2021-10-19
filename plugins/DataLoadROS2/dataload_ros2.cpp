@@ -81,6 +81,9 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
 
   std::vector<TopicInfo> topics_info;
 
+  std::set<std::string> blacklist_topic_name;
+  std::set<std::string> failed_topic_type;
+
   for (const rosbag2_storage::TopicMetadata& topic : topic_metadata)
   {
     all_topics_qt.push_back( {QString::fromStdString(topic.name),
@@ -92,12 +95,30 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     topic_info.type = topic.type;
 
     const auto& typesupport_identifier = rosidl_typesupport_cpp::typesupport_identifier;
-    const auto& typesupport_library = rosbag2_cpp::get_typesupport_library(topic.type,
-                                                                           typesupport_identifier);
-    topic_info.type_support = rosbag2_cpp::get_typesupport_handle(topic.type,
-                                                                  typesupport_identifier,
-                                                                  typesupport_library);
-    topics_info.emplace_back( std::move(topic_info) );
+    try
+    {
+      const auto& typesupport_library = rosbag2_cpp::get_typesupport_library(topic.type,
+                                                                             typesupport_identifier);
+      topic_info.type_support = rosbag2_cpp::get_typesupport_handle(topic.type,
+                                                                    typesupport_identifier,
+                                                                    typesupport_library);
+      topics_info.emplace_back( std::move(topic_info) );
+
+    } catch (...) {
+      failed_topic_type.insert(topic.type);
+      blacklist_topic_name.insert(topic.type);
+    }
+  }
+
+  if(!failed_topic_type.empty())
+  {
+    QString msg("Can not recognize the following message types and those topics will be ignored:\n\n");
+    for(const auto& type: failed_topic_type)
+    {
+      msg += "  " + QString::fromStdString(type) + "\n";
+    }
+    msg += "\nHave you forgotten to source your workspace?";
+    QMessageBox::warning(nullptr, tr("Error"), msg);
   }
 
   if (info->plugin_config.hasChildNodes())
@@ -136,7 +157,6 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
   saveDefaultSettings();
 
   CompositeParser parser(plot_map);
-
 
   std::set<std::string> topic_selected;
   for (const auto& topic_qt : _config.selected_topics)
@@ -179,6 +199,10 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
   {
     auto msg = _bag_reader->read_next();
     const std::string& topic_name = msg->topic_name;
+    if(blacklist_topic_name.count(topic_name))
+    {
+      continue;
+    }
     const double msg_timestamp = 1e-9 * double(msg->time_stamp);  // nanoseconds to seconds
 
     //------ progress dialog --------------
