@@ -2,6 +2,13 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* parse a ROSBAG even if some topic types are not recognized
+* Update ros2.yaml
+* segmentation fault off (`#30 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/30>`_)
+* Contributors: Davide Faconti, simulacrus
+
 1.5.0 (2021-06-20)
 ------------------
 * massive changes
