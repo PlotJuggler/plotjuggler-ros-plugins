@@ -26,7 +26,7 @@ public:
       for (const auto& kv : status.values)
       {
         const char* start_ptr = kv.value.data();
-        double val = 0;
+        std::vector<double> val;
 
         if (status.hardware_id.empty())
         {
@@ -37,12 +37,21 @@ public:
           key = fmt::format("{}/{}/{}/{}", _topic_name, status.hardware_id, status.name, kv.key);
         }
 
-        bool parsed = boost::spirit::qi::parse(start_ptr, start_ptr + kv.value.size(),
-                                               boost::spirit::qi::double_, val);
-        if (parsed)
+        bool parsed = boost::spirit::qi::phrase_parse(start_ptr, start_ptr + kv.value.size(),
+                                               boost::spirit::qi::double_ % ',', boost::spirit::qi::ascii::space, val);
+        if (val.size() > 1)
+        {
+          for (size_t index = 0; index < val.size(); index++)
+          {
+            std::string subkey = fmt::format("{}/{}", key, index);
+            auto& series = getSeries(subkey);
+            series.pushBack({ timestamp, val[index] });  
+          }
+        }
+        else if (parsed)
         {
           auto& series = getSeries(key);
-          series.pushBack({ timestamp, val });
+          series.pushBack({ timestamp, val[0] });
         }
         else{
           auto& series = getStringSeries(key);
