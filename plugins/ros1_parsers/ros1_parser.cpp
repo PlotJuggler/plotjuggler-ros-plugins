@@ -5,6 +5,7 @@
 #include "odometry_msg.h"
 #include "pal_statistics_msg.h"
 #include "tf_msg.h"
+#include "fiveai_stamped_diagnostic.h"
 #include "plotjuggler_msgs.h"
 
 
@@ -174,9 +175,16 @@ void RosCompositeParser::registerMessageType(const std::string& topic_name,
   {
     parser.reset(new PlotJugglerDataPointsParser(topic_name, _plot_data));
   }
+  else if (type == "fiveai_node_msgs/NodeDiagnostics")
+  {
+    parser.reset(new FiveAiDiagnosticMsg(topic_name, _plot_data));
+  }
   else
   {
     parser.reset(new IntrospectionParser(topic_name, type, definition, _plot_data));
+
+    std::cout << type <<"\n----------" <<std::endl;
+    std::cout << definition <<std::endl;
   }
 
   parser->setConfig(_config);

@@ -7,8 +7,8 @@
 
 #include <ros/types.h>
 #include <ros/serialization.h>
-#include "ros_parser_base.h"
-#include <boost/spirit/include/qi.hpp>
+#include <boost/algorithm/string.hpp>
+#include "ros1_parser.h"
 
 struct StampedDiagnostic_
 {
@@ -58,56 +58,55 @@ struct Serializer< ::NodeDiagnostics_>
 
 //-----------------------------------------------------
 
-class FiveAiDiagnosticMsg : public RosParserBase
+class FiveAiDiagnosticMsg : public RosMessageParser
 {
-public:
-  FiveAiDiagnosticMsg() = default;
+  public:
+  FiveAiDiagnosticMsg(const std::string& topic_name,
+                      PJ::PlotDataMapRef& plot_data)
+      : RosMessageParser(topic_name, plot_data)
+  {}
 
-  static const std::string& getCompatibleKey()
-  {
-    static std::string temp = "b47994f5f7cab18367c65bedb56d7f75";
-    return temp;
-  }
-
-  virtual void pushMessageRef(const std::string&, const MessageRef& msg, double& timestamp) override
+  bool parseMessage(MessageRef msg, double& timestamp) override
   {
     NodeDiagnostics_ diagnostic;
     ros::serialization::IStream is(const_cast<uint8_t*>(msg.data()), msg.size());
     ros::serialization::deserialize(is, diagnostic);
 
-    for (const auto& it : diagnostic.diagnostics)
+    for (const StampedDiagnostic_& diag : diagnostic.diagnostics)
     {
-      if (_use_header_stamp)
-      {
-        timestamp = it.stamp.toSec();
-      }
-      const char* start_ptr = it.value.data();
-      double val = 0;
+      timestamp = diag.stamp.toSec();
 
-      bool parsed = boost::spirit::qi::parse(start_ptr, start_ptr + it.value.size(), boost::spirit::qi::double_, val);
-      if (!parsed)
-        continue;
+      double value = 0;
+      bool parsed = PJ::ParseDouble(diag.value, value,
+                                    _config.remove_suffix_from_strings,
+                                    _config.boolean_strings_to_number);
 
-      auto data_it = _data.find(it.key);
-      if (data_it == _data.end())
+      std::string replaced_key = diag.key;
+      std::replace(replaced_key.begin(), replaced_key.end(), ' ', '_');
+
+      if (parsed)
       {
-        data_it =
-            _data.emplace(std::piecewise_construct, std::forward_as_tuple(it.key), std::forward_as_tuple(it.key)).first;
+        auto key = fmt::format("{}/{}/value", _topic_name, replaced_key);
+        auto& series = getSeries(key);
+        series.pushBack({ timestamp, value });
       }
-      data_it->second.pushBack({ timestamp, val });
+      else
+      {
+        auto key = fmt::format("{}/{}/value", _topic_name, replaced_key);
+        auto& series = getStringSeries(key);
+        series.pushBack({ timestamp, diag.value });
+      }
+
+      {
+        auto key = fmt::format("{}/{}/status", _topic_name, replaced_key);
+        auto& series = getSeries(key);
+        series.pushBack({ timestamp, diag.status });
+      }
+
     }
+    return true;
   }
 
-  void extractData(PlotDataMapRef& plot_map, const std::string& prefix) override
-  {
-    for (auto& it : _data)
-    {
-      appendData(plot_map, fmt::format("{}/{}", prefix, it.first), it.second);
-    }
-  }
-
-private:
-  std::unordered_map<std::string, PlotData> _data;
 };
 
 #endif  // FIVEAI_STAMPED_DIAGNOSTIC_H

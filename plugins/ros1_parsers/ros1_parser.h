@@ -18,7 +18,7 @@ class BuiltinMessageParser : public RosMessageParser
   {
   }
 
-  virtual bool parseMessage(MessageRef serialized_msg, double& timestamp) override
+  bool parseMessage(MessageRef serialized_msg, double& timestamp) override
   {
     T msg;
     ros::serialization::IStream is(const_cast<uint8_t*>(serialized_msg.data()), serialized_msg.size());
