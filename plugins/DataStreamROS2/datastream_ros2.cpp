@@ -71,7 +71,7 @@ bool DataStreamROS2::start(QStringList* selected_datasources)
     std::lock_guard<std::mutex> lock(mutex());
     dataMap().numeric.clear();
     dataMap().user_defined.clear();
-    _parser.reset( new CompositeParser(dataMap()) );
+    _parser.reset( new Ros2CompositeParser(dataMap()) );
   }
 
   // Display the dialog which allows users to select ros topics to subscribe to,
@@ -107,26 +107,18 @@ bool DataStreamROS2::start(QStringList* selected_datasources)
   update_list_timer.stop();
 
   // If no topics were selected, or the OK button was not pressed, do nothing
-  if (res != QDialog::Accepted || _config.selected_topics.empty())
+  if (res != QDialog::Accepted || _config.topics.empty())
   {
     return false;
   }
 
   saveDefaultSettings();
-  if (_config.discard_large_arrays)
-  {
-    _parser->setMaxArrayPolicy(DISCARD_LARGE_ARRAYS, _config.max_array_size);
-  }
-  else
-  {
-    _parser->setMaxArrayPolicy(KEEP_LARGE_ARRAYS, _config.max_array_size);
-  }
-  _parser->setUseHeaderStamp(_config.use_header_stamp);
+  _parser->setConfig(_config);
 
   //--------- subscribe ---------
   for (const auto& topic : dialog_topics)
   {
-    if (_config.selected_topics.contains(topic.first))
+    if (_config.topics.contains(topic.first))
     {
       subscribeToTopic(topic.first.toStdString(), topic.second.toStdString());
     }
@@ -213,7 +205,11 @@ void DataStreamROS2::messageCallback(const std::string& topic_name, std::shared_
   try
   {
       std::unique_lock<std::mutex> lock(mutex());
-      _parser->parseMessage(topic_name, &(msg.get()->get_rcl_serialized_message()), timestamp);
+
+      auto msg_ptr = msg.get()->get_rcl_serialized_message();
+      MessageRef msg_ref( msg_ptr.buffer, msg_ptr.buffer_length );
+
+      _parser->parseMessage(topic_name, msg_ref, timestamp);
   }
   catch (std::runtime_error& ex)
   {
@@ -231,68 +227,24 @@ void DataStreamROS2::messageCallback(const std::string& topic_name, std::shared_
 void DataStreamROS2::saveDefaultSettings()
 {
   QSettings settings;
-  settings.setValue("DataStreamROS2/default_topics", _config.selected_topics);
-  settings.setValue("DataStreamROS2/use_header_stamp", _config.use_header_stamp);
-  settings.setValue("DataStreamROS2/discard_large_arrays", _config.discard_large_arrays);
-  settings.setValue("DataStreamROS2/max_array_size", (int)_config.max_array_size);
+  _config.saveToSettings(settings, "DataStreamROS2");
 }
 
 void DataStreamROS2::loadDefaultSettings()
 {
   QSettings settings;
-  _config.selected_topics = settings.value("DataStreamROS2/default_topics", false).toStringList();
-  _config.use_header_stamp = settings.value("DataStreamROS2/use_header_stamp", false).toBool();
-  _config.discard_large_arrays = settings.value("DataStreamROS2/discard_large_arrays", true).toBool();
-  _config.max_array_size = settings.value("DataStreamROS2/max_array_size", 100).toInt();
+  _config.loadFromSettings(settings, "DataStreamROS2");
 }
 
 bool DataStreamROS2::xmlLoadState(const QDomElement& parent_element)
 {
-  qDebug() << "DataStreamROS2::xmlLoadState";
-
-  QDomElement stamp_elem = parent_element.firstChildElement("use_header_stamp");
-  _config.use_header_stamp = (stamp_elem.attribute("value") == "true");
-
-  QDomElement discard_elem = parent_element.firstChildElement("discard_large_arrays");
-  _config.discard_large_arrays = (stamp_elem.attribute("value") == "true");
-
-  QDomElement max_elem = parent_element.firstChildElement("max_array_size");
-  _config.max_array_size = (stamp_elem.attribute("value") == "true");
-
-  _config.selected_topics.clear();
-  QDomElement topic_elem = parent_element.firstChildElement("selected_topics").firstChildElement("topic");
-  while (!topic_elem.isNull())
-  {
-    qDebug() << "Value: " << topic_elem.attribute("value");
-    _config.selected_topics.push_back(topic_elem.attribute("name"));
-    topic_elem = topic_elem.nextSiblingElement("topic");
-  }
+  _config.xmlLoadState(parent_element);
   return true;
 }
 
-bool DataStreamROS2::xmlSaveState(QDomDocument& doc, QDomElement& plugin_elem) const
+bool DataStreamROS2::xmlSaveState(QDomDocument& doc,
+                                  QDomElement& parent_element) const
 {
-  QDomElement stamp_elem = doc.createElement("use_header_stamp");
-  stamp_elem.setAttribute("value", _config.use_header_stamp ? "true" : "false");
-  plugin_elem.appendChild(stamp_elem);
-
-  // TODO: Implement discarding large arrays
-  QDomElement discard_elem = doc.createElement("discard_large_arrays");
-  discard_elem.setAttribute("value", _config.discard_large_arrays ? "true" : "false");
-  plugin_elem.appendChild(discard_elem);
-
-  QDomElement max_elem = doc.createElement("max_array_size");
-  max_elem.setAttribute("value", _config.max_array_size ? "true" : "false");
-  plugin_elem.appendChild(max_elem);
-
-  QDomElement topics_elem = doc.createElement("selected_topics");
-  for (auto topic : _config.selected_topics)
-  {
-    QDomElement topic_elem = doc.createElement("topic");
-    topic_elem.setAttribute("name", topic);
-    topics_elem.appendChild(topic_elem);
-  }
-  plugin_elem.appendChild(topics_elem);
-
+  _config.xmlSaveState(doc, parent_element);
   return true;
 }

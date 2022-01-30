@@ -17,7 +17,7 @@ public:
 
   virtual void parseMessageImpl(const diagnostic_msgs::msg::DiagnosticArray& msg, double& timestamp) override
   {
-    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
+    _header_parser.parse(msg.header, timestamp, _config.use_header_stamp);
 
     std::string key;
 

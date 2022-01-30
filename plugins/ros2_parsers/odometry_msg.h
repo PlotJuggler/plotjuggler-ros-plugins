@@ -19,7 +19,7 @@ class OdometryMsgParser : public BuiltinMessageParser<nav_msgs::msg::Odometry>
 
   void parseMessageImpl(const nav_msgs::msg::Odometry& msg, double& timestamp) override
   {
-    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
+    _header_parser.parse(msg.header, timestamp, _config.use_header_stamp);
     _pose_parser.parseMessageImpl(msg.pose, timestamp);
     _twist_parser.parseMessageImpl(msg.twist, timestamp);
   }

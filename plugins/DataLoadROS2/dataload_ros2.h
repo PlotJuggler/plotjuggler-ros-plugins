@@ -40,7 +40,7 @@ private:
 
   std::vector<const char*> _extensions;
 
-  DialogSelectRosTopics::Configuration _config;
+  RosParserConfig _config;
 
   std::vector<std::pair<QString, QString>> getAndRegisterAllTopics();
 

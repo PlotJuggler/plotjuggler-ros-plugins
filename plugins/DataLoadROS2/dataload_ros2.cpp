@@ -18,6 +18,7 @@
 #include <rosidl_typesupport_introspection_cpp/field_types.hpp>
 #include <rosidl_typesupport_cpp/identifier.hpp>
 #include <rosbag2_cpp/typesupport_helpers.hpp>
+#include <rosbag2_cpp/storage_options.hpp>
 #include <rosbag2_cpp/types/introspection_message.hpp>
 #include <unordered_map>
 #include <rclcpp/rclcpp.hpp>
@@ -128,7 +129,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
 
   if (!info->selected_datasources.empty())
   {
-    _config.selected_topics = info->selected_datasources;
+    _config.topics = info->selected_datasources;
   }
   else
   {
@@ -156,10 +157,10 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
 
   saveDefaultSettings();
 
-  CompositeParser parser(plot_map);
+  Ros2CompositeParser parser(plot_map);
 
   std::set<std::string> topic_selected;
-  for (const auto& topic_qt : _config.selected_topics)
+  for (const auto& topic_qt : _config.topics)
   {
     std::string topic_name = topic_qt.toStdString();
     std::string topic_type = topicTypesByName.at(topic_name);
@@ -168,15 +169,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     parser.registerMessageType(topic_name, topic_type);
   }
 
-  if (_config.discard_large_arrays)
-  {
-    parser.setMaxArrayPolicy(DISCARD_LARGE_ARRAYS, _config.max_array_size);
-  }
-  else
-  {
-    parser.setMaxArrayPolicy(KEEP_LARGE_ARRAYS, _config.max_array_size);
-  }
-  parser.setUseHeaderStamp(_config.use_header_stamp);
+  parser.setConfig(_config);
 
   QProgressDialog progress_dialog;
   progress_dialog.setLabelText("Loading... please wait");
@@ -224,7 +217,8 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     }
     //----- parse! -----------
     double timestamp = msg_timestamp;
-    parser.parseMessage(topic_name, msg->serialized_data.get(), timestamp);
+    MessageRef msg_ref(msg->serialized_data->buffer, msg->serialized_data->buffer_length);
+    parser.parseMessage(topic_name, msg_ref, timestamp);
 
     //---- save msg reference in PlotAny ----
     auto data_point = PJ::PlotDataAny::Point(timestamp, std::any(msg));
@@ -244,55 +238,30 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
 
   qDebug() << "The rosbag loaded the data in " << diff << " milliseconds";
 
-  info->selected_datasources = _config.selected_topics;
+  info->selected_datasources = _config.topics;
   return true;
 }
 
 bool DataLoadROS2::xmlSaveState(QDomDocument& doc, QDomElement& plugin_elem) const
 {
-  QDomElement stamp_elem = doc.createElement("use_header_stamp");
-  stamp_elem.setAttribute("value", _config.use_header_stamp ? "true" : "false");
-  plugin_elem.appendChild(stamp_elem);
-
-  QDomElement discard_elem = doc.createElement("discard_large_arrays");
-  discard_elem.setAttribute("value", _config.discard_large_arrays ? "true" : "false");
-  plugin_elem.appendChild(discard_elem);
-
-  QDomElement max_elem = doc.createElement("max_array_size");
-  max_elem.setAttribute("value", QString::number(_config.max_array_size));
-  plugin_elem.appendChild(max_elem);
-
+  _config.xmlSaveState(doc, plugin_elem);
   return true;
 }
 
 bool DataLoadROS2::xmlLoadState(const QDomElement& parent_element)
 {
-  QDomElement stamp_elem = parent_element.firstChildElement("use_header_stamp");
-  _config.use_header_stamp = (stamp_elem.attribute("value") == "true");
-
-  QDomElement discard_elem = parent_element.firstChildElement("discard_large_arrays");
-  _config.discard_large_arrays = (discard_elem.attribute("value") == "true");
-
-  QDomElement max_elem = parent_element.firstChildElement("max_array_size");
-  _config.max_array_size = static_cast<size_t>(max_elem.attribute("value").toInt());
-
+  _config.xmlLoadState(parent_element);
   return true;
 }
 
 void DataLoadROS2::saveDefaultSettings()
 {
   QSettings settings;
-  settings.setValue("DataLoadROS2/default_topics", _config.selected_topics);
-  settings.setValue("DataLoadROS2/use_header_stamp", _config.use_header_stamp);
-  settings.setValue("DataLoadROS2/max_array_size", (int)_config.max_array_size);
-  settings.setValue("DataLoadROS2/discard_large_arrays", _config.discard_large_arrays);
+  _config.saveToSettings(settings, "DataLoadROS2");
 }
 
 void DataLoadROS2::loadDefaultSettings()
 {
   QSettings settings;
-  _config.selected_topics = settings.value("DataLoadROS2/default_topics", false).toStringList();
-  _config.use_header_stamp = settings.value("DataLoadROS2/use_header_stamp", false).toBool();
-  _config.max_array_size = settings.value("DataLoadROS2/max_array_size", 100).toInt();
-  _config.discard_large_arrays = settings.value("DataLoadROS2/discard_large_arrays", true).toBool();
+  _config.loadFromSettings(settings, "DataLoadROS2");
 }

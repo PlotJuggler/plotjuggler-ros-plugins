@@ -15,10 +15,10 @@
 #include "ui_dialog_select_ros_topics.h"
 
 DialogSelectRosTopics::DialogSelectRosTopics(const std::vector<std::pair<QString, QString>>& topic_list,
-                                             const Configuration& config, QWidget* parent)
+                                             const PJ::RosParserConfig& config, QWidget* parent)
   : QDialog(parent)
   , ui(new Ui::dialogSelectRosTopics)
-  , _default_selected_topics(config.selected_topics)
+  , _default_selected_topics(config.topics)
   , _select_all(QKeySequence(Qt::CTRL + Qt::Key_A), this)
   , _deselect_all(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_A), this)
 {
@@ -27,9 +27,10 @@ DialogSelectRosTopics::DialogSelectRosTopics(const std::vector<std::pair<QString
 
   ui->setupUi(this);
 
-  ui->checkBoxEnableRules->setChecked(config.use_renaming_rules);
   ui->spinBoxArraySize->setValue(config.max_array_size);
   ui->checkBoxTimestamp->setChecked(config.use_header_stamp);
+  ui->checkBoxStringBoolean->setChecked(config.boolean_strings_to_number);
+  ui->checkBoxStringSuffix->setChecked(config.remove_suffix_from_strings);
 
   if (config.discard_large_arrays)
   {
@@ -75,10 +76,6 @@ DialogSelectRosTopics::DialogSelectRosTopics(const std::vector<std::pair<QString
   QSettings settings;
   restoreGeometry(settings.value("DialogSelectRosTopics.geometry").toByteArray());
 
-#ifdef DISABLE_RULE_EDITING
-  ui->checkBoxEnableRules->setHidden(true);
-  ui->pushButtonEditRules->setHidden(true);
-#endif
 }
 
 void DialogSelectRosTopics::updateTopicList(std::vector<std::pair<QString, QString>> topic_list)
@@ -154,16 +151,18 @@ DialogSelectRosTopics::~DialogSelectRosTopics()
   delete ui;
 }
 
-DialogSelectRosTopics::Configuration DialogSelectRosTopics::getResult() const
+PJ::RosParserConfig DialogSelectRosTopics::getResult() const
 {
-  Configuration config;
-  config.selected_topics = _topic_list;
+  PJ::RosParserConfig config;
+  config.topics = _topic_list;
   config.max_array_size = ui->spinBoxArraySize->value();
   config.use_header_stamp = ui->checkBoxTimestamp->isChecked();
   config.discard_large_arrays = ui->radioMaxDiscard->isChecked();
-  config.use_renaming_rules = ui->checkBoxEnableRules->isChecked();
+  config.boolean_strings_to_number = ui->checkBoxStringBoolean->isChecked();
+  config.remove_suffix_from_strings = ui->checkBoxStringSuffix->isChecked();
   return config;
 }
+
 
 void DialogSelectRosTopics::on_buttonBox_accepted()
 {
@@ -187,19 +186,6 @@ void DialogSelectRosTopics::on_listRosTopics_itemSelectionChanged()
   ui->buttonBox->setEnabled(indexes.size() > 0);
 }
 
-void DialogSelectRosTopics::on_checkBoxEnableRules_toggled(bool checked)
-{
-  ui->pushButtonEditRules->setEnabled(checked);
-}
-
-void DialogSelectRosTopics::on_pushButtonEditRules_pressed()
-{
-#ifndef DISABLE_RULE_EDITING
-  RuleEditing* rule_editing = new RuleEditing(this);
-  rule_editing->exec();
-#endif
-}
-
 void DialogSelectRosTopics::on_maximumSizeHelp_pressed()
 {
   QMessageBox msgBox;
@@ -220,9 +206,6 @@ void DialogSelectRosTopics::on_maximumSizeHelp_pressed()
 
 void DialogSelectRosTopics::on_lineEditFilter_textChanged(const QString& search_string)
 {
-  int visible_count = 0;
-  bool updated = false;
-
   QStringList spaced_items = search_string.split(' ');
 
   for (int row = 0; row < ui->listRosTopics->rowCount(); row++)

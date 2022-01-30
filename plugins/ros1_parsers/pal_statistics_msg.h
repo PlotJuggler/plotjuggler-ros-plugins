@@ -105,7 +105,7 @@ public:
     auto& values = _data[pal_msg.names_version];
 
     double header_stamp = pal_msg.header.stamp.toSec();
-    timestamp = (_use_header_stamp && header_stamp > 0) ? header_stamp : timestamp;
+    timestamp = (_config.use_header_stamp && header_stamp > 0) ? header_stamp : timestamp;
 
     auto names_it = _stored_pal_statistics_names.find(pal_msg.names_version);
     if (names_it == _stored_pal_statistics_names.end())

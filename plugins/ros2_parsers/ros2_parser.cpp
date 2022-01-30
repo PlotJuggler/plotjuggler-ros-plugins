@@ -8,36 +8,18 @@
 #include "pj_statistics_msg.h"
 //  #include "pal_statistics_msg.h"
 
-
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 
-void RosMessageParser::setUseHeaderStamp(bool use)
+bool IntrospectionParser::parseMessage(MessageRef serialized_msg, double& timestamp)
 {
-  _use_header_stamp = use;
-}
+  rcutils_uint8_array_t msg_ref;
+  msg_ref.buffer = serialized_msg.data();
+  msg_ref.buffer_length = serialized_msg.size();
 
-PJ::PlotData& RosMessageParser::getSeries(const std::string key)
-{
-  return _plot_data.getOrCreateNumeric(key);
-}
+  _intropection_parser.deserializeIntoFlatMessage(&msg_ref, &_flat_msg);
 
-PJ::StringSeries &RosMessageParser::getStringSeries(const std::string key)
-{
-  return _plot_data.getOrCreateStringSeries(key);
-}
-
-//-------------------------------------
-void IntrospectionParser::setMaxArrayPolicy(LargeArrayPolicy discard_policy, size_t max_size)
-{
-  _intropection_parser.setMaxArrayPolicy(static_cast<Ros2Introspection::MaxArrayPolicy>(discard_policy), max_size);
-}
-
-bool IntrospectionParser::parseMessage(const rcutils_uint8_array_t* serialized_msg, double& timestamp)
-{
-  _intropection_parser.deserializeIntoFlatMessage(serialized_msg, &_flat_msg);
-
-  if (_use_header_stamp && _intropection_parser.topicInfo().has_header_stamp)
+  if (_config.use_header_stamp && _intropection_parser.topicInfo().has_header_stamp)
   {
     double sec = _flat_msg.values[0].second;
     double nsec = _flat_msg.values[1].second;
@@ -96,34 +78,8 @@ bool IntrospectionParser::parseMessage(const rcutils_uint8_array_t* serialized_m
 
 //-----------------------------------------
 
-CompositeParser::CompositeParser(PJ::PlotDataMapRef& plot_data)
-  : _discard_policy(LargeArrayPolicy::DISCARD_LARGE_ARRAYS)
-  , _max_array_size(999)
-  , _use_header_stamp(false)
-  , _plot_data(plot_data)
-{
-}
-
-void CompositeParser::setUseHeaderStamp(bool use)
-{
-  _use_header_stamp = use;
-  for (auto it : _parsers)
-  {
-    it.second->setUseHeaderStamp(use);
-  }
-}
-
-void CompositeParser::setMaxArrayPolicy(LargeArrayPolicy policy, size_t max_size)
-{
-  _discard_policy = policy;
-  _max_array_size = max_size;
-  for (auto it : _parsers)
-  {
-    it.second->setMaxArrayPolicy(policy, max_size);
-  }
-}
-
-void CompositeParser::registerMessageType(const std::string& topic_name, const std::string& topic_type)
+void Ros2CompositeParser::registerMessageType(const std::string& topic_name,
+                                              const std::string& topic_type)
 {
   std::shared_ptr<RosMessageParser> parser;
   if (_parsers.count(topic_name) > 0)
@@ -217,30 +173,22 @@ void CompositeParser::registerMessageType(const std::string& topic_name, const s
     parser.reset(new IntrospectionParser(topic_name, type, _plot_data));
   }
 
-  parser->setMaxArrayPolicy(_discard_policy, _max_array_size);
-  parser->setUseHeaderStamp(_use_header_stamp);
+  parser->setConfig(_config);
   _parsers.insert({ topic_name, parser });
 }
 
-bool CompositeParser::parseMessage(const std::string& topic_name,
-                                   const MessageRef* serialized_msg,
-                                   double& timestamp)
-{
-  auto it = _parsers.find(topic_name);
-  if (it == _parsers.end())
-  {
-    return false;
-  }
-  it->second->parseMessage(serialized_msg, timestamp);
-  return false;
-}
-
-const rosidl_message_type_support_t* CompositeParser::typeSupport(const std::string& topic_name) const
+const rosidl_message_type_support_t *
+Ros2CompositeParser::typeSupport(const std::string &topic_name) const
 {
   auto it = _parsers.find(topic_name);
   if (it == _parsers.end())
   {
     return nullptr;
   }
-  return it->second->typeSupport();
+  if( auto parser = dynamic_cast<Ros2MessageParser*>(it->second.get()))
+  {
+    return parser->typeSupport();
+  }
+  return nullptr;
 }
+

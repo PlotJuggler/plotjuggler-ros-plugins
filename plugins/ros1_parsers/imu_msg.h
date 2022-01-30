@@ -38,7 +38,7 @@ public:
       _lazy_init();
     }
 
-    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
+    _header_parser.parse(msg.header, timestamp, _config.use_header_stamp);
 
     _data[0]->pushBack({ timestamp, msg.angular_velocity.x });
     _data[1]->pushBack({ timestamp, msg.angular_velocity.y });
