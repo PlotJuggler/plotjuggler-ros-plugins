@@ -15,7 +15,7 @@ public:
 
   void parseMessageImpl(const sensor_msgs::msg::JointState& msg, double& timestamp) override
   {
-    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
+    _header_parser.parse(msg.header, timestamp, _config.use_header_stamp);
 
     for (int i = 0; i < msg.name.size(); i++)
     {

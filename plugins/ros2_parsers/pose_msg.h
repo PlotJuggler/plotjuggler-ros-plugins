@@ -52,7 +52,7 @@ class PoseStampedMsgParser
 
   void parseMessageImpl(const geometry_msgs::msg::PoseStamped& msg, double& timestamp) override
   {
-    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
+    _header_parser.parse(msg.header, timestamp, _config.use_header_stamp);
     _pose_parser.parseMessageImpl(msg.pose, timestamp);
   }
 

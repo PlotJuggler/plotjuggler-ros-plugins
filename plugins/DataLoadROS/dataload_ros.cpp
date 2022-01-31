@@ -23,7 +23,8 @@
 DataLoadROS::DataLoadROS()
 {
   _extensions.push_back("bag");
-  loadDefaultSettings();
+  QSettings settings;
+  _config.loadFromSettings(settings, "DataLoadROS");
 }
 
 DataLoadROS::~DataLoadROS()
@@ -44,7 +45,7 @@ const std::vector<const char*>& DataLoadROS::compatibleFileExtensions() const
 }
 
 std::vector<std::pair<QString, QString>>
-DataLoadROS::getAllTopics(const rosbag::Bag* bag, CompositeParser& parser)
+DataLoadROS::getAllTopics(const rosbag::Bag* bag, RosCompositeParser& parser)
 {
   std::vector<std::pair<QString, QString>> all_topics;
   rosbag::View bag_view(*bag, ros::TIME_MIN, ros::TIME_MAX, true);
@@ -118,7 +119,7 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
     return false;
   }
 
-  CompositeParser ros_parser(plot_map);
+  RosCompositeParser ros_parser(plot_map);
   auto all_topics = getAllTopics(temp_bag.get(), ros_parser);
 
   //----------------------------------
@@ -130,7 +131,7 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
 
   if (!info->selected_datasources.empty())
   {
-    _config.selected_topics = info->selected_datasources;
+    _config.topics = info->selected_datasources;
   }
   else
   {
@@ -153,20 +154,16 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
   _bag = temp_bag;
   //---------------------------------------
 
-  saveDefaultSettings();
+  {
+    QSettings settings;
+    _config.saveToSettings(settings, "DataLoadROS");
+  }
 
-  ros_parser.setUseHeaderStamp(_config.use_header_stamp);
-  ros_parser.setMaxArrayPolicy(static_cast<LargeArrayPolicy>(_config.discard_large_arrays), _config.max_array_size);
-
-  // TODO?
-  //  if (_config.use_renaming_rules)
-  //  {
-  //    parser.addRules(RuleEditing::getRenamingRules());
-  //  }
+  ros_parser.setConfig(_config);
 
   //-----------------------------------
   std::set<std::string> topic_selected;
-  for (const auto& topic : _config.selected_topics)
+  for (const auto& topic : _config.topics)
   {
     topic_selected.insert(topic.toStdString());
   }
@@ -238,66 +235,19 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
 
   qDebug() << "The loading operation took" << timer.elapsed() << "milliseconds";
 
-  info->selected_datasources = _config.selected_topics;
+  info->selected_datasources = _config.topics;
   return true;
 }
 
 bool DataLoadROS::xmlSaveState(QDomDocument& doc, QDomElement& plugin_elem) const
 {
-  QDomElement stamp_elem = doc.createElement("use_header_stamp");
-  stamp_elem.setAttribute("value", _config.use_header_stamp ? "true" : "false");
-  plugin_elem.appendChild(stamp_elem);
-
-  QDomElement rename_elem = doc.createElement("use_renaming_rules");
-  rename_elem.setAttribute("value", _config.use_renaming_rules ? "true" : "false");
-  plugin_elem.appendChild(rename_elem);
-
-  QDomElement discard_elem = doc.createElement("discard_large_arrays");
-  discard_elem.setAttribute("value", _config.discard_large_arrays ? "true" : "false");
-  plugin_elem.appendChild(discard_elem);
-
-  QDomElement max_elem = doc.createElement("max_array_size");
-  max_elem.setAttribute("value", QString::number(_config.max_array_size));
-  plugin_elem.appendChild(max_elem);
-
+  _config.xmlSaveState(doc, plugin_elem);
   return true;
 }
 
 bool DataLoadROS::xmlLoadState(const QDomElement& parent_element)
 {
-  QDomElement stamp_elem = parent_element.firstChildElement("use_header_stamp");
-  _config.use_header_stamp = (stamp_elem.attribute("value") == "true");
-
-  QDomElement rename_elem = parent_element.firstChildElement("use_renaming_rules");
-  _config.use_renaming_rules = (rename_elem.attribute("value") == "true");
-
-  QDomElement discard_elem = parent_element.firstChildElement("discard_large_arrays");
-  _config.discard_large_arrays = (discard_elem.attribute("value") == "true");
-
-  QDomElement max_elem = parent_element.firstChildElement("max_array_size");
-  _config.max_array_size = max_elem.attribute("value").toInt();
-
+  _config.xmlLoadState(parent_element);
   return true;
 }
 
-void DataLoadROS::saveDefaultSettings()
-{
-  QSettings settings;
-
-  settings.setValue("DataLoadROS/default_topics", _config.selected_topics);
-  settings.setValue("DataLoadROS/use_renaming", _config.use_renaming_rules);
-  settings.setValue("DataLoadROS/use_header_stamp", _config.use_header_stamp);
-  settings.setValue("DataLoadROS/max_array_size", (int)_config.max_array_size);
-  settings.setValue("DataLoadROS/discard_large_arrays", _config.discard_large_arrays);
-}
-
-void DataLoadROS::loadDefaultSettings()
-{
-  QSettings settings;
-
-  _config.selected_topics = settings.value("DataLoadROS/default_topics", false).toStringList();
-  _config.use_header_stamp = settings.value("DataLoadROS/use_header_stamp", false).toBool();
-  _config.use_renaming_rules = settings.value("DataLoadROS/use_renaming", true).toBool();
-  _config.max_array_size = settings.value("DataLoadROS/max_array_size", 100).toInt();
-  _config.discard_large_arrays = settings.value("DataLoadROS/discard_large_arrays", true).toBool();
-}

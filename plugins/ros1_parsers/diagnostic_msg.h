@@ -2,6 +2,7 @@
 
 #include <diagnostic_msgs/DiagnosticArray.h>
 #include <boost/spirit/include/qi.hpp>
+#include <boost/algorithm/string.hpp>
 #include "fmt/format.h"
 #include "ros1_parser.h"
 #include "header_msg.h"
@@ -18,7 +19,7 @@ public:
   virtual void parseMessageImpl(const diagnostic_msgs::DiagnosticArray& msg,
                                 double& timestamp) override
   {
-    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
+    _header_parser.parse(msg.header, timestamp, _config.use_header_stamp);
 
     std::string key;
 
@@ -26,8 +27,7 @@ public:
     {
       for (const auto& kv : status.values)
       {
-        const char* start_ptr = kv.value.data();
-        double val = 0;
+        double value = 0;
 
         if (status.hardware_id.empty())
         {
@@ -38,16 +38,20 @@ public:
           key = fmt::format("{}/{}/{}/{}", _topic_name, status.hardware_id, status.name, kv.key);
         }
 
-        bool parsed = boost::spirit::qi::parse(start_ptr, start_ptr + kv.value.size(),
-                                               boost::spirit::qi::double_, val);
+        bool parsed = PJ::ParseDouble(kv.value, value,
+                                      _config.remove_suffix_from_strings,
+                                      _config.boolean_strings_to_number);
         if (parsed)
         {
           auto& series = getSeries(key);
-          series.pushBack({ timestamp, val });
+          series.pushBack({ timestamp, value });
         }
         else{
-          auto& series = getStringSeries(key);
-          series.pushBack( { timestamp, kv.value} );
+          if(_plot_data.numeric.count(key) == 0)
+          {
+            auto& series = getStringSeries(key);
+            series.pushBack( { timestamp, kv.value} );
+          }
         }
       }
     }
@@ -55,4 +59,5 @@ public:
 
 private:
   HeaderMsgParser _header_parser;
+
 };

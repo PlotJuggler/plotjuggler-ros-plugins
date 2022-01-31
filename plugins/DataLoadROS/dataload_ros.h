@@ -45,13 +45,9 @@ protected:
 private:
   std::vector<const char*> _extensions;
 
-  DialogSelectRosTopics::Configuration _config;
+  RosParserConfig _config;
 
-  std::vector<std::pair<QString, QString>> getAllTopics(const rosbag::Bag* bag, CompositeParser& parser);
-
-  void saveDefaultSettings();
-
-  void loadDefaultSettings();
+  std::vector<std::pair<QString, QString>> getAllTopics(const rosbag::Bag* bag, RosCompositeParser &parser);
 };
 
 #endif  // DATALOAD_CSV_H

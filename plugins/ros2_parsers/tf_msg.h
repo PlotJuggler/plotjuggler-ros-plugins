@@ -21,7 +21,7 @@ public:
     {
       double header_stamp = double(trans.header.stamp.sec) +
                             double(trans.header.stamp.nanosec) * 1e-9;
-      timestamp = (_use_header_stamp && header_stamp > 0) ? header_stamp : timestamp;
+      timestamp = (_config.use_header_stamp && header_stamp > 0) ? header_stamp : timestamp;
 
       std::string prefix;
       if (trans.header.frame_id.empty())

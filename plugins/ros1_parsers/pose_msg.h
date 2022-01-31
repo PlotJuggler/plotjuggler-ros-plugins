@@ -53,7 +53,7 @@ public:
 
   void parseMessageImpl(const geometry_msgs::PoseStamped& msg, double& timestamp) override
   {
-    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
+    _header_parser.parse(msg.header, timestamp, _config.use_header_stamp);
     _pose_parser.parseMessageImpl(msg.pose, timestamp);
   }
 
@@ -97,7 +97,7 @@ public:
 
   void parseMessageImpl(const geometry_msgs::PoseWithCovarianceStamped& msg, double& timestamp) override
   {
-    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
+    _header_parser.parse(msg.header, timestamp, _config.use_header_stamp);
     _pose_cov_parser.parseMessageImpl(msg.pose, timestamp);
   }
 

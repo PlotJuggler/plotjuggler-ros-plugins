@@ -40,7 +40,7 @@ public:
   {
     auto& values = _data[msg.names_version];
 
-    _header_parser.parse(msg.header, timestamp, _use_header_stamp);
+    _header_parser.parse(msg.header, timestamp, _config.use_header_stamp);
 
     auto names_it = _stored_pj_statistics_names.find(msg.names_version);
     if (names_it == _stored_pj_statistics_names.end())
