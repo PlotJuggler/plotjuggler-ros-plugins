@@ -182,9 +182,6 @@ void RosCompositeParser::registerMessageType(const std::string& topic_name,
   else
   {
     parser.reset(new IntrospectionParser(topic_name, type, definition, _plot_data));
-
-    std::cout << type <<"\n----------" <<std::endl;
-    std::cout << definition <<std::endl;
   }
 
   parser->setConfig(_config);
