@@ -361,7 +361,9 @@ bool Parser::deserializeIntoFlatContainer(const std::string& msg_identifier, Spa
     {
       bool DO_STORE = store;
       if (field.isConstant())
+      {
         continue;
+      }
 
       const ROSType& field_type = field.type();
 
@@ -382,7 +384,7 @@ bool Parser::deserializeIntoFlatContainer(const std::string& msg_identifier, Spa
       bool IS_BLOB = false;
 
       // Stop storing it if is NOT a blob and a very large array.
-      if (array_size > static_cast<int32_t>(max_array_size))
+      if (array_size > static_cast<int32_t>(max_array_size)  && field_type.typeID() != OTHER)
       {
         if (builtinSize(field_type.typeID()) == 1)
         {

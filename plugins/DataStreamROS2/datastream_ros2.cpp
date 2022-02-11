@@ -7,6 +7,7 @@
 #include <QApplication>
 #include <QProgressDialog>
 #include "ros2_parsers/generic_subscription.hpp"
+#include "rosbag2_helper.hpp"
 
 DataStreamROS2::DataStreamROS2() :
     DataStreamer(),
@@ -176,6 +177,7 @@ const std::vector<QAction*> &DataStreamROS2::availableActions()
   return empty;
 }
 
+
 void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::string& topic_type)
 {
   if (_subscriptions.find(topic_name) != _subscriptions.end())
@@ -187,16 +189,17 @@ void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::
 
   auto bound_callback = [=](std::shared_ptr<rclcpp::SerializedMessage> msg) { messageCallback(topic_name, msg); };
 
+  auto publisher_info = _node->get_publishers_info_by_topic(topic_name);
+  auto detected_qos = PJ::adapt_request_to_offers(topic_name, publisher_info);
+
   // double subscription, latching or not
-  for (bool transient : { true, false })
-  {
-    auto subscription = std::make_shared<rosbag2_transport::GenericSubscription>(
-          _node->get_node_base_interface().get(),
-          *_parser->typeSupport(topic_name),
-          topic_name, transient, bound_callback);
-    _subscriptions[topic_name + (transient ? "/transient_" : "")] = subscription;
-    _node->get_node_topics_interface()->add_subscription(subscription, nullptr);
-  }
+  auto subscription = std::make_shared<rosbag2_transport::GenericSubscription>(
+      _node->get_node_base_interface().get(),
+      *_parser->typeSupport(topic_name),
+      topic_name, detected_qos, bound_callback);
+  _subscriptions[topic_name] = subscription;
+  _node->get_node_topics_interface()->add_subscription(subscription, nullptr);
+
 }
 
 void DataStreamROS2::messageCallback(const std::string& topic_name, std::shared_ptr<rclcpp::SerializedMessage> msg)

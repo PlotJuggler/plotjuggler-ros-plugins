@@ -55,7 +55,7 @@ class GenericSubscription : public rclcpp::SubscriptionBase
       rclcpp::node_interfaces::NodeBaseInterface * node_base,
       const rosidl_message_type_support_t & ts,
       const std::string & topic_name,
-      bool transient,
+      const rclcpp::QoS& qos,
       std::function<void(std::shared_ptr<rclcpp::SerializedMessage>)> callback);
 
     // Same as create_serialized_message() as the subscription is to serialized_messages only
@@ -101,19 +101,25 @@ inline rcl_subscription_options_t LatchingOptions()
   return options;
 }
 
+inline rcl_subscription_options_t GetSubscriptionOptions(const rclcpp::QoS& qos)
+{
+  rcl_subscription_options_t options = rcl_subscription_get_default_options();
+  options.qos = qos.get_rmw_qos_profile();
+  return options;
+}
 
 inline
 GenericSubscription::GenericSubscription(
   rclcpp::node_interfaces::NodeBaseInterface * node_base,
   const rosidl_message_type_support_t & ts,
   const std::string & topic_name,
-  bool transient,
+  const rclcpp::QoS& qos,
   std::function<void(std::shared_ptr<rclcpp::SerializedMessage>)> callback)
 : SubscriptionBase(
     node_base,
     ts,
     topic_name,
-    transient ? LatchingOptions() : PermissiveOptions(),
+    GetSubscriptionOptions( qos ),
     true),
   default_allocator_(rcutils_get_default_allocator()),
   callback_(callback)
