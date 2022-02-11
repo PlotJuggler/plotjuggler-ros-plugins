@@ -20,6 +20,7 @@
 #include <rosbag2_cpp/typesupport_helpers.hpp>
 #include <rosbag2_cpp/storage_options.hpp>
 #include <rosbag2_cpp/types/introspection_message.hpp>
+#include <rosbag2_storage/storage_options.hpp>
 #include <unordered_map>
 #include <rclcpp/rclcpp.hpp>
 #include <rmw/rmw.h>
@@ -50,7 +51,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     bagDir = finfo.dir().path();
   }
 
-  rosbag2_cpp::StorageOptions storageOptions;
+  rosbag2_storage::StorageOptions storageOptions;
   storageOptions.uri = bagDir.toStdString();
   storageOptions.storage_id = "sqlite3";
   rosbag2_cpp::ConverterOptions converterOptions;
@@ -150,7 +151,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
 
   if (_bag_reader)
   {
-    _bag_reader->reset();
+    _bag_reader->close();
   }
   _bag_reader = temp_bag_reader;
   //---------------------------------------
