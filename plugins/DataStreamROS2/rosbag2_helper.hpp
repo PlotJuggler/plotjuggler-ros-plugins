@@ -5,7 +5,7 @@
 #include <vector>
 #include <rclcpp/rclcpp.hpp>
 
-namespace Rosbag2QoS
+namespace PJ
 {
 
 inline rclcpp::QoS adapt_request_to_offers(
