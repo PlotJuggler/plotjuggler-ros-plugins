@@ -100,7 +100,7 @@ class FiveAiDiagnosticMsg : public RosMessageParser
       {
         auto key = fmt::format("{}/{}/status", _topic_name, replaced_key);
         auto& series = getSeries(key);
-        series.pushBack({ timestamp, diag.status });
+        series.pushBack({ timestamp, static_cast<double>(diag.status) });
       }
 
     }
