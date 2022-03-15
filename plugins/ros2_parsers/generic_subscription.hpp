@@ -23,7 +23,6 @@
 #include "rclcpp/subscription.hpp"
 #include "rclcpp/any_subscription_callback.hpp"
 #include "rclcpp/subscription.hpp"
-#include "rosbag2_transport/logging.hpp"
 
 namespace rosbag2_transport
 {

@@ -25,9 +25,9 @@ TopicPublisherROS2::TopicPublisherROS2() :  _node(nullptr), _enabled(false)
   _context = std::make_shared<rclcpp::Context>();
   _context->init(0, nullptr);
 
-  auto exec_args = rclcpp::executor::ExecutorArgs();
-  exec_args.context = _context;
-  _executor = std::make_unique<rclcpp::executors::MultiThreadedExecutor>(exec_args, 2);
+  auto exec_opts = rclcpp::ExecutorOptions();
+  exec_opts.context = _context;
+  _executor = std::make_unique<rclcpp::executors::MultiThreadedExecutor>(exec_opts, 2);
 
   _select_topics_to_publish = new QAction(QString("Select topics to be published"));
   connect(_select_topics_to_publish, &QAction::triggered,

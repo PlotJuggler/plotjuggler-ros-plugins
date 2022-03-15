@@ -39,7 +39,7 @@ inline rclcpp::QoS adapt_request_to_offers(
     request_qos.reliable();
   } else {
     if (reliability_reliable_endpoints_count > 0) {
-      ROSBAG2_TRANSPORT_LOG_WARN_STREAM( topic_name <<
+      RCLCPP_WARN_STREAM(rclcpp::get_logger("plotjuggler_ros"), topic_name <<
           ": some, but not all, publishers on topic "
           "are offering RMW_QOS_POLICY_RELIABILITY_RELIABLE. "
           "Falling back to RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT "
@@ -55,7 +55,7 @@ inline rclcpp::QoS adapt_request_to_offers(
     request_qos.transient_local();
   } else {
     if (durability_transient_local_endpoints_count > 0) {
-      ROSBAG2_TRANSPORT_LOG_WARN_STREAM(topic_name <<
+      RCLCPP_WARN_STREAM(rclcpp::get_logger("plotjuggler_ros"), topic_name <<
           ": some, but not all, publishers on topic "
           "are offering RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL. "
           "Falling back to RMW_QOS_POLICY_DURABILITY_VOLATILE "

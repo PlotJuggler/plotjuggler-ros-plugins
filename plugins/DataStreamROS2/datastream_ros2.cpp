@@ -21,9 +21,9 @@ DataStreamROS2::DataStreamROS2() :
   _context = std::make_shared<rclcpp::Context>();
   _context->init(0, nullptr);
 
-  auto exec_args = rclcpp::executor::ExecutorArgs();
-  exec_args.context = _context;
-  _executor = std::make_unique<rclcpp::executors::MultiThreadedExecutor>(exec_args, 2);
+  auto exec_opts = rclcpp::ExecutorOptions();
+  exec_opts.context = _context;
+  _executor = std::make_unique<rclcpp::executors::MultiThreadedExecutor>(exec_opts, 2);
 
 }
 
