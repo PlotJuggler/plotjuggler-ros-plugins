@@ -38,6 +38,26 @@ const std::vector<const char*>& DataLoadROS2::compatibleFileExtensions() const
   return _extensions;
 }
 
+std::string DataLoadROS2::getStorageID(std::string& uri)
+{
+  std::string extension = "";
+  std::string::size_type idx = uri.rfind('.');
+
+  if(idx != std::string::npos)
+  {
+    extension = uri.substr(idx);
+  }
+
+  if (extension == ".mcap")
+  {
+    return "mcap";
+  }
+  else
+  {
+    return "sqlite3";
+  }
+}
+
 bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
                                     PJ::PlotDataMapRef& plot_map)
 {
@@ -53,7 +73,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
 
   rosbag2_storage::StorageOptions storageOptions;
   storageOptions.uri = bagDir.toStdString();
-  storageOptions.storage_id = "sqlite3";
+  storageOptions.storage_id = getStorageID(storageOptions.uri);
   rosbag2_cpp::ConverterOptions converterOptions;
   converterOptions.input_serialization_format = "cdr";
   converterOptions.output_serialization_format = rmw_get_serialization_format();

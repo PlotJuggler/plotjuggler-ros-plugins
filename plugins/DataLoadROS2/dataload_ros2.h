@@ -47,6 +47,8 @@ private:
   void saveDefaultSettings();
 
   void loadDefaultSettings();
+
+  std::string getStorageID(std::string& uri);
 };
 
 #endif  // DATALOAD_ROS2_H
