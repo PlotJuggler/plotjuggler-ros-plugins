@@ -18,7 +18,6 @@
 #include <rosidl_typesupport_introspection_cpp/field_types.hpp>
 #include <rosidl_typesupport_cpp/identifier.hpp>
 #include <rosbag2_cpp/typesupport_helpers.hpp>
-#include <rosbag2_cpp/storage_options.hpp>
 #include <rosbag2_cpp/types/introspection_message.hpp>
 #include <rosbag2_storage/storage_options.hpp>
 #include <unordered_map>
