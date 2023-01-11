@@ -67,7 +67,8 @@ struct Serializer<::PalStatisticsValues_>
 
 //-----------------------------------------------------
 
-static std::unordered_map<uint32_t, std::vector<std::string>> _stored_pal_statistics_names;
+using TopicStatistics = std::unordered_map<uint32_t, std::vector<std::string>>;
+static std::unordered_map<std::string, TopicStatistics> _stored_pal_statistics_names;
 
 class PalStatisticsNamesParser : public RosMessageParser
 {
@@ -82,7 +83,10 @@ public:
     PalStatisticsNames_ pal_names;
     ros::serialization::IStream is(const_cast<uint8_t*>(msg.data()), msg.size());
     ros::serialization::deserialize(is, pal_names);
-    _stored_pal_statistics_names.insert({ pal_names.names_version, std::move(pal_names.names) });
+    std::string values_topic_name = _topic_name;
+    values_topic_name.replace(values_topic_name.find("names"), 5, "values");
+    _stored_pal_statistics_names[values_topic_name].insert(
+        { pal_names.names_version, std::move(pal_names.names) });
     return true;
   }
 };
@@ -107,8 +111,9 @@ public:
     double header_stamp = pal_msg.header.stamp.toSec();
     timestamp = (_config.use_header_stamp && header_stamp > 0) ? header_stamp : timestamp;
 
-    auto names_it = _stored_pal_statistics_names.find(pal_msg.names_version);
-    if (names_it == _stored_pal_statistics_names.end())
+    auto& statistics_map = _stored_pal_statistics_names[_topic_name];
+    auto names_it = statistics_map.find(pal_msg.names_version);
+    if (names_it == statistics_map.end())
     {
       return false;  // missing vocabulary
     }
