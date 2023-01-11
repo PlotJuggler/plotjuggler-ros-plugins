@@ -9,8 +9,8 @@
 #include "fmt/format.h"
 #include "header_msg.h"
 
-
-static std::unordered_map<uint32_t, std::vector<std::string>> _stored_pal_statistics_names;
+using TopicStatistics = std::unordered_map<uint32_t, std::vector<std::string>>;
+static std::unordered_map<std::string, TopicStatistics> _stored_pal_statistics_names;
 
 
 class PAL_StatisticsNamesParser : public BuiltinMessageParser<pal_statistics_msgs::msg::StatisticsNames>
@@ -23,7 +23,9 @@ public:
 
   void parseMessageImpl(const pal_statistics_msgs::msg::StatisticsNames& msg, double& timestamp) override
   {
-    _stored_pal_statistics_names.insert({ msg.names_version, msg.names });
+    std::string values_topic_name = _topic_name;
+    values_topic_name.replace(values_topic_name.find("names"), 5, "values");
+    _stored_pal_statistics_names[values_topic_name].insert({ msg.names_version, msg.names });
   }
 };
 
@@ -42,9 +44,10 @@ public:
     auto& values = _data[msg.names_version];
 
     _header_parser.parse(msg.header, timestamp, _config.use_header_stamp);
+    auto& statistics_map = _stored_pal_statistics_names[_topic_name];
 
-    auto names_it = _stored_pal_statistics_names.find(msg.names_version);
-    if (names_it == _stored_pal_statistics_names.end())
+    auto names_it = statistics_map.find(msg.names_version);
+    if (names_it == statistics_map.end())
     {
       return;  // missing vocabulary
     }
