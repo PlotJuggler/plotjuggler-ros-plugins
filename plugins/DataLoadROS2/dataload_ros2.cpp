@@ -50,9 +50,10 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     bagDir = finfo.dir().path();
   }
 
-  rosbag2_cpp::StorageOptions storageOptions;
+  rosbag2_storage::StorageOptions storageOptions;
+  const auto bag_metadata = metadata_io->read_metadata(bagDir.toStdString());
   storageOptions.uri = bagDir.toStdString();
-  storageOptions.storage_id = "sqlite3";
+  storageOptions.storage_id = bag_metadata.storage_identifier;
   rosbag2_cpp::ConverterOptions converterOptions;
   converterOptions.input_serialization_format = "cdr";
   converterOptions.output_serialization_format = rmw_get_serialization_format();
@@ -69,7 +70,6 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     QMessageBox::warning(nullptr, tr("Error"), QString("rosbag::open thrown an exception:\n") + QString(ex.what()));
     return false;
   }
-  const auto bag_metadata = metadata_io->read_metadata(storageOptions.uri);
 
   QDir::setCurrent(oldPath);
 
@@ -150,7 +150,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
 
   if (_bag_reader)
   {
-    _bag_reader->reset();
+    _bag_reader->close();
   }
   _bag_reader = temp_bag_reader;
   //---------------------------------------

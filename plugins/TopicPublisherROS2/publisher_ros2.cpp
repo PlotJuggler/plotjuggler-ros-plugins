@@ -25,7 +25,7 @@ TopicPublisherROS2::TopicPublisherROS2() :  _node(nullptr), _enabled(false)
   _context = std::make_shared<rclcpp::Context>();
   _context->init(0, nullptr);
 
-  auto exec_args = rclcpp::executor::ExecutorArgs();
+  auto exec_args = rclcpp::ExecutorOptions();
   exec_args.context = _context;
   _executor = std::make_unique<rclcpp::executors::MultiThreadedExecutor>(exec_args, 2);
 

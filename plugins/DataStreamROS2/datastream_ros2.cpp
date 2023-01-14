@@ -6,8 +6,8 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QProgressDialog>
-#include "ros2_parsers/generic_subscription.hpp"
-#include "rosbag2_helper.hpp"
+#include "rclcpp/generic_subscription.hpp"
+#include "rosbag2_transport/qos.hpp"
 
 DataStreamROS2::DataStreamROS2() :
     DataStreamer(),
@@ -21,7 +21,7 @@ DataStreamROS2::DataStreamROS2() :
   _context = std::make_shared<rclcpp::Context>();
   _context->init(0, nullptr);
 
-  auto exec_args = rclcpp::executor::ExecutorArgs();
+  auto exec_args = rclcpp::ExecutorOptions();
   exec_args.context = _context;
   _executor = std::make_unique<rclcpp::executors::MultiThreadedExecutor>(exec_args, 2);
 
@@ -190,13 +190,13 @@ void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::
   auto bound_callback = [=](std::shared_ptr<rclcpp::SerializedMessage> msg) { messageCallback(topic_name, msg); };
 
   auto publisher_info = _node->get_publishers_info_by_topic(topic_name);
-  auto detected_qos = PJ::adapt_request_to_offers(topic_name, publisher_info);
+  auto detected_qos = rosbag2_transport::Rosbag2QoS::adapt_request_to_offers(topic_name, publisher_info);
 
   // double subscription, latching or not
-  auto subscription = std::make_shared<rosbag2_transport::GenericSubscription>(
-      _node->get_node_base_interface().get(),
-      *_parser->typeSupport(topic_name),
-      topic_name, detected_qos, bound_callback);
+  auto subscription = _node->create_generic_subscription(topic_name,
+                                                         topic_type,
+                                                         detected_qos,
+                                                         bound_callback);
   _subscriptions[topic_name] = subscription;
   _node->get_node_topics_interface()->add_subscription(subscription, nullptr);
 
