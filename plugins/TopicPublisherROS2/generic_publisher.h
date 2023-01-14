@@ -25,7 +25,7 @@ public:
   GenericPublisher(rclcpp::node_interfaces::NodeBaseInterface* node_base,
                    const std::string& topic_name,
                    const rosidl_message_type_support_t& type_support)
-    : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options())
+    : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options(), callbacks_, true)
   {
   }
 
@@ -52,6 +52,8 @@ public:
 
     return std::make_shared<GenericPublisher>(node.get_node_base_interface().get(), topic_name, *type_support);
   }
+  
+  rclcpp::PublisherEventCallbacks callbacks_;
 };
 
 #endif  // GENERIC_PUBLISHER_H
