@@ -2,8 +2,8 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.7.3 (2023-01-14)
+------------------
 * Fix mapping of multiple pal_statistics topics (`#61 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/61>`_)
 * fix implicit uint8_t -> double narrowing (`#42 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/42>`_)
   YES, the standard committee believes this might be narrowing
