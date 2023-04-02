@@ -11,6 +11,12 @@ ROS is supported through external plugins that can be found in this [repository]
 - **Logs/rosout** visualizer (ROS only).
 - **Re-publisher** similar to `rosbag play` (ROS only).
 
+## Skip the topic selection window (useful when loading a layout)
+When loading a layout that includes ROS topics, PlotJuggler shows the ROS topic selection dialog, in order to skip
+clicking on `Ok` you can set the environment variable: `PLOTJUGGLER_ACCEPT_SELECT_ROS_TOPIC_DIALOG=1` and this dialog will be skipped.
+
+Note that if you click on `Stop` and then on `Start` again, you will be able to edit the topics.
+
 
 ## Install with Debians (TODO)
 

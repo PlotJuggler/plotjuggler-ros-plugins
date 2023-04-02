@@ -374,7 +374,19 @@ bool DataStreamROS::start(QStringList* selected_datasources)
     dialog.updateTopicList(all_topics);
   });
 
-  int res = dialog.exec();
+  const char* env_var = std::getenv("PLOTJUGGLER_ACCEPT_SELECT_ROS_TOPIC_DIALOG");
+  bool skip_topics_dialog_box = (env_var != nullptr && env_var[0] == '1');
+  int res = QDialog::Accepted;
+  if(skip_topics_dialog_box){
+    qDebug() << "Environment variable PLOTJUGGLER_ACCEPT_SELECT_ROS_TOPIC_DIALOG set. Skipping dialog.\n";
+    // To enable the user to choose topics manually in the future
+    setenv("PLOTJUGGLER_ACCEPT_SELECT_ROS_TOPIC_DIALOG", "0", 1);
+    dialog.on_buttonBox_accepted();
+  }
+  else{
+    res = dialog.exec();
+  }
+
   _config = dialog.getResult();
   timer.stop();
 

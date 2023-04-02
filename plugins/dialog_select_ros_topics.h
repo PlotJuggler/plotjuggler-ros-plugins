@@ -33,9 +33,9 @@ public slots:
 
   void updateTopicList(std::vector<std::pair<QString, QString>> topic_list);
 
-private slots:
-
   void on_buttonBox_accepted();
+
+private slots:
 
   void on_listRosTopics_itemSelectionChanged();
 
