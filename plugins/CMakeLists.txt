@@ -94,7 +94,7 @@ elseif(COMPILING_WITH_AMENT)
         nav_msgs
         diagnostic_msgs
         plotjuggler_msgs
-     #    pal_statistics_msgs
+        pal_statistics_msgs
         tf2_msgs
         tf2_ros
         plotjuggler
