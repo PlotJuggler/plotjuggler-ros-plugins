@@ -6,7 +6,7 @@
 #include "plotjuggler_msgs.h"
 #include "diagnostic_msg.h"
 #include "pj_statistics_msg.h"
-//  #include "pal_statistics_msg.h"
+#include "pal_statistics_msg.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
@@ -160,14 +160,14 @@ void Ros2CompositeParser::registerMessageType(const std::string& topic_name,
   {
     parser.reset(new PJ_StatisticsValuesParser(topic_name, _plot_data));
   }
-//  else if (type == "pal_statistics_msgs/StatisticsNames")
-//  {
-//    parser.reset(new PAL_StatisticsNamesParser(topic_name, _plot_data));
-//  }
-//  else if (type == "pal_statistics_msgs/StatisticsValues")
-//  {
-//    parser.reset(new PAL_StatisticsValuesParser(topic_name, _plot_data));
-//  }
+  else if (type == "pal_statistics_msgs/StatisticsNames")
+  {
+    parser.reset(new PAL_StatisticsNamesParser(topic_name, _plot_data));
+  }
+  else if (type == "pal_statistics_msgs/StatisticsValues")
+  {
+    parser.reset(new PAL_StatisticsValuesParser(topic_name, _plot_data));
+  }
   else
   {
     parser.reset(new IntrospectionParser(topic_name, type, _plot_data));
