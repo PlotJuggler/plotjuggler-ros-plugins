@@ -59,7 +59,9 @@ ROSMessage::ROSMessage(const std::string& msg_def)
     }
 
     // Trim start of line
-    line.erase(line.begin(), std::find_if(line.begin(), line.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+    //line.erase(line.begin(), std::find_if(line.begin(), line.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+    line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](unsigned char c){return !std::isspace(c);}));
+
 
     if (line.compare(0, 5, "MSG: ") == 0)
     {
