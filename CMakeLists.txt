@@ -2,8 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 PROJECT(plotjuggler_ros)
 
-# http://answers.ros.org/question/230877/optionally-build-a-package-with-catkin/
-if( CATKIN_DEVEL_PREFIX OR catkin_FOUND OR CATKIN_BUILD_BINARY_PACKAGE)
+find_package(ament_cmake QUIET)
+find_package(catkin QUIET)
+
+if(catkin_FOUND)
     set(COMPILING_WITH_CATKIN 1)
 
     message(STATUS "---------------------------------------------------------------------")
@@ -28,9 +30,9 @@ if( CATKIN_DEVEL_PREFIX OR catkin_FOUND OR CATKIN_BUILD_BINARY_PACKAGE)
     catkin_package(
         CATKIN_DEPENDS ${ROS_DEPENDENCIES}  )
 
-elseif( DEFINED ENV{AMENT_PREFIX_PATH})
+elseif(ament_cmake_FOUND)
     set(COMPILING_WITH_AMENT 1)
-    
+
     message(STATUS "---------------------------------------------------------------------")
     message(STATUS "PlotJuggler is being built using AMENT. ROS2 plugins will be compiled")
     message(STATUS "---------------------------------------------------------------------")
@@ -53,7 +55,7 @@ elseif( DEFINED ENV{AMENT_PREFIX_PATH})
    #  find_package(pal_statistics_msgs REQUIRED)
 
 else()
-    message(FATAL_ERROR "PlotJuggler is being WITHOUT any ROS support")
+    message(FATAL_ERROR "Cannot determine appropriate ROS build system")
 endif()
 
 cmake_policy (SET CMP0020 NEW)
@@ -135,7 +137,7 @@ elseif(COMPILING_WITH_AMENT)
 
 	install(DIRECTORY launch
 		DESTINATION share/${PROJECT_NAME})
-    
+
 else()
     set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -149,4 +151,3 @@ add_subdirectory( plugins )
 if(COMPILING_WITH_AMENT)
     ament_package()
 endif()
-
