@@ -7,8 +7,8 @@
 
 #include <rosbag2_cpp/readers/sequential_reader.hpp>
 #include <PlotJuggler/dataloader_base.h>
-#include "ros2_parsers/ros2_parser.h"
 #include "dialog_select_ros_topics.h"
+#include "parser_configuration.h"
 
 class DataLoadROS2 : public PJ::DataLoader
 {
@@ -40,7 +40,7 @@ private:
 
   std::vector<const char*> _extensions;
 
-  RosParserConfig _config;
+  PJ::RosParserConfig _config;
 
   std::vector<std::pair<QString, QString>> getAndRegisterAllTopics();
 

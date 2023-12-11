@@ -28,12 +28,6 @@ SET( COMMON_SRC
 
 if(COMPILING_WITH_CATKIN)
 
-    include_directories(
-        ros1_introspection/include
-        ${catkin_INCLUDE_DIRS}  )
-
-    add_subdirectory(ros1_introspection)
-
      list(APPEND COMMON_SRC
         qnodedialog.cpp
         rule_editing.cpp
@@ -71,17 +65,9 @@ if(COMPILING_WITH_CATKIN)
     target_link_libraries( RosoutPublisher commonROS )
 #######################################################################
 elseif(COMPILING_WITH_AMENT)
+    include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
-    include_directories(
-        ./
-        ${Boost_INCLUDE_DIRS}
-        ros2_introspection/include
-        ros2_parsers)
-
-    list( APPEND COMMON_SRC
-        ros2_introspection/src/ros2_introspection.cpp
-        ros2_introspection/src/stringtree.cpp
-        ros2_parsers/ros2_parser.cpp )
+    list( APPEND COMMON_SRC ros2_parsers/ros2_parser.cpp )
 
     set(AMENT_DEPENDENCIES
         rclcpp
@@ -94,7 +80,7 @@ elseif(COMPILING_WITH_AMENT)
         nav_msgs
         diagnostic_msgs
         plotjuggler_msgs
-     #    pal_statistics_msgs
+        pal_statistics_msgs
         tf2_msgs
         tf2_ros
         plotjuggler
@@ -116,15 +102,15 @@ elseif(COMPILING_WITH_AMENT)
     target_link_libraries( DataLoadROS2 commonROS)
     ament_target_dependencies( DataLoadROS2 ${AMENT_DEPENDENCIES})
 #    #############
-    add_library( DataStreamROS2 SHARED
-        DataStreamROS2/datastream_ros2.cpp)
-    target_link_libraries( DataStreamROS2  commonROS)
-    ament_target_dependencies( DataStreamROS2 ${AMENT_DEPENDENCIES})
+    # add_library( DataStreamROS2 SHARED
+    #     DataStreamROS2/datastream_ros2.cpp)
+    # target_link_libraries( DataStreamROS2  commonROS)
+    # ament_target_dependencies( DataStreamROS2 ${AMENT_DEPENDENCIES})
 #    #############
-    add_library( TopicPublisherROS2 SHARED
-        TopicPublisherROS2/publisher_ros2.cpp)
-    target_link_libraries( TopicPublisherROS2 commonROS)
-    ament_target_dependencies( TopicPublisherROS2 ${AMENT_DEPENDENCIES})
+    # add_library( TopicPublisherROS2 SHARED
+    #     TopicPublisherROS2/publisher_ros2.cpp)
+    # target_link_libraries( TopicPublisherROS2 commonROS)
+    # ament_target_dependencies( TopicPublisherROS2 ${AMENT_DEPENDENCIES})
 endif()
 
 #######################################################################
@@ -140,7 +126,7 @@ if(COMPILING_WITH_CATKIN)
 elseif(COMPILING_WITH_AMENT)
     install(TARGETS
         DataLoadROS2
-        DataStreamROS2
-        TopicPublisherROS2
+        # DataStreamROS2
+        # TopicPublisherROS2
         DESTINATION  lib/${PROJECT_NAME}  )
 endif()

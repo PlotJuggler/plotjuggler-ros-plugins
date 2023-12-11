@@ -80,11 +80,6 @@ void CompositeParser::setConfig(const RosParserConfig &config)
   _config = config;
   // we don't need this information.
   _config.topics.clear();
-
-  for(auto& [name, parser]: _parsers)
-  {
-    parser->setConfig(_config);
-  }
 }
 
 bool CompositeParser::parseMessage(const std::string& topic_name, MessageRef serialized_msg, double& timestamp)
@@ -94,24 +89,13 @@ bool CompositeParser::parseMessage(const std::string& topic_name, MessageRef ser
   {
     return false;
   }
-  auto&parser = it->second;
+  auto& parser = it->second;
   parser->parseMessage(serialized_msg, timestamp);
   return true;
 }
 
-RosMessageParser::RosMessageParser(const std::string &topic_name, PlotDataMapRef &plot_data):
-  MessageParser(topic_name, plot_data)
+RosMessageParser::RosMessageParser(PlotDataMapRef &plot_data): _plot_data(plot_data)
 {
-}
-
-const RosParserConfig &RosMessageParser::getConfig() const
-{
-  return _config;
-}
-
-void RosMessageParser::setConfig(const RosParserConfig &config)
-{
-  _config = config;
 }
 
 PlotData &RosMessageParser::getSeries(const std::string& key)

@@ -53,7 +53,8 @@ private:
 
   std::thread _spinner;
 
-  RosParserConfig _config;
+  bool _clamp_large_arrays = false;
+  int _max_array_size = 1000;
 
   rclcpp::Clock _clock;
 

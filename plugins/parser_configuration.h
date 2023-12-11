@@ -27,23 +27,21 @@ struct RosParserConfig
   void loadFromSettings(const QSettings& settings, QString prefix);
 };
 
-// base class for the parser
-class RosMessageParser: public MessageParser
+
+class RosMessageParser
 {
   public:
-  RosMessageParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data);
-
-  const RosParserConfig& getConfig() const;
-
-  void setConfig(const RosParserConfig& config);
+  RosMessageParser(PlotDataMapRef &plot_data);
 
   PJ::PlotData& getSeries(const std::string& key);
 
   PJ::StringSeries& getStringSeries(const std::string &key);
 
+  virtual bool parseMessage(MessageRef serialized_msg, double& timestamp) = 0;
+
   protected:
 
-  RosParserConfig _config;
+  PJ::PlotDataMapRef& _plot_data;
 };
 
 // aggregator front-end to many parsers
@@ -60,7 +58,7 @@ class CompositeParser
 
   protected:
 
-  std::map<std::string, std::shared_ptr<RosMessageParser>> _parsers;
+  std::unordered_map<std::string, std::shared_ptr<RosMessageParser>> _parsers;
   RosParserConfig _config;
   PJ::PlotDataMapRef& _plot_data;
 };

@@ -36,6 +36,7 @@
     <depend>tf2_msgs</depend>
     <depend>plotjuggler_msgs</depend>
     <depend>plotjuggler</depend>
+    <depend>pal_statistics_msgs</depend>
 
     <!-- common dependancies -->
     <depend>qtbase5-dev</depend>
