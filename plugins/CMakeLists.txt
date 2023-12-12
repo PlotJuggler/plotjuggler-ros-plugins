@@ -101,11 +101,11 @@ elseif(COMPILING_WITH_AMENT)
         DataLoadROS2/dataload_ros2.cpp)
     target_link_libraries( DataLoadROS2 commonROS)
     ament_target_dependencies( DataLoadROS2 ${AMENT_DEPENDENCIES})
-#    #############
-    # add_library( DataStreamROS2 SHARED
-    #     DataStreamROS2/datastream_ros2.cpp)
-    # target_link_libraries( DataStreamROS2  commonROS)
-    # ament_target_dependencies( DataStreamROS2 ${AMENT_DEPENDENCIES})
+   #############
+    add_library( DataStreamROS2 SHARED
+        DataStreamROS2/datastream_ros2.cpp)
+    target_link_libraries( DataStreamROS2  commonROS)
+    ament_target_dependencies( DataStreamROS2 ${AMENT_DEPENDENCIES})
 #    #############
     # add_library( TopicPublisherROS2 SHARED
     #     TopicPublisherROS2/publisher_ros2.cpp)
@@ -134,7 +134,7 @@ elseif(COMPILING_WITH_AMENT)
     install(TARGETS
         test_ros2_parser
         DataLoadROS2
-        # DataStreamROS2
+        DataStreamROS2
         # TopicPublisherROS2
         DESTINATION  lib/${PROJECT_NAME}  )
 endif()
