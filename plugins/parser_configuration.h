@@ -41,6 +41,10 @@ class CompositeParser
 
   bool parseMessage(const std::string& topic_name, MessageRef serialized_msg, double& timestamp);
 
+  void clear() { _parsers.clear(); }
+
+  bool hasParser(const std::string& topic_name) { return _parsers.count(topic_name) != 0; }
+
   protected:
 
   std::unordered_map<std::string, std::shared_ptr<PJ::MessageParser>> _parsers;

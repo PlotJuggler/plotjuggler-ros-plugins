@@ -46,15 +46,14 @@ private:
   std::unique_ptr<rclcpp::executors::MultiThreadedExecutor> _executor;
   std::shared_ptr<rclcpp::Node> _node;
 
-  std::unique_ptr<Ros2CompositeParser> _parser;
+  CompositeParser _parser;
 
   bool _running;
   bool _first_warning;
 
   std::thread _spinner;
 
-  bool _clamp_large_arrays = false;
-  int _max_array_size = 1000;
+  RosParserConfig _config;
 
   rclcpp::Clock _clock;
 

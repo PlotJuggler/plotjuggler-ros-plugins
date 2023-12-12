@@ -13,8 +13,7 @@ DataStreamROS2::DataStreamROS2() :
     DataStreamer(),
     _node(nullptr),
     _running(false),
-    _first_warning(false),
-    _config()
+    _first_warning(false)
 {
   loadDefaultSettings();
 
@@ -72,7 +71,7 @@ bool DataStreamROS2::start(QStringList* selected_datasources)
     std::lock_guard<std::mutex> lock(mutex());
     dataMap().numeric.clear();
     dataMap().user_defined.clear();
-    _parser.reset( new Ros2CompositeParser(dataMap()) );
+    _parser.clear();
   }
 
   // Display the dialog which allows users to select ros topics to subscribe to,
@@ -114,7 +113,7 @@ bool DataStreamROS2::start(QStringList* selected_datasources)
   }
 
   saveDefaultSettings();
-  _parser->setConfig(_config);
+  _parser.setConfig(_config);
 
   //--------- subscribe ---------
   for (const auto& topic : dialog_topics)
@@ -185,7 +184,10 @@ void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::
     return;
   }
 
-  _parser->registerMessageType(topic_name, topic_type);
+  if(!_parser.hasParser(topic_name))
+  {
+    _parser.addParser(topic_name, CreateParserROS2(*parserFactories(), topic_name, topic_type, dataMap()));
+  }
 
   auto bound_callback = [=](std::shared_ptr<rclcpp::SerializedMessage> msg) { messageCallback(topic_name, msg); };
 
@@ -199,7 +201,6 @@ void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::
                                                          bound_callback);
   _subscriptions[topic_name] = subscription;
   _node->get_node_topics_interface()->add_subscription(subscription, nullptr);
-
 }
 
 void DataStreamROS2::messageCallback(const std::string& topic_name, std::shared_ptr<rclcpp::SerializedMessage> msg)
@@ -212,7 +213,7 @@ void DataStreamROS2::messageCallback(const std::string& topic_name, std::shared_
       auto msg_ptr = msg.get()->get_rcl_serialized_message();
       MessageRef msg_ref( msg_ptr.buffer, msg_ptr.buffer_length );
 
-      _parser->parseMessage(topic_name, msg_ref, timestamp);
+      _parser.parseMessage(topic_name, msg_ref, timestamp);
   }
   catch (std::runtime_error& ex)
   {
