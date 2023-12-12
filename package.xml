@@ -17,6 +17,7 @@
     <depend condition="$ROS_VERSION == 1">rosbag_storage</depend>
     <depend condition="$ROS_VERSION == 1">roscpp</depend>
     <depend condition="$ROS_VERSION == 1">roscpp_serialization</depend>
+    <depend condition="$ROS_VERSION == 1">ros_type_introspection</depend>
 
     <!-- ROS2 dependencies -->
     <buildtool_depend condition="$ROS_VERSION == 2">ament_cmake</buildtool_depend>

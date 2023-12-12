@@ -45,7 +45,7 @@ const std::vector<const char*>& DataLoadROS::compatibleFileExtensions() const
 }
 
 std::vector<std::pair<QString, QString>>
-DataLoadROS::getAllTopics(const rosbag::Bag* bag, RosCompositeParser& parser)
+DataLoadROS::getAllTopics(const rosbag::Bag* bag, PJ::CompositeParser& parser)
 {
   std::vector<std::pair<QString, QString>> all_topics;
   rosbag::View bag_view(*bag, ros::TIME_MIN, ros::TIME_MAX, true);
@@ -62,8 +62,8 @@ DataLoadROS::getAllTopics(const rosbag::Bag* bag, RosCompositeParser& parser)
     all_topics.push_back(std::make_pair(QString(topic.c_str()), QString(datatype.c_str())));
     try
     {
-      parser.registerMessageType(topic, datatype, definition);
-
+      auto ros_parser = CreateParserROS(*parserFactories(), topic, datatype, definition, *_plot_map);
+      parser.addParser(topic, ros_parser);
       RosIntrospectionFactory::registerMessage(topic, md5sum, datatype, definition);
     }
     catch (std::exception& ex)
@@ -107,6 +107,7 @@ DataLoadROS::getAllTopics(const rosbag::Bag* bag, RosCompositeParser& parser)
 
 bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& plot_map)
 {
+  _plot_map = &plot_map;
   auto temp_bag = std::make_shared<rosbag::Bag>();
 
   try
@@ -119,7 +120,7 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
     return false;
   }
 
-  RosCompositeParser ros_parser(plot_map);
+  PJ::CompositeParser ros_parser;
   auto all_topics = getAllTopics(temp_bag.get(), ros_parser);
 
   //----------------------------------
@@ -182,7 +183,7 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
   QElapsedTimer timer;
   timer.start();
 
-  PlotDataAny& plot_consecutive = plot_map.addUserDefined("plotjuggler::rosbag1::consecutive_messages")->second;
+  PJ::PlotDataAny& plot_consecutive = plot_map.addUserDefined("plotjuggler::rosbag1::consecutive_messages")->second;
 
   std::vector<uint8_t> buffer;
 
@@ -215,13 +216,13 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
     ros::serialization::OStream stream(buffer.data(), msg_size);
     msg_instance.write(stream);
 
-    MessageRef msg_serialized(buffer.data(), buffer.size());
+    PJ::MessageRef msg_serialized(buffer.data(), buffer.size());
 
     double tmp_timestamp = msg_time;
     ros_parser.parseMessage(topic_name, msg_serialized, tmp_timestamp);
 
     //------ save msg reference in PlotAny ----
-    auto data_point = PlotDataAny::Point(tmp_timestamp, std::any(msg_instance));
+    auto data_point = PJ::PlotDataAny::Point(tmp_timestamp, std::any(msg_instance));
     plot_consecutive.pushBack(data_point);
 
     auto plot_pair = plot_map.user_defined.find(topic_name);
@@ -229,7 +230,7 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
     {
       plot_pair = plot_map.addUserDefined(topic_name);
     }
-    PlotDataAny& plot_raw = plot_pair->second;
+    PJ::PlotDataAny& plot_raw = plot_pair->second;
     plot_raw.pushBack(data_point);
   }
 

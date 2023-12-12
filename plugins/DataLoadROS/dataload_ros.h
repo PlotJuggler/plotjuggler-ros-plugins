@@ -9,13 +9,13 @@
 
 #include <PlotJuggler/dataloader_base.h>
 #include "dialog_select_ros_topics.h"
-#include "ros1_parsers/ros1_parser.h"
+#include "ros_parsers/ros1_parser.h"
+#include "parser_configuration.h"
 
 class DataLoadROS : public PJ::DataLoader
 {
   Q_OBJECT
-  Q_PLUGIN_METADATA(IID "facontidavide.PlotJuggler3.DataLoader"
-                        "../dataloader.json")
+  Q_PLUGIN_METADATA(IID "facontidavide.PlotJuggler3.ROSDataLoader")
   Q_INTERFACES(PJ::DataLoader)
 
 public:
@@ -45,9 +45,11 @@ protected:
 private:
   std::vector<const char*> _extensions;
 
-  RosParserConfig _config;
+  PJ::RosParserConfig _config;
 
-  std::vector<std::pair<QString, QString>> getAllTopics(const rosbag::Bag* bag, RosCompositeParser &parser);
+  std::vector<std::pair<QString, QString>> getAllTopics(const rosbag::Bag* bag, PJ::CompositeParser &parser);
+
+  PJ::PlotDataMapRef* _plot_map = nullptr;
 };
 
 #endif  // DATALOAD_CSV_H

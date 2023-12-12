@@ -28,10 +28,12 @@ SET( COMMON_SRC
 
 if(COMPILING_WITH_CATKIN)
 
+    include_directories(
+        ${catkin_INCLUDE_DIRS}  )
+
      list(APPEND COMMON_SRC
         qnodedialog.cpp
         rule_editing.cpp
-        ros_parsers/ros1_parser.cpp
         )
 
     add_library( commonROS STATIC ${COMMON_SRC} ${COMMON_UI_SRC} )
@@ -39,32 +41,32 @@ if(COMPILING_WITH_CATKIN)
     target_link_libraries( commonROS PRIVATE
         ${Qt5Widgets_LIBRARIES}
         ${Qt5Xml_LIBRARIES}
-        ${catkin_LIBRARIES}
-        ros_type_introspection_static )
+        ${catkin_LIBRARIES})
 
     #########
     add_library( DataLoadROS SHARED
         DataLoadROS/dataload_ros.cpp)
     target_link_libraries( DataLoadROS  commonROS)
     #############
-    add_library( DataStreamROS SHARED
-        DataStreamROS/datastream_ROS.cpp )
-    target_link_libraries( DataStreamROS  commonROS )
-    #############
-    add_library( RosTopicPublisher SHARED
-        TopicPublisherROS/statepublisher_rostopic.cpp)
-    target_link_libraries( RosTopicPublisher commonROS )
-    #############
-    QT5_WRAP_UI ( ROSOUT_UI RosoutPublisher/logwidget.ui )
-    add_library( RosoutPublisher SHARED ${ROSOUT_UI}
-        RosoutPublisher/rosout_publisher.cpp
-        RosoutPublisher/logs_table_model.cpp
-        RosoutPublisher/logwidget.cpp
-        RosoutPublisher/modelfilter.cpp
-        )
-    target_link_libraries( RosoutPublisher commonROS )
+    # add_library( DataStreamROS SHARED
+    #     DataStreamROS/datastream_ROS.cpp )
+    # target_link_libraries( DataStreamROS  commonROS )
+    # #############
+    # add_library( RosTopicPublisher SHARED
+    #     TopicPublisherROS/statepublisher_rostopic.cpp)
+    # target_link_libraries( RosTopicPublisher commonROS )
+    # #############
+    # QT5_WRAP_UI ( ROSOUT_UI RosoutPublisher/logwidget.ui )
+    # add_library( RosoutPublisher SHARED ${ROSOUT_UI}
+    #     RosoutPublisher/rosout_publisher.cpp
+    #     RosoutPublisher/logs_table_model.cpp
+    #     RosoutPublisher/logwidget.cpp
+    #     RosoutPublisher/modelfilter.cpp
+    #     )
+    # target_link_libraries( RosoutPublisher commonROS )
 #######################################################################
 elseif(COMPILING_WITH_AMENT)
+
     include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
     list( APPEND COMMON_SRC ros_parsers/ros2_parser.cpp )
@@ -118,9 +120,9 @@ endif()
 if(COMPILING_WITH_CATKIN)
     install(TARGETS
         DataLoadROS
-        DataStreamROS
-        RosTopicPublisher
-        RosoutPublisher
+        # DataStreamROS
+        # RosTopicPublisher
+        # RosoutPublisher
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/
         )
 elseif(COMPILING_WITH_AMENT)
