@@ -66,8 +66,11 @@ void RosParserConfig::loadFromSettings(const QSettings &settings, QString prefix
   remove_suffix_from_strings = settings.value(prefix + "/remove_suffix_from_strings", true).toBool();
 }
 
-CompositeParser::CompositeParser(PlotDataMapRef &plot_data): _plot_data(plot_data)
+void CompositeParser::addParser(const std::string& topic_name, std::shared_ptr<PJ::MessageParser> parser)
 {
+  parser->setLargeArraysPolicy(!_config.discard_large_arrays, _config.max_array_size);
+  parser->enableEmbeddedTimestamp(_config.use_header_stamp);
+  _parsers.insert( {topic_name, parser} );
 }
 
 const RosParserConfig &CompositeParser::getConfig()
@@ -80,6 +83,11 @@ void CompositeParser::setConfig(const RosParserConfig &config)
   _config = config;
   // we don't need this information.
   _config.topics.clear();
+  for(auto& [name, parser]: _parsers)
+  {
+    parser->setLargeArraysPolicy(!config.discard_large_arrays, config.max_array_size);
+    parser->enableEmbeddedTimestamp(config.use_header_stamp);
+  }
 }
 
 bool CompositeParser::parseMessage(const std::string& topic_name, MessageRef serialized_msg, double& timestamp)
@@ -94,19 +102,6 @@ bool CompositeParser::parseMessage(const std::string& topic_name, MessageRef ser
   return true;
 }
 
-RosMessageParser::RosMessageParser(PlotDataMapRef &plot_data): _plot_data(plot_data)
-{
-}
-
-PlotData &RosMessageParser::getSeries(const std::string& key)
-{
-  return _plot_data.getOrCreateNumeric(key);
-}
-
-StringSeries &RosMessageParser::getStringSeries(const std::string& key)
-{
-  return _plot_data.getOrCreateStringSeries(key);
-}
 
 bool ParseDouble(const std::string &str,
                  double &value,

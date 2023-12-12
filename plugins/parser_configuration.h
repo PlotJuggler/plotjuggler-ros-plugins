@@ -28,27 +28,12 @@ struct RosParserConfig
 };
 
 
-class RosMessageParser
-{
-  public:
-  RosMessageParser(PlotDataMapRef &plot_data);
-
-  PJ::PlotData& getSeries(const std::string& key);
-
-  PJ::StringSeries& getStringSeries(const std::string &key);
-
-  virtual bool parseMessage(MessageRef serialized_msg, double& timestamp) = 0;
-
-  protected:
-
-  PJ::PlotDataMapRef& _plot_data;
-};
-
 // aggregator front-end to many parsers
 class CompositeParser
 {
   public:
-  CompositeParser(PlotDataMapRef& plot_data);
+
+  void addParser(const std::string& topic_name, std::shared_ptr<PJ::MessageParser> parser);
 
   const RosParserConfig& getConfig();
 
@@ -58,9 +43,8 @@ class CompositeParser
 
   protected:
 
-  std::unordered_map<std::string, std::shared_ptr<RosMessageParser>> _parsers;
+  std::unordered_map<std::string, std::shared_ptr<PJ::MessageParser>> _parsers;
   RosParserConfig _config;
-  PJ::PlotDataMapRef& _plot_data;
 };
 
 bool ParseDouble(const std::string& str, double& value, bool remover_suffix, bool parse_boolean);

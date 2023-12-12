@@ -92,19 +92,10 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
                               QString::fromStdString(topic.type)} );
     topicTypesByName.emplace(topic.name, topic.type);
 
-    TopicInfo topic_info;
-    topic_info.name = topic.name;
-    topic_info.type = topic.type;
-
     const auto& typesupport_identifier = rosidl_typesupport_cpp::typesupport_identifier;
     try
     {
-      const auto& typesupport_library = rosbag2_cpp::get_typesupport_library(topic.type,
-                                                                             typesupport_identifier);
-      topic_info.type_support = rosbag2_cpp::get_typesupport_handle(topic.type,
-                                                                    typesupport_identifier,
-                                                                    typesupport_library);
-      topics_info.emplace_back( std::move(topic_info) );
+      topics_info.emplace_back( CreateTopicInfo(topic.name, topic.type) );
 
     } catch (...) {
       failed_topic_type.insert(topic.type);
@@ -158,7 +149,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
 
   saveDefaultSettings();
 
-  Ros2CompositeParser parser(plot_map);
+  PJ::CompositeParser parser;
 
   std::set<std::string> topic_selected;
   for (const auto& topic_qt : _config.topics)
@@ -167,7 +158,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     std::string topic_type = topicTypesByName.at(topic_name);
     topic_selected.insert(topic_name);
 
-    parser.registerMessageType(topic_name, topic_type);
+    parser.addParser(topic_name, CreateParserROS2( *parserFactories(), topic_name, topic_type, plot_map));
   }
 
   parser.setConfig(_config);

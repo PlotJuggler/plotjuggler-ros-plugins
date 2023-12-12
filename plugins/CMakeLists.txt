@@ -111,6 +111,13 @@ elseif(COMPILING_WITH_AMENT)
     #     TopicPublisherROS2/publisher_ros2.cpp)
     # target_link_libraries( TopicPublisherROS2 commonROS)
     # ament_target_dependencies( TopicPublisherROS2 ${AMENT_DEPENDENCIES})
+
+    add_executable(test_ros2_parser
+        ros2_parsers/test_ros2_parser.cpp 
+        ros2_parsers/ros2_parser.cpp)
+    target_link_libraries( test_ros2_parser commonROS)
+    ament_target_dependencies( test_ros2_parser ${AMENT_DEPENDENCIES})
+
 endif()
 
 #######################################################################
@@ -125,6 +132,7 @@ if(COMPILING_WITH_CATKIN)
         )
 elseif(COMPILING_WITH_AMENT)
     install(TARGETS
+        test_ros2_parser
         DataLoadROS2
         # DataStreamROS2
         # TopicPublisherROS2

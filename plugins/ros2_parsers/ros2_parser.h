@@ -13,9 +13,9 @@
 using namespace PJ;
 
 
-struct TopicInfo{
+struct TopicInfo {
 
-  std::string name;
+  std::string topic_name;
   std::string type;
   bool has_header_stamp;
 
@@ -28,30 +28,13 @@ struct TopicInfo{
   static rcutils_allocator_t allocator;
 };
 
-class Ros2MessageParser: public RosMessageParser
-{
-public:
-  Ros2MessageParser(std::shared_ptr<MessageParser> parser_impl,
-                    const std::string& topic_name,
-                    const std::string& topic_type,
-                    PlotDataMapRef& plot_data);
-  
-  bool parseMessage(MessageRef serialized_msg, double& timestamp) override;
-
-protected:
-  TopicInfo _info;
-  std::shared_ptr<MessageParser> _parser_impl;
- };
+std::string CreateSchema(const std::string& type_name);
 
 
-class Ros2CompositeParser: public CompositeParser
-{
-  public:
+TopicInfo CreateTopicInfo(const std::string& topic_name, const std::string& type_name);
 
-  Ros2CompositeParser(PlotDataMapRef& plot_data): CompositeParser(plot_data) {}
-
-  void registerMessageType(const std::string& topic_name,
-                           const std::string& topic_type);
-};
-
+std::shared_ptr<PJ::MessageParser> CreateParserROS2(const PJ::ParserFactories& factories,
+                                                    const std::string& topic_name,
+                                                    const std::string& type_name,
+                                                    PJ::PlotDataMapRef& data);
 
