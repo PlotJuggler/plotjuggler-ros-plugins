@@ -31,7 +31,7 @@ if(COMPILING_WITH_CATKIN)
      list(APPEND COMMON_SRC
         qnodedialog.cpp
         rule_editing.cpp
-        ros1_parsers/ros1_parser.cpp
+        ros_parsers/ros1_parser.cpp
         )
 
     add_library( commonROS STATIC ${COMMON_SRC} ${COMMON_UI_SRC} )
@@ -67,20 +67,13 @@ if(COMPILING_WITH_CATKIN)
 elseif(COMPILING_WITH_AMENT)
     include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
-    list( APPEND COMMON_SRC ros2_parsers/ros2_parser.cpp )
+    list( APPEND COMMON_SRC ros_parsers/ros2_parser.cpp )
 
     set(AMENT_DEPENDENCIES
         rclcpp
         rosbag2
         rcpputils
-        fastcdr
         rosbag2_transport
-        sensor_msgs
-        geometry_msgs
-        nav_msgs
-        diagnostic_msgs
-        plotjuggler_msgs
-        pal_statistics_msgs
         tf2_msgs
         tf2_ros
         plotjuggler
@@ -106,15 +99,15 @@ elseif(COMPILING_WITH_AMENT)
         DataStreamROS2/datastream_ros2.cpp)
     target_link_libraries( DataStreamROS2  commonROS)
     ament_target_dependencies( DataStreamROS2 ${AMENT_DEPENDENCIES})
-#    #############
-    # add_library( TopicPublisherROS2 SHARED
-    #     TopicPublisherROS2/publisher_ros2.cpp)
-    # target_link_libraries( TopicPublisherROS2 commonROS)
-    # ament_target_dependencies( TopicPublisherROS2 ${AMENT_DEPENDENCIES})
+   #############
+    add_library( TopicPublisherROS2 SHARED
+        TopicPublisherROS2/publisher_ros2.cpp)
+    target_link_libraries( TopicPublisherROS2 commonROS)
+    ament_target_dependencies( TopicPublisherROS2 ${AMENT_DEPENDENCIES})
 
     add_executable(test_ros2_parser
-        ros2_parsers/test_ros2_parser.cpp 
-        ros2_parsers/ros2_parser.cpp)
+        ros_parsers/test_ros2_parser.cpp 
+        ros_parsers/ros2_parser.cpp)
     target_link_libraries( test_ros2_parser commonROS)
     ament_target_dependencies( test_ros2_parser ${AMENT_DEPENDENCIES})
 
@@ -135,6 +128,6 @@ elseif(COMPILING_WITH_AMENT)
         test_ros2_parser
         DataLoadROS2
         DataStreamROS2
-        # TopicPublisherROS2
+        TopicPublisherROS2
         DESTINATION  lib/${PROJECT_NAME}  )
 endif()

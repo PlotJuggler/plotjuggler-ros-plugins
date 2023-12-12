@@ -54,16 +54,16 @@ void TopicPublisherROS2::updatePublishers()
   }
   for (const auto& info : _topics_info)
   {
-    auto to_publish = _topics_to_publish.find(info.name);
+    auto to_publish = _topics_to_publish.find(info.topic_name);
     if( to_publish == _topics_to_publish.end() || to_publish->second == false  )
     {
       continue; // no publish
     }
 
-    auto publisher_it = _publishers.find(info.name);
+    auto publisher_it = _publishers.find(info.topic_name);
     if (publisher_it == _publishers.end())
     {
-      _publishers.insert({ info.name, GenericPublisher::create(*_node, info.name, info.type) });
+      _publishers.insert({ info.topic_name, GenericPublisher::create(*_node, info.topic_name, info.type) });
     }
   }
 
@@ -106,7 +106,7 @@ void TopicPublisherROS2::setEnabled(bool to_enable)
     // select all the topics by default
     for(const auto& info: _topics_info)
     {
-      _topics_to_publish.insert( {info.name, true} );
+      _topics_to_publish.insert( {info.topic_name, true} );
     }
 
     updatePublishers();
@@ -150,7 +150,7 @@ void TopicPublisherROS2::filterDialog()
 
   for (const TopicInfo& info : _topics_info)
   {
-    const std::string topic_name = info.name;
+    const std::string topic_name = info.topic_name;
     auto cb = new QCheckBox(dialog);
     auto filter_it = _topics_to_publish.find(topic_name);
     if (filter_it == _topics_to_publish.end())

@@ -9,11 +9,8 @@
 #include <PlotJuggler/plotdata.h>
 #include "parser_configuration.h"
 
-
-using namespace PJ;
-
-
-struct TopicInfo {
+struct TopicInfo
+{
 
   std::string topic_name;
   std::string type;
@@ -28,13 +25,12 @@ struct TopicInfo {
   static rcutils_allocator_t allocator;
 };
 
-std::string CreateSchema(const std::string& type_name);
+std::string CreateSchema(const std::string &type_name);
 
+TopicInfo CreateTopicInfo(const std::string &topic_name, const std::string &type_name);
 
-TopicInfo CreateTopicInfo(const std::string& topic_name, const std::string& type_name);
-
-std::shared_ptr<PJ::MessageParser> CreateParserROS2(const PJ::ParserFactories& factories,
-                                                    const std::string& topic_name,
-                                                    const std::string& type_name,
-                                                    PJ::PlotDataMapRef& data);
-
+std::shared_ptr<PJ::MessageParser>
+CreateParserROS2(const PJ::ParserFactories &factories,
+                 const std::string &topic_name,
+                 const std::string &type_name,
+                 PJ::PlotDataMapRef &data);
