@@ -46,14 +46,14 @@ private:
   std::unique_ptr<rclcpp::executors::MultiThreadedExecutor> _executor;
   std::shared_ptr<rclcpp::Node> _node;
 
-  CompositeParser _parser;
+  PJ::CompositeParser _parser;
 
   bool _running;
   bool _first_warning;
 
   std::thread _spinner;
 
-  RosParserConfig _config;
+  PJ::RosParserConfig _config;
 
   rclcpp::Clock _clock;
 

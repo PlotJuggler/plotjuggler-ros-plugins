@@ -208,12 +208,12 @@ void DataStreamROS2::messageCallback(const std::string& topic_name, std::shared_
   double timestamp = _node->get_clock()->now().seconds();
   try
   {
-      std::unique_lock<std::mutex> lock(mutex());
+    std::unique_lock<std::mutex> lock(mutex());
 
-      auto msg_ptr = msg.get()->get_rcl_serialized_message();
-      MessageRef msg_ref( msg_ptr.buffer, msg_ptr.buffer_length );
+    auto msg_ptr = msg.get()->get_rcl_serialized_message();
+    PJ::MessageRef msg_ref( msg_ptr.buffer, msg_ptr.buffer_length );
 
-      _parser.parseMessage(topic_name, msg_ref, timestamp);
+    _parser.parseMessage(topic_name, msg_ref, timestamp);
   }
   catch (std::runtime_error& ex)
   {

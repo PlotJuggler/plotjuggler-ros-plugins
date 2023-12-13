@@ -9,6 +9,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/publisher.hpp>
 #include <rosbag2_storage/serialized_bag_message.hpp>
+#include <rosbag2_storage/storage_options.hpp>
 
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/static_transform_broadcaster.h>

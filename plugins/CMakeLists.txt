@@ -86,9 +86,8 @@ elseif(COMPILING_WITH_AMENT)
     target_compile_definitions(commonROS PUBLIC DISABLE_RULE_EDITING)
     target_link_libraries( commonROS
         ${Qt5Widgets_LIBRARIES}
-        ${Qt5Xml_LIBRARIES}
-        fastcdr
-       )
+        ${Qt5Xml_LIBRARIES})
+
     ament_target_dependencies( commonROS ${AMENT_DEPENDENCIES})
 
     #############
@@ -106,6 +105,10 @@ elseif(COMPILING_WITH_AMENT)
         TopicPublisherROS2/publisher_ros2.cpp)
     target_link_libraries( TopicPublisherROS2 commonROS)
     ament_target_dependencies( TopicPublisherROS2 ${AMENT_DEPENDENCIES})
+
+    if("$ENV{AMENT_PREFIX_PATH}" EQUAL "/opt/ros/humble")
+        target_compile_definitions(TopicPublisherROS2 PUBLIC HUMBLE)
+    endif()
 
     add_executable(test_ros2_parser
         ros_parsers/test_ros2_parser.cpp 

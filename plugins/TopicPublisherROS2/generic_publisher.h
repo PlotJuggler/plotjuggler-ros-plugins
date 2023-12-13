@@ -18,6 +18,7 @@
 #include <memory>
 #include <string>
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp/publisher_base.hpp>
 
 class GenericPublisher : public rclcpp::PublisherBase
 {
@@ -25,9 +26,12 @@ public:
   GenericPublisher(rclcpp::node_interfaces::NodeBaseInterface* node_base,
                    const std::string& topic_name,
                    const rosidl_message_type_support_t& type_support)
-    : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options())
-  {
-  }
+#ifdef ROS_HUMBLE
+  : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options())
+#else
+  : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options(), callbacks_, true)
+#endif
+  {}
 
   virtual ~GenericPublisher() = default;
 
@@ -52,6 +56,10 @@ public:
 
     return std::make_shared<GenericPublisher>(node.get_node_base_interface().get(), topic_name, *type_support);
   }
+
+  #ifndef ROS_HUMBLE
+  rclcpp::PublisherEventCallbacks callbacks_;
+  #endif
 };
 
 #endif  // GENERIC_PUBLISHER_H

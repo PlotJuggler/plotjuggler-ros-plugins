@@ -18,7 +18,6 @@
 #include <rosidl_typesupport_introspection_cpp/field_types.hpp>
 #include <rosidl_typesupport_cpp/identifier.hpp>
 #include <rosbag2_cpp/typesupport_helpers.hpp>
-#include <rosbag2_cpp/storage_options.hpp>
 #include <rosbag2_cpp/types/introspection_message.hpp>
 #include <unordered_map>
 #include <rclcpp/rclcpp.hpp>
@@ -26,6 +25,8 @@
 
 #include "dialog_select_ros_topics.h"
 #include "ros_parsers/ros2_parser.h"
+
+#include <rosbag2_storage/storage_options.hpp>
 
 DataLoadROS2::DataLoadROS2()
 {
@@ -209,7 +210,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     }
     //----- parse! -----------
     double timestamp = msg_timestamp;
-    MessageRef msg_ref(msg->serialized_data->buffer, msg->serialized_data->buffer_length);
+    PJ::MessageRef msg_ref(msg->serialized_data->buffer, msg->serialized_data->buffer_length);
     parser.parseMessage(topic_name, msg_ref, timestamp);
 
     //---- save msg reference in PlotAny ----
