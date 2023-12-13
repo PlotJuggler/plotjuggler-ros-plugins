@@ -33,8 +33,7 @@ if(COMPILING_WITH_CATKIN)
 
      list(APPEND COMMON_SRC
         qnodedialog.cpp
-        rule_editing.cpp
-        )
+        rule_editing.cpp)
 
     add_library( commonROS STATIC ${COMMON_SRC} ${COMMON_UI_SRC} )
     target_compile_definitions(commonROS PUBLIC DISABLE_RULE_EDITING)
@@ -47,23 +46,23 @@ if(COMPILING_WITH_CATKIN)
     add_library( DataLoadROS SHARED
         DataLoadROS/dataload_ros.cpp)
     target_link_libraries( DataLoadROS  commonROS)
+    ############
+    add_library( DataStreamROS SHARED
+        DataStreamROS/datastream_ROS.cpp )
+    target_link_libraries( DataStreamROS  commonROS )
     #############
-    # add_library( DataStreamROS SHARED
-    #     DataStreamROS/datastream_ROS.cpp )
-    # target_link_libraries( DataStreamROS  commonROS )
-    # #############
-    # add_library( RosTopicPublisher SHARED
-    #     TopicPublisherROS/statepublisher_rostopic.cpp)
-    # target_link_libraries( RosTopicPublisher commonROS )
-    # #############
-    # QT5_WRAP_UI ( ROSOUT_UI RosoutPublisher/logwidget.ui )
-    # add_library( RosoutPublisher SHARED ${ROSOUT_UI}
-    #     RosoutPublisher/rosout_publisher.cpp
-    #     RosoutPublisher/logs_table_model.cpp
-    #     RosoutPublisher/logwidget.cpp
-    #     RosoutPublisher/modelfilter.cpp
-    #     )
-    # target_link_libraries( RosoutPublisher commonROS )
+    add_library( RosTopicPublisher SHARED
+        TopicPublisherROS/statepublisher_rostopic.cpp)
+    target_link_libraries( RosTopicPublisher commonROS )
+    #############
+    QT5_WRAP_UI ( ROSOUT_UI RosoutPublisher/logwidget.ui )
+    add_library( RosoutPublisher SHARED ${ROSOUT_UI}
+        RosoutPublisher/rosout_publisher.cpp
+        RosoutPublisher/logs_table_model.cpp
+        RosoutPublisher/logwidget.cpp
+        RosoutPublisher/modelfilter.cpp
+        )
+    target_link_libraries( RosoutPublisher commonROS )
 #######################################################################
 elseif(COMPILING_WITH_AMENT)
 
@@ -123,9 +122,9 @@ endif()
 if(COMPILING_WITH_CATKIN)
     install(TARGETS
         DataLoadROS
-        # DataStreamROS
-        # RosTopicPublisher
-        # RosoutPublisher
+        DataStreamROS
+        RosTopicPublisher
+        RosoutPublisher
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/
         )
 elseif(COMPILING_WITH_AMENT)

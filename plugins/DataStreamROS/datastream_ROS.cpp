@@ -24,6 +24,9 @@
 #include "qnodedialog.h"
 #include "shape_shifter_factory.hpp"
 
+using PJ::PlotDataAny;
+using PJ::PlotData;
+
 DataStreamROS::DataStreamROS() : DataStreamer(), _node(nullptr)
 , _action_saveIntoRosbag(nullptr)
 , _prev_clock_time(0)
@@ -73,7 +76,8 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
   const auto& definition = msg->getMessageDefinition();
 
   // register the message type
-  _parser->registerMessageType(topic_name, datatype, definition);
+  auto ros_parser = CreateParserROS(*parserFactories(), topic_name, datatype, definition, dataMap());
+  _parser.addParser(topic_name, ros_parser);
 
   RosIntrospectionFactory::registerMessage(topic_name, md5sum, datatype, definition);
 
@@ -93,7 +97,7 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
 
     auto tmp_config = _config;
     tmp_config.use_header_stamp = false;
-    _parser->setConfig(tmp_config);
+    _parser.setConfig(tmp_config);
   }
 
   // time wrapping may happen using use_sim_time = true and
@@ -113,13 +117,13 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
   }
   _prev_clock_time = msg_time;
 
-  MessageRef buffer_view(buffer);
+  PJ::MessageRef buffer_view(buffer);
 
   try
   {
       // before pushing, lock the mutex
       std::lock_guard<std::mutex> lock(mutex());
-      _parser->parseMessage(topic_name, buffer_view, msg_time);
+      _parser.parseMessage(topic_name, buffer_view, msg_time);
   }
   catch (std::runtime_error& ex)
   {
@@ -145,7 +149,7 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
       plot_pair = _user_defined_buffers.emplace(
             std::piecewise_construct,
             std::forward_as_tuple(prefixed_topic_name),
-            std::forward_as_tuple(prefixed_topic_name, PlotGroup::Ptr())).first;
+            std::forward_as_tuple(prefixed_topic_name, PJ::PlotGroup::Ptr())).first;
     }
     PlotDataAny& user_defined_data = plot_pair->second;
     user_defined_data.pushBack(PlotDataAny::Point(msg_time, std::any(std::move(buffer))));
@@ -217,7 +221,7 @@ void DataStreamROS::timerCallback()
         emit closed();
         return;
       }
-      _parser.reset( new RosCompositeParser(dataMap()) );
+      _parser.clear();
       subscribe();
 
       _running = true;
@@ -343,7 +347,7 @@ bool DataStreamROS::start(QStringList* selected_datasources)
     std::lock_guard<std::mutex> lock(mutex());
     dataMap().numeric.clear();
     dataMap().user_defined.clear();
-    _parser.reset( new RosCompositeParser(dataMap()) );
+    _parser.clear();
   }
 
   using namespace RosIntrospection;
@@ -388,7 +392,7 @@ bool DataStreamROS::start(QStringList* selected_datasources)
     _config.saveToSettings(settings, "DataStreamROS");
   }
 
-  _parser->setConfig(_config);
+  _parser.setConfig(_config);
 
   //-------------------------
   subscribe();
@@ -428,7 +432,7 @@ void DataStreamROS::shutdown()
 
   _subscribers.clear();
   _running = false;
-  _parser.reset();
+  _parser.clear();
 }
 
 DataStreamROS::~DataStreamROS()

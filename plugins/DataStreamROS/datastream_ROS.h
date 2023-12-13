@@ -11,7 +11,7 @@
 #include <rosgraph_msgs/Clock.h>
 #include "qnodedialog.h"
 #include "dialog_select_ros_topics.h"
-#include "ros1_parsers/ros1_parser.h"
+#include "ros_parsers/ros1_parser.h"
 
 class DataStreamROS : public PJ::DataStreamer
 {
@@ -75,15 +75,15 @@ private:
 
   std::map<std::string, int> _msg_index;
 
-  RosParserConfig _config;
+  PJ::RosParserConfig _config;
 
-  std::unique_ptr<RosCompositeParser> _parser;
+  PJ::CompositeParser _parser;
 
   QTimer* _periodic_timer;
 
   double _prev_clock_time;
 
-  std::unordered_map<std::string, PlotDataAny> _user_defined_buffers;
+  std::unordered_map<std::string, PJ::PlotDataAny> _user_defined_buffers;
 
 private:
   void saveIntoRosbag();
