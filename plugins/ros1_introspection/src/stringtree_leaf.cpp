@@ -90,7 +90,7 @@ void CreateStringFromTreeLeaf(const StringTreeLeaf& leaf, bool skip_root, std::s
     return;
   }
 
-  boost::container::static_vector<const std::string*, 16> strings_chain;
+  std::vector<const std::string*> strings_chain;
 
   size_t total_size = 0;
 
