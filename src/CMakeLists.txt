@@ -1,8 +1,3 @@
-# Qt related stuff
-set(CMAKE_AUTOMOC ON)
-SET(CMAKE_AUTOUIC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 add_definitions(${QT_DEFINITIONS})
 add_definitions(-DQT_PLUGIN)
 add_definitions(-DQT_SHARED)
@@ -12,8 +7,7 @@ QT5_WRAP_UI ( COMMON_UI_SRC
     rule_editing.ui
     dialog_select_ros_topics.ui
     dialog_with_itemlist.ui
-    publisher_select_dialog.ui
-    )
+    publisher_select_dialog.ui )
 
 SET( COMMON_SRC
     dialog_select_ros_topics.h
@@ -21,29 +15,29 @@ SET( COMMON_SRC
     dialog_with_itemlist.h
     publisher_select_dialog.h
     parser_configuration.cpp
-    parser_configuration.h
-   )
+    parser_configuration.h )
 
 #############
 
+include_directories(
+    ${catkin_INCLUDE_DIRS}
+    ${plotjuggler_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR} )
+
 if(COMPILING_WITH_CATKIN)
 
-    include_directories(
-        ${catkin_INCLUDE_DIRS}
-        ${plotjuggler_INCLUDE_DIRS}
-        )
-
-     list(APPEND COMMON_SRC
+    add_library( commonROS STATIC 
+        ${COMMON_SRC} 
+        ${COMMON_UI_SRC}
         qnodedialog.cpp
-        rule_editing.cpp)
+        rule_editing.cpp )
 
-    add_library( commonROS STATIC ${COMMON_SRC} ${COMMON_UI_SRC} )
     target_compile_definitions(commonROS PUBLIC DISABLE_RULE_EDITING)
-    target_link_libraries( commonROS PRIVATE
+    target_link_libraries( commonROS 
         ${Qt5Widgets_LIBRARIES}
         ${Qt5Xml_LIBRARIES}
-        ${plotjuggler_LIBRARIES}
-        ${catkin_LIBRARIES})
+        ${catkin_LIBRARIES}
+        ${plotjuggler_LIBRARIES})
 
     #########
     add_library( DataLoadROS SHARED
@@ -69,10 +63,6 @@ if(COMPILING_WITH_CATKIN)
 #######################################################################
 elseif(COMPILING_WITH_AMENT)
 
-    include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
-
-    list( APPEND COMMON_SRC ros_parsers/ros2_parser.cpp )
-
     set(AMENT_DEPENDENCIES
         rclcpp
         rosbag2
@@ -80,17 +70,18 @@ elseif(COMPILING_WITH_AMENT)
         rosbag2_transport
         tf2_msgs
         tf2_ros
-        plotjuggler
-        )
+        plotjuggler )
 
-    add_library( commonROS STATIC ${COMMON_SRC} ${COMMON_UI_SRC})
+    add_library( commonROS STATIC 
+        ${COMMON_SRC} 
+        ${COMMON_UI_SRC}
+        ros_parsers/ros2_parser.cpp )
 
     target_compile_definitions(commonROS PUBLIC DISABLE_RULE_EDITING)
     target_link_libraries( commonROS
         ${Qt5Widgets_LIBRARIES}
         ${Qt5Xml_LIBRARIES}
         ${plotjuggler_LIBRARIES})
-
     ament_target_dependencies( commonROS ${AMENT_DEPENDENCIES})
 
     #############
@@ -113,14 +104,8 @@ elseif(COMPILING_WITH_AMENT)
         message(STATUS "Detected Humble")
         target_compile_definitions(TopicPublisherROS2 PUBLIC ROS_HUMBLE)
     endif()
-
-    add_executable(test_ros2_parser
-        ros_parsers/test_ros2_parser.cpp 
-        ros_parsers/ros2_parser.cpp)
-    target_link_libraries( test_ros2_parser commonROS)
-    ament_target_dependencies( test_ros2_parser ${AMENT_DEPENDENCIES})
-
 endif()
+
 
 #######################################################################
 
@@ -130,11 +115,9 @@ if(COMPILING_WITH_CATKIN)
         DataStreamROS
         RosTopicPublisher
         RosoutPublisher
-        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/
-        )
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/   )
 elseif(COMPILING_WITH_AMENT)
     install(TARGETS
-        test_ros2_parser
         DataLoadROS2
         DataStreamROS2
         TopicPublisherROS2

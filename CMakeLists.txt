@@ -2,8 +2,11 @@ cmake_minimum_required(VERSION 3.5)
 
 PROJECT(plotjuggler_ros)
 
+find_package(ament_cmake QUIET)
+find_package(catkin QUIET)
+
 # http://answers.ros.org/question/230877/optionally-build-a-package-with-catkin/
-if( CATKIN_DEVEL_PREFIX OR catkin_FOUND OR CATKIN_BUILD_BINARY_PACKAGE)
+if( catkin_FOUND OR CATKIN_DEVEL_PREFIX OR CATKIN_BUILD_BINARY_PACKAGE)
     set(COMPILING_WITH_CATKIN 1)
 
     message(STATUS "---------------------------------------------------------------------")
@@ -23,14 +26,13 @@ if( CATKIN_DEVEL_PREFIX OR catkin_FOUND OR CATKIN_BUILD_BINARY_PACKAGE)
     catkin_package(
         CATKIN_DEPENDS ${ROS_DEPENDENCIES}  )
 
-elseif( DEFINED ENV{AMENT_PREFIX_PATH})
+elseif( ament_cmake_FOUND )
     set(COMPILING_WITH_AMENT 1)
     
     message(STATUS "---------------------------------------------------------------------")
     message(STATUS "PlotJuggler is being built using AMENT. ROS2 plugins will be compiled")
     message(STATUS "---------------------------------------------------------------------")
 
-    find_package(ament_cmake REQUIRED)
     find_package(rclcpp REQUIRED)
     find_package(rcpputils REQUIRED)
     find_package(rosbag2 REQUIRED)
