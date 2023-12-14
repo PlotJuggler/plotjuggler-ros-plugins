@@ -40,6 +40,7 @@ if(COMPILING_WITH_CATKIN)
     target_link_libraries( commonROS PRIVATE
         ${Qt5Widgets_LIBRARIES}
         ${Qt5Xml_LIBRARIES}
+        ${plotjuggler_LIBRARIES}
         ${catkin_LIBRARIES})
 
     #########
@@ -85,7 +86,8 @@ elseif(COMPILING_WITH_AMENT)
     target_compile_definitions(commonROS PUBLIC DISABLE_RULE_EDITING)
     target_link_libraries( commonROS
         ${Qt5Widgets_LIBRARIES}
-        ${Qt5Xml_LIBRARIES})
+        ${Qt5Xml_LIBRARIES}
+        ${plotjuggler_LIBRARIES})
 
     ament_target_dependencies( commonROS ${AMENT_DEPENDENCIES})
 
