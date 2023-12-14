@@ -4,7 +4,6 @@ add_definitions(-DQT_SHARED)
 
 QT5_WRAP_UI ( COMMON_UI_SRC
     qnodedialog.ui
-    rule_editing.ui
     dialog_select_ros_topics.ui
     dialog_with_itemlist.ui
     publisher_select_dialog.ui )
@@ -29,10 +28,8 @@ if(COMPILING_WITH_CATKIN)
     add_library( commonROS STATIC 
         ${COMMON_SRC} 
         ${COMMON_UI_SRC}
-        qnodedialog.cpp
-        rule_editing.cpp )
+        qnodedialog.cpp)
 
-    target_compile_definitions(commonROS PUBLIC DISABLE_RULE_EDITING)
     target_link_libraries( commonROS 
         ${Qt5Widgets_LIBRARIES}
         ${Qt5Xml_LIBRARIES}
@@ -77,7 +74,6 @@ elseif(COMPILING_WITH_AMENT)
         ${COMMON_UI_SRC}
         ros_parsers/ros2_parser.cpp )
 
-    target_compile_definitions(commonROS PUBLIC DISABLE_RULE_EDITING)
     target_link_libraries( commonROS
         ${Qt5Widgets_LIBRARIES}
         ${Qt5Xml_LIBRARIES}

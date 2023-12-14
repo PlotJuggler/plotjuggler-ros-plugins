@@ -38,7 +38,6 @@ public:
   virtual bool xmlLoadState(const QDomElement& parent_element) override;
 
 protected:
-  void loadSubstitutionRule(QStringList all_topic_names);
 
   std::shared_ptr<rosbag::Bag> _bag;
 

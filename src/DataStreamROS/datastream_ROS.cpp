@@ -20,7 +20,6 @@
 #include <ros/transport_hints.h>
 
 #include "dialog_select_ros_topics.h"
-#include "rule_editing.h"
 #include "qnodedialog.h"
 #include "shape_shifter_factory.hpp"
 

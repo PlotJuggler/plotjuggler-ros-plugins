@@ -63,8 +63,6 @@ private:
 
   std::map<std::string, ros::Subscriber> _subscribers;
 
-  RosIntrospection::SubstitutionRuleMap _rules;
-
   int _received_msg_count;
 
   QAction* _action_saveIntoRosbag;
