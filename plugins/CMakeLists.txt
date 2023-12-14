@@ -105,8 +105,9 @@ elseif(COMPILING_WITH_AMENT)
     target_link_libraries( TopicPublisherROS2 commonROS)
     ament_target_dependencies( TopicPublisherROS2 ${AMENT_DEPENDENCIES})
 
-    if("$ENV{AMENT_PREFIX_PATH}" EQUAL "/opt/ros/humble")
-        target_compile_definitions(TopicPublisherROS2 PUBLIC HUMBLE)
+    if("$ENV{AMENT_PREFIX_PATH}" MATCHES ".*/opt/ros/humble")
+        message(STATUS "Detected Humble")
+        target_compile_definitions(TopicPublisherROS2 PUBLIC ROS_HUMBLE)
     endif()
 
     add_executable(test_ros2_parser
