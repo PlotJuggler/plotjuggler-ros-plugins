@@ -132,7 +132,7 @@ endif()
 
 #############################################################
 
-add_subdirectory( plugins )
+add_subdirectory( src )
 
 if(COMPILING_WITH_AMENT)
     ament_package()
