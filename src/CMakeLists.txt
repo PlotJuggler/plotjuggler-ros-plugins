@@ -29,7 +29,9 @@ SET( COMMON_SRC
 if(COMPILING_WITH_CATKIN)
 
     include_directories(
-        ${catkin_INCLUDE_DIRS}  )
+        ${catkin_INCLUDE_DIRS}
+        ${plotjuggler_INCLUDE_DIRS}
+        )
 
      list(APPEND COMMON_SRC
         qnodedialog.cpp
