@@ -27,6 +27,7 @@
 #include "ros_parsers/ros2_parser.h"
 
 #include <rosbag2_storage/storage_options.hpp>
+#include <rosbag2_transport/reader_writer_factory.hpp>
 
 DataLoadROS2::DataLoadROS2()
 {
@@ -44,8 +45,6 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
 {
   auto metadata_io = std::make_unique<rosbag2_storage::MetadataIo>();
 
-  auto temp_bag_reader = std::make_shared<rosbag2_cpp::readers::SequentialReader>();
-
   QString bagDir;
   {
     QFileInfo finfo(info->filename);
@@ -59,6 +58,9 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
   rosbag2_cpp::ConverterOptions converterOptions;
   converterOptions.input_serialization_format = "cdr";
   converterOptions.output_serialization_format = rmw_get_serialization_format();
+
+  std::shared_ptr<rosbag2_cpp::Reader> temp_bag_reader =
+      rosbag2_transport::ReaderWriterFactory::make_reader(storageOptions);
 
   QString oldPath = QDir::currentPath();
   QDir::setCurrent(QDir::cleanPath(bagDir + QDir::separator() + ".."));
