@@ -5,7 +5,7 @@
 #include <QtPlugin>
 #include <QSettings>
 
-#include <rosbag2_cpp/readers/sequential_reader.hpp>
+#include <rosbag2_cpp/reader.hpp>
 #include <PlotJuggler/dataloader_base.h>
 #include "dialog_select_ros_topics.h"
 #include "parser_configuration.h"
@@ -36,7 +36,7 @@ public:
   virtual bool xmlLoadState(const QDomElement& parent_element) override;
 
 private:
-  std::shared_ptr<rosbag2_cpp::readers::SequentialReader> _bag_reader;
+  std::shared_ptr<rosbag2_cpp::Reader> _bag_reader;
 
   std::vector<const char*> _extensions;
 
