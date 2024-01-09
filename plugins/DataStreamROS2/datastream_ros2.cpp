@@ -7,7 +7,7 @@
 #include <QApplication>
 #include <QProgressDialog>
 #include "rclcpp/generic_subscription.hpp"
-#include "rosbag2_transport/qos.hpp"
+#include "rosbag2_storage/qos.hpp"
 
 DataStreamROS2::DataStreamROS2() :
     DataStreamer(),
@@ -190,7 +190,7 @@ void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::
   auto bound_callback = [=](std::shared_ptr<rclcpp::SerializedMessage> msg) { messageCallback(topic_name, msg); };
 
   auto publisher_info = _node->get_publishers_info_by_topic(topic_name);
-  auto detected_qos = rosbag2_transport::Rosbag2QoS::adapt_request_to_offers(topic_name, publisher_info);
+  auto detected_qos = rosbag2_storage::Rosbag2QoS::adapt_request_to_offers(topic_name, publisher_info);
 
   // double subscription, latching or not
   auto subscription = _node->create_generic_subscription(topic_name,
