@@ -26,6 +26,10 @@ void RosParserConfig::xmlSaveState(QDomDocument &doc, QDomElement &parent_elem) 
   QDomElement suffix_elem = doc.createElement("remove_suffix_from_strings");
   suffix_elem.setAttribute("value", remove_suffix_from_strings ? "true" : "false");
   parent_elem.appendChild(suffix_elem);
+
+  QDomElement topics_elem = doc.createElement("selected_topics");
+  topics_elem.setAttribute("value", topics.join(';'));
+  parent_elem.appendChild(topics_elem);
 }
 
 void RosParserConfig::xmlLoadState(const QDomElement &parent_element)
@@ -44,6 +48,11 @@ void RosParserConfig::xmlLoadState(const QDomElement &parent_element)
 
   QDomElement suffix_elem = parent_element.firstChildElement("remove_suffix_from_strings");
   remove_suffix_from_strings = (suffix_elem.attribute("value")== "true");
+
+  QDomElement topics_elem = parent_element.firstChildElement("selected_topics");
+  if(!topics_elem.isNull()) {
+    topics = topics_elem.attribute("value").split(';');
+  }
 }
 
 void RosParserConfig::saveToSettings(QSettings &settings, QString prefix) const

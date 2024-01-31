@@ -117,17 +117,15 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     QMessageBox::warning(nullptr, tr("Error"), msg);
   }
 
+  // FIXME: we keep this for backward compatibility
   if (info->plugin_config.hasChildNodes())
   {
     xmlLoadState(info->plugin_config.firstChildElement());
   }
 
-  if (!info->selected_datasources.empty())
+  if (!info->plugin_config.hasChildNodes() || _config.topics.empty())
   {
-    _config.topics = info->selected_datasources;
-  }
-  else
-  {
+    loadDefaultSettings();
     DialogSelectRosTopics* dialog = new DialogSelectRosTopics(all_topics_qt, _config);
 
     if (dialog->exec() != static_cast<int>(QDialog::Accepted))
@@ -161,12 +159,16 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     std::string topic_type = topicTypesByName.at(topic_name);
     topic_selected.insert(topic_name);
 
-    parser.addParser(topic_name, CreateParserROS2( *parserFactories(), topic_name, topic_type, plot_map));
+    auto ros2_parser = CreateParserROS2( *parserFactories(), 
+                                         topic_name, topic_type, plot_map);
+    parser.addParser(topic_name, ros2_parser);
+
   }
 
   parser.setConfig(_config);
 
   QProgressDialog progress_dialog;
+  progress_dialog.setWindowTitle("Loading the rosbag");
   progress_dialog.setLabelText("Loading... please wait");
   progress_dialog.setWindowModality(Qt::ApplicationModal);
   progress_dialog.setRange(0, bag_metadata.message_count);
@@ -233,7 +235,6 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
 
   qDebug() << "The rosbag loaded the data in " << diff << " milliseconds";
 
-  info->selected_datasources = _config.topics;
   return true;
 }
 

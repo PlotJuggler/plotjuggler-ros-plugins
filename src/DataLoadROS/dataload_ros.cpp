@@ -123,18 +123,17 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
   auto all_topics = getAllTopics(temp_bag.get(), ros_parser);
 
   //----------------------------------
-
+  // FIXME: we keep this here for backward compatibility
   if (info->plugin_config.hasChildNodes())
   {
     xmlLoadState(info->plugin_config.firstChildElement());
   }
 
-  if (!info->selected_datasources.empty())
+  if (info->plugin_config.hasChildNodes() || _config.topics.empty())
   {
-    _config.topics = info->selected_datasources;
-  }
-  else
-  {
+    QSettings settings;
+    _config.loadFromSettings(settings, "DataLoadROS");
+
     DialogSelectRosTopics* dialog = new DialogSelectRosTopics(all_topics, _config);
 
     if (dialog->exec() != static_cast<int>(QDialog::Accepted))
@@ -169,6 +168,7 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
   }
 
   QProgressDialog progress_dialog;
+  progress_dialog.setWindowTitle("Loading the rosbag");
   progress_dialog.setLabelText("Loading... please wait");
   progress_dialog.setWindowModality(Qt::ApplicationModal);
 
