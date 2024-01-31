@@ -235,7 +235,6 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
 
   qDebug() << "The loading operation took" << timer.elapsed() << "milliseconds";
 
-  info->selected_datasources = _config.topics;
   return true;
 }
 
