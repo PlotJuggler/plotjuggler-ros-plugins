@@ -2,6 +2,13 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* preparing for release 3.9
+* Update ros1.yaml
+* Add support for compressed rosbags (`#77 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/77>`_)
+* Contributors: Anthony Welte, Davide Faconti
+
 1.7.3 (2023-01-14)
 ------------------
 * Fix mapping of multiple pal_statistics topics (`#61 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/61>`_)
