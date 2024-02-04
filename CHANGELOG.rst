@@ -2,8 +2,8 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.0 (2024-02-04)
+------------------
 * preparing for release 3.9
 * Update ros1.yaml
 * Add support for compressed rosbags (`#77 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/77>`_)
