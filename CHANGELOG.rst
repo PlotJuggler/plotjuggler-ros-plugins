@@ -2,6 +2,11 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* critical bug fix in ROS1 plugins
+* Contributors: Davide Faconti
+
 2.1.0 (2024-02-04)
 ------------------
 * preparing for release 3.9
