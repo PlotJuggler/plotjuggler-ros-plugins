@@ -75,14 +75,15 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
   const auto& definition = msg->getMessageDefinition();
 
   // register the message type
-  auto ros_parser = CreateParserROS(*parserFactories(), topic_name, datatype, definition, dataMap());
-  _parser.addParser(topic_name, ros_parser);
-
-  RosIntrospectionFactory::registerMessage(topic_name, md5sum, datatype, definition);
+  if(!_parser.hasParser(topic_name))
+  {
+    auto ros_parser = CreateParserROS(*parserFactories(), topic_name, datatype, definition, dataMap());
+    _parser.addParser(topic_name, ros_parser);
+    RosIntrospectionFactory::registerMessage(topic_name, md5sum, datatype, definition);
+  }
 
   //------------------------------------
   std::vector<uint8_t> buffer;
-
   buffer.resize(msg->size());
 
   ros::serialization::OStream stream(buffer.data(), buffer.size());

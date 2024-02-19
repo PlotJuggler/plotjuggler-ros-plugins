@@ -129,7 +129,7 @@ bool DataLoadROS::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& p
     xmlLoadState(info->plugin_config.firstChildElement());
   }
 
-  if (info->plugin_config.hasChildNodes() || _config.topics.empty())
+  if (!info->plugin_config.hasChildNodes() || _config.topics.empty())
   {
     QSettings settings;
     _config.loadFromSettings(settings, "DataLoadROS");
