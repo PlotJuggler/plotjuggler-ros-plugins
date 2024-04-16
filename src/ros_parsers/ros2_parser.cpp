@@ -8,7 +8,7 @@
 
 #include <rosidl_typesupport_cpp/identifier.hpp>
 #include <rosidl_typesupport_introspection_cpp/identifier.hpp>
-#include <PlotJuggler/fmt/core.h>
+#include <PlotJuggler/contrib/fmt/core.h>
 
 
 bool TypeHasHeader(const rosidl_message_type_support_t* type_support)
@@ -72,6 +72,7 @@ std::string CreateSchema(const std::string& base_type)
         case ROS_TYPE_UINT64: schema += "uint64"; break;
         case ROS_TYPE_INT64: schema += "int64"; break;
         case ROS_TYPE_STRING: schema += "string"; break;
+        case ROS_TYPE_WSTRING: schema += "string"; break;
         case ROS_TYPE_MESSAGE: {
             auto type_info = reinterpret_cast<const MessageMembers*>(member.members_->data);
             std::string package = type_info->message_namespace_;
