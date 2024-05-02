@@ -7,7 +7,47 @@
 #include <QApplication>
 #include <QProgressDialog>
 #include "rclcpp/generic_subscription.hpp"
-#include "rosbag2_transport/qos.hpp"
+
+// function taken from rosbag2_transport
+
+rclcpp::QoS adapt_request_to_offers(
+  const std::string & topic_name, const std::vector<rclcpp::TopicEndpointInfo> & endpoints)
+{
+  rclcpp::QoS request_qos(rmw_qos_profile_default.depth);
+
+  if (endpoints.empty()) {
+    return request_qos;
+  }
+  size_t num_endpoints = endpoints.size();
+  size_t reliability_reliable_endpoints_count = 0;
+  size_t durability_transient_local_endpoints_count = 0;
+  for (const auto & endpoint : endpoints) {
+    const auto & profile = endpoint.qos_profile().get_rmw_qos_profile();
+    if (profile.reliability == RMW_QOS_POLICY_RELIABILITY_RELIABLE) {
+      reliability_reliable_endpoints_count++;
+    }
+    if (profile.durability == RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL) {
+      durability_transient_local_endpoints_count++;
+    }
+  }
+
+  // Policy: reliability
+  if (reliability_reliable_endpoints_count == num_endpoints) {
+    request_qos.reliable();
+  } else {
+    request_qos.best_effort();
+  }
+
+  // Policy: durability
+  // If all publishers offer transient_local, we can request it and receive latched messages
+  if (durability_transient_local_endpoints_count == num_endpoints) {
+    request_qos.transient_local();
+  } else {
+    request_qos.durability_volatile();
+  }
+
+  return request_qos;
+}
 
 DataStreamROS2::DataStreamROS2() :
     DataStreamer(),
@@ -192,7 +232,7 @@ void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::
   auto bound_callback = [=](std::shared_ptr<rclcpp::SerializedMessage> msg) { messageCallback(topic_name, msg); };
 
   auto publisher_info = _node->get_publishers_info_by_topic(topic_name);
-  auto detected_qos = rosbag2_transport::Rosbag2QoS::adapt_request_to_offers(topic_name, publisher_info);
+  auto detected_qos = adapt_request_to_offers(topic_name, publisher_info);
 
   // double subscription, latching or not
   auto subscription = _node->create_generic_subscription(topic_name,
