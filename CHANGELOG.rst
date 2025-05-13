@@ -2,6 +2,17 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* use system FMT
+* Fix detection of ROS 2 Humble (`#82 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/82>`_)
+  Detecting the ROS distribution based on the content of
+  AMENT_PREFIX_PATH does not always work. For example, when using the
+  Nix package manager, paths in AMENT_PREFIX_PATH could never match the
+  currently used pattern. It's better to use ROS_DISTRO variable for
+  this purpose. This should (I think) work everywhere.
+* Contributors: Davide Faconti, Michal Sojka
+
 2.1.1 (2024-02-19)
 ------------------
 * critical bug fix in ROS1 plugins
