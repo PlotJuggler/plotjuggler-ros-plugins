@@ -2,8 +2,8 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.2 (2025-05-13)
+------------------
 * use system FMT
 * Fix detection of ROS 2 Humble (`#82 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/82>`_)
   Detecting the ROS distribution based on the content of
