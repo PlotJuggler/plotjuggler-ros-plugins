@@ -8,7 +8,7 @@
 
 #include <rosidl_typesupport_cpp/identifier.hpp>
 #include <rosidl_typesupport_introspection_cpp/identifier.hpp>
-#include <PlotJuggler/fmt/core.h>
+#include <fmt/core.h>
 
 
 bool TypeHasHeader(const rosidl_message_type_support_t* type_support)
