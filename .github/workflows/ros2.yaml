@@ -1,19 +1,18 @@
-name: ros2
+name: jazzy
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - humble
+  pull_request:
+    types: [opened, synchronize]
+
 
 jobs:
-  industrial_ci:
-    strategy:
-      matrix:
-        env:
-          - {ROS_DISTRO: humble, ROS_REPO: main}
-          - {ROS_DISTRO: iron, ROS_REPO: main}
-          - {ROS_DISTRO: rolling, ROS_REPO: main}
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v1
-      - uses: 'ros-industrial/industrial_ci@master'
-        env: ${{matrix.env}}
+      - uses: ros-tooling/action-ros-ci@v0.4
         with:
-            package-name: plotjuggler_ros
+          package-name: plotjuggler_ros
+          target-ros2-distro: jazzy
