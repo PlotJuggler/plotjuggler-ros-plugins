@@ -8,14 +8,8 @@
 
 #include <rosidl_typesupport_cpp/identifier.hpp>
 #include <rosidl_typesupport_introspection_cpp/identifier.hpp>
+#include <fmt/core.h>
 
-#if __has_include(<PlotJuggler/fmt/core.h>)
-# include <PlotJuggler/fmt/core.h>
-#endif
-
-#if __has_include(<PlotJuggler/contrib/fmt/core.h>)
-# include <PlotJuggler/contrib/fmt/core.h>
-#endif
 
 bool TypeHasHeader(const rosidl_message_type_support_t* type_support)
 {
