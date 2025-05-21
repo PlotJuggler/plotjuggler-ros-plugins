@@ -2,6 +2,20 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* jazzy+
+* Fixing wstring ROS2 data type, and import rename for latest release build compatibility (`#86 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/86>`_)
+  Co-authored-by: Davide Faconti <davide.faconti@gmail.com>
+* Update ros2_parser.cpp
+* Fix detection of ROS 2 Humble (`#82 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/82>`_)
+  Detecting the ROS distribution based on the content of
+  AMENT_PREFIX_PATH does not always work. For example, when using the
+  Nix package manager, paths in AMENT_PREFIX_PATH could never match the
+  currently used pattern. It's better to use ROS_DISTRO variable for
+  this purpose. This should (I think) work everywhere.
+* Contributors: Ben Cohen, Davide Faconti, Michal Sojka
+
 2.1.1 (2024-02-19)
 ------------------
 * critical bug fix in ROS1 plugins
