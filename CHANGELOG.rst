@@ -2,8 +2,8 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.0 (2025-05-21)
+------------------
 * jazzy+
 * Fixing wstring ROS2 data type, and import rename for latest release build compatibility (`#86 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/86>`_)
   Co-authored-by: Davide Faconti <davide.faconti@gmail.com>
