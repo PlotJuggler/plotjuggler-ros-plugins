@@ -193,7 +193,7 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     {
       continue;
     }
-    const double msg_timestamp = 1e-9 * double(msg->send_timestamp);  // nanoseconds to seconds
+    const double msg_timestamp = 1e-9 * double(msg->time_stamp);  // nanoseconds to seconds
 
     //------ progress dialog --------------
     if (msg_count++ % 100 == 0)
