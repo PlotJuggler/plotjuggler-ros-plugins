@@ -193,7 +193,13 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info,
     {
       continue;
     }
+
+#ifdef ROS_HUMBLE
     const double msg_timestamp = 1e-9 * double(msg->time_stamp);  // nanoseconds to seconds
+#else
+    // from jazzy and later
+    const double msg_timestamp = 1e-9 * double(msg->send_timestamp);  // nanoseconds to seconds
+#endif
 
     //------ progress dialog --------------
     if (msg_count++ % 100 == 0)
