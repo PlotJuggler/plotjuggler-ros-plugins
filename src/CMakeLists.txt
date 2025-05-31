@@ -98,6 +98,7 @@ elseif(COMPILING_WITH_AMENT)
 
     if("$ENV{ROS_DISTRO}" STREQUAL "humble")
         message(STATUS "Detected Humble")
+        target_compile_definitions(DataLoadROS2 PUBLIC ROS_HUMBLE)
         target_compile_definitions(TopicPublisherROS2 PUBLIC ROS_HUMBLE)
     endif()
 endif()
