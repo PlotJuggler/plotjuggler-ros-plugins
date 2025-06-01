@@ -8,115 +8,55 @@ QT5_WRAP_UI ( COMMON_UI_SRC
     dialog_with_itemlist.ui
     publisher_select_dialog.ui )
 
-SET( COMMON_SRC
-    dialog_select_ros_topics.h
+
+add_library( commonROS STATIC 
+   dialog_select_ros_topics.h
     dialog_select_ros_topics.cpp
     dialog_with_itemlist.h
     publisher_select_dialog.h
     parser_configuration.cpp
-    parser_configuration.h )
+    parser_configuration.h
+    ros_parsers/ros2_parser.cpp
+    ${COMMON_UI_SRC}
+)
 
-#############
+target_link_libraries( commonROS
+    PUBLIC
+        Qt5::Widgets
+        Qt5::Xml
+        rclcpp::rclcpp
+        rcpputils::rcpputils
+        rosbag2_transport::rosbag2_transport
+        tf2_ros::tf2_ros
+        plotjuggler::plotjuggler_base
+        ${tf2_msgs_TARGETS}
+    )
 
-include_directories(
-    ${catkin_INCLUDE_DIRS}
-    ${plotjuggler_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR} )
-
-if(COMPILING_WITH_CATKIN)
-
-    add_library( commonROS STATIC 
-        ${COMMON_SRC} 
-        ${COMMON_UI_SRC}
-        qnodedialog.cpp)
-
-    target_link_libraries( commonROS 
-        ${Qt5Widgets_LIBRARIES}
-        ${Qt5Xml_LIBRARIES}
-        ${catkin_LIBRARIES}
-        ${plotjuggler_LIBRARIES})
-
-    #########
-    add_library( DataLoadROS SHARED
-        DataLoadROS/dataload_ros.cpp)
-    target_link_libraries( DataLoadROS  commonROS)
-    ############
-    add_library( DataStreamROS SHARED
-        DataStreamROS/datastream_ROS.cpp )
-    target_link_libraries( DataStreamROS  commonROS )
-    #############
-    add_library( RosTopicPublisher SHARED
-        TopicPublisherROS/statepublisher_rostopic.cpp)
-    target_link_libraries( RosTopicPublisher commonROS )
-    #############
-    QT5_WRAP_UI ( ROSOUT_UI RosoutPublisher/logwidget.ui )
-    add_library( RosoutPublisher SHARED ${ROSOUT_UI}
-        RosoutPublisher/rosout_publisher.cpp
-        RosoutPublisher/logs_table_model.cpp
-        RosoutPublisher/logwidget.cpp
-        RosoutPublisher/modelfilter.cpp
-        )
-    target_link_libraries( RosoutPublisher commonROS )
 #######################################################################
-elseif(COMPILING_WITH_AMENT)
+add_library( DataLoadROS2 SHARED    DataLoadROS2/dataload_ros2.cpp)
+target_link_libraries( DataLoadROS2 commonROS)
 
-    set(AMENT_DEPENDENCIES
-        rclcpp
-        rosbag2
-        rcpputils
-        rosbag2_transport
-        tf2_msgs
-        tf2_ros
-        plotjuggler )
 
-    add_library( commonROS STATIC 
-        ${COMMON_SRC} 
-        ${COMMON_UI_SRC}
-        ros_parsers/ros2_parser.cpp )
+add_library( DataStreamROS2 SHARED  DataStreamROS2/datastream_ros2.cpp)
+target_link_libraries( DataStreamROS2  commonROS)
 
-    target_link_libraries( commonROS
-        ${Qt5Widgets_LIBRARIES}
-        ${Qt5Xml_LIBRARIES}
-        ${plotjuggler_LIBRARIES})
-    ament_target_dependencies( commonROS ${AMENT_DEPENDENCIES})
 
-    #############
-    add_library( DataLoadROS2 SHARED
-        DataLoadROS2/dataload_ros2.cpp)
-    target_link_libraries( DataLoadROS2 commonROS)
-    ament_target_dependencies( DataLoadROS2 ${AMENT_DEPENDENCIES})
-   #############
-    add_library( DataStreamROS2 SHARED
-        DataStreamROS2/datastream_ros2.cpp)
-    target_link_libraries( DataStreamROS2  commonROS)
-    ament_target_dependencies( DataStreamROS2 ${AMENT_DEPENDENCIES})
-   #############
-    add_library( TopicPublisherROS2 SHARED
-        TopicPublisherROS2/publisher_ros2.cpp)
-    target_link_libraries( TopicPublisherROS2 commonROS)
-    ament_target_dependencies( TopicPublisherROS2 ${AMENT_DEPENDENCIES})
+add_library( TopicPublisherROS2 SHARED TopicPublisherROS2/publisher_ros2.cpp)
+target_link_libraries( TopicPublisherROS2 commonROS)
 
-    if("$ENV{ROS_DISTRO}" STREQUAL "humble")
+if("$ENV{ROS_DISTRO}" STREQUAL "humble")
         message(STATUS "Detected Humble")
         target_compile_definitions(DataLoadROS2 PUBLIC ROS_HUMBLE)
         target_compile_definitions(TopicPublisherROS2 PUBLIC ROS_HUMBLE)
-    endif()
 endif()
-
 
 #######################################################################
 
-if(COMPILING_WITH_CATKIN)
-    install(TARGETS
-        DataLoadROS
-        DataStreamROS
-        RosTopicPublisher
-        RosoutPublisher
-        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/   )
-elseif(COMPILING_WITH_AMENT)
-    install(TARGETS
+
+install(TARGETS
         DataLoadROS2
         DataStreamROS2
         TopicPublisherROS2
-        DESTINATION  lib/${PROJECT_NAME}  )
-endif()
+        DESTINATION  lib/${PROJECT_NAME}  
+    )
+

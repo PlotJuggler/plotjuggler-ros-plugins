@@ -2,49 +2,15 @@ cmake_minimum_required(VERSION 3.5)
 
 PROJECT(plotjuggler_ros)
 
-find_package(ament_cmake QUIET)
-find_package(catkin QUIET)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rcpputils REQUIRED)
+find_package(rosbag2_transport REQUIRED)
+find_package(Boost REQUIRED)
+find_package(tf2_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(plotjuggler REQUIRED)
 
-# http://answers.ros.org/question/230877/optionally-build-a-package-with-catkin/
-if( catkin_FOUND OR CATKIN_DEVEL_PREFIX OR CATKIN_BUILD_BINARY_PACKAGE)
-    set(COMPILING_WITH_CATKIN 1)
-
-    message(STATUS "---------------------------------------------------------------------")
-    message(STATUS "PlotJuggler is being built using CATKIN. ROS plugins will be compiled")
-    message(STATUS "---------------------------------------------------------------------")
-
-    set(ROS_DEPENDENCIES
-        rosbag_storage
-        roscpp
-        roscpp_serialization
-        ros_type_introspection
-        tf2_ros
-        plotjuggler )
-
-    find_package(catkin REQUIRED COMPONENTS ${ROS_DEPENDENCIES} )
-
-    catkin_package(
-        CATKIN_DEPENDS ${ROS_DEPENDENCIES}  )
-
-elseif( ament_cmake_FOUND )
-    set(COMPILING_WITH_AMENT 1)
-    
-    message(STATUS "---------------------------------------------------------------------")
-    message(STATUS "PlotJuggler is being built using AMENT. ROS2 plugins will be compiled")
-    message(STATUS "---------------------------------------------------------------------")
-
-    find_package(rclcpp REQUIRED)
-    find_package(rcpputils REQUIRED)
-    find_package(rosbag2 REQUIRED)
-    find_package(rosbag2_transport REQUIRED)
-    find_package(Boost REQUIRED)
-    find_package(tf2_msgs REQUIRED)
-    find_package(tf2_ros REQUIRED)
-    find_package(plotjuggler REQUIRED)
-
-else()
-    message(FATAL_ERROR "PlotJuggler is being WITHOUT any ROS support")
-endif()
 
 cmake_policy (SET CMP0020 NEW)
 
@@ -96,47 +62,20 @@ IF (NOT WIN32)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fPIC")
 ENDIF()
 
-include_directories(
-    3rdparty
-    ${Qt5Core_INCLUDE_DIRS}
-    ${Qt5Widgets_INCLUDE_DIRS}
-    ${Qt5Concurrent_INCLUDE_DIRS}
-    ${Qt5Xml_INCLUDE_DIRS}
-    ${Qt5WebSockets_INCLUDE_DIRS}
-    ${Qt5Svg_INCLUDE_DIRS}
-)
 
 add_definitions(-DFMT_HEADER_ONLY)
 
 #########################  INSTALL ####################################
 
-if(COMPILING_WITH_CATKIN)
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_LIB_DESTINATION})
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION})
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION})
 
-	install(DIRECTORY launch
-		DESTINATION share/${PROJECT_NAME})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-elseif(COMPILING_WITH_AMENT)
-    find_package(ament_cmake REQUIRED)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-	install(DIRECTORY launch
-		DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY launch
+	DESTINATION share/${PROJECT_NAME})
     
-else()
-    set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/plotjuggler)
-endif()
-
-#############################################################
-
 add_subdirectory( src )
 
-if(COMPILING_WITH_AMENT)
-    ament_package()
-endif()
+ament_package()
+
 

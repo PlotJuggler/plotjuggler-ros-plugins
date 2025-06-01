@@ -14,19 +14,15 @@ ROS is supported through external plugins that can be found in this [repository]
 - **Re-publisher** similar to `rosbag play` (ROS only).
 
 
-## Install with Debians (TODO)
+## Install with Debians
 
 Install PlotJuggler and its ROS plugins with:
 
     sudo apt install ros-${ROS_DISTRO}-plotjuggler-ros
-    
-To launch PlotJuggler on ROS, use the command:
-
-      rosrun plotjuggler plotjuggler
 
 or, if have ROS2 installed:
 
-       ros2 run plotjuggler plotjuggler
+    ros2 run plotjuggler plotjuggler
 
 ## How to compile PlotJuggler from source
 
@@ -41,12 +37,12 @@ Create a catkin workspace and clone the repositories:
 Now, it is time to compile:
 
     cd ~/ws_plotjuggler
-    rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -y
-    catkin build
-    
-Enjoy:
+    rosdep install --from-paths src --ignore-src -y
+    colcon build
 
-    source devel/setup.bash
-    roslaunch plotjuggler_ros plotjuggler.launch
+# For ROS (1) users
+
+From version 2.3+, this library will support only ROS2 (Hubmle or older)
+
     
      
