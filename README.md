@@ -1,3 +1,5 @@
+[![ros2](https://github.com/PlotJuggler/plotjuggler-ros-plugins/actions/workflows/ros2.yaml/badge.svg)](https://github.com/PlotJuggler/plotjuggler-ros-plugins/actions/workflows/ros2.yaml)
+
 # ROS plugins for PlotJuggler
 
 PlotJuggler works great with ROS, but it is not itself a "ROS" application.
