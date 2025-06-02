@@ -1,0 +1,23 @@
+name: ROS2 Jazzy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      # Set up ROS
+      - uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: jazzy
+
+      # Run ROS CI
+      - uses: ros-tooling/action-ros-ci@v0.4
+        with:
+          package-name: plotjuggler_ros
+          target-ros2-distro: jazzy
