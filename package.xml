@@ -19,7 +19,7 @@
     <depend>rosbag2_transport</depend>
 
     <depend>plotjuggler</depend>
-    <depend>plotjuggler_msgs<depend>
+    <depend>plotjuggler_msgs</depend>
     <depend>tf2_ros</depend>
     <depend>tf2_msgs</depend>
 
