@@ -93,7 +93,6 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& 
     all_topics_qt.push_back({ QString::fromStdString(topic.name), QString::fromStdString(topic.type) });
     topicTypesByName.emplace(topic.name, topic.type);
 
-    const auto& typesupport_identifier = rosidl_typesupport_cpp::typesupport_identifier;
     try
     {
       topics_info.emplace_back(CreateTopicInfo(topic.name, topic.type));

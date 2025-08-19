@@ -35,7 +35,6 @@ bool TypeHasHeader(const rosidl_message_type_support_t* type_support)
 std::string CreateSchema(const std::string& base_type)
 {
   std::string schema;
-  using TypeSupport = rosidl_message_type_support_t;
   using namespace rosidl_typesupport_introspection_cpp;
 
   std::set<std::string> secondary_types_pending;
