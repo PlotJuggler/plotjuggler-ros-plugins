@@ -44,8 +44,8 @@ std::string CreateSchema(const std::string& base_type)
   auto addTypeToSchema = [&](const std::string& type_name, bool add_header)
   {
     auto introspection_library = rclcpp::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
-    auto introspection_support = rclcpp::get_typesupport_handle(type_name, "rosidl_typesupport_introspection_cpp",
-                                                                *introspection_library);
+    auto introspection_support = rclcpp::get_message_typesupport_handle(
+        type_name, "rosidl_typesupport_introspection_cpp", *introspection_library);
 
     if (add_header)
     {
@@ -148,12 +148,12 @@ TopicInfo CreateTopicInfo(const std::string& topic_name, const std::string& type
   info.type = type_name;
 
   info.introspection_library = rclcpp::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
-  info.introspection_support = rclcpp::get_typesupport_handle(type_name, "rosidl_typesupport_introspection_cpp",
-                                                              *info.introspection_library);
+  info.introspection_support = rclcpp::get_message_typesupport_handle(type_name, "rosidl_typesupport_introspection_cpp",
+                                                                      *info.introspection_library);
 
   auto identifier   = rosidl_typesupport_cpp::typesupport_identifier;
   info.support_library = rclcpp::get_typesupport_library(type_name, identifier);
-  info.type_support = rclcpp::get_typesupport_handle(type_name, identifier, *info.support_library);
+  info.type_support = rclcpp::get_message_typesupport_handle(type_name, identifier, *info.support_library);
 
   info.has_header_stamp = TypeHasHeader(info.introspection_support);
   return info;
