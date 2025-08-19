@@ -41,11 +41,11 @@ std::string CreateSchema(const std::string& base_type)
   std::set<std::string> secondary_types_pending;
   std::set<std::string> secondary_types_done;
 
-  auto addTypeToSchema = [&](const std::string& type_name, bool add_header) {
-    auto introspection_library =
-        rosbag2_cpp::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
-    auto introspection_support =
-        rosbag2_cpp::get_typesupport_handle(type_name, "rosidl_typesupport_introspection_cpp", introspection_library);
+  auto addTypeToSchema = [&](const std::string& type_name, bool add_header)
+  {
+    auto introspection_library = rclcpp::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
+    auto introspection_support = rclcpp::get_typesupport_handle(type_name, "rosidl_typesupport_introspection_cpp",
+                                                                *introspection_library);
 
     if (add_header)
     {
@@ -147,13 +147,13 @@ TopicInfo CreateTopicInfo(const std::string& topic_name, const std::string& type
   info.topic_name = topic_name;
   info.type = type_name;
 
-  info.introspection_library = rosbag2_cpp::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
-  info.introspection_support = rosbag2_cpp::get_typesupport_handle(type_name, "rosidl_typesupport_introspection_cpp",
-                                                                   info.introspection_library);
+  info.introspection_library = rclcpp::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
+  info.introspection_support = rclcpp::get_typesupport_handle(type_name, "rosidl_typesupport_introspection_cpp",
+                                                              *info.introspection_library);
 
-  auto identifier = rosidl_typesupport_cpp::typesupport_identifier;
-  info.support_library = rosbag2_cpp::get_typesupport_library(type_name, identifier);
-  info.type_support = rosbag2_cpp::get_typesupport_handle(type_name, identifier, info.support_library);
+  auto identifier   = rosidl_typesupport_cpp::typesupport_identifier;
+  info.support_library = rclcpp::get_typesupport_library(type_name, identifier);
+  info.type_support = rclcpp::get_typesupport_handle(type_name, identifier, *info.support_library);
 
   info.has_header_stamp = TypeHasHeader(info.introspection_support);
   return info;

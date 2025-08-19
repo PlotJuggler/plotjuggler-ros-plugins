@@ -48,8 +48,9 @@ public:
   static std::shared_ptr<GenericPublisher> create(rclcpp::Node& node, const std::string& topic_name,
                                                   const std::string& topic_type)
   {
-    auto library = std::move(rosbag2_cpp::get_typesupport_library(topic_type, "rosidl_typesupport_cpp"));
-    auto type_support = rosbag2_cpp::get_typesupport_handle(topic_type, "rosidl_typesupport_cpp", library);
+  
+   auto library = std::move(rclcpp::get_typesupport_library(topic_type, "rosidl_typesupport_cpp"));
+   auto type_support = rclcpp::get_typesupport_handle(topic_type, "rosidl_typesupport_cpp", *library);
 
     return std::make_shared<GenericPublisher>(node.get_node_base_interface().get(), topic_name, *type_support);
   }

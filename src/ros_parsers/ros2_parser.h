@@ -3,7 +3,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rmw/rmw.h"
 #include "rmw/types.h"
-#include "rosbag2_cpp/typesupport_helpers.hpp"
+#include "rclcpp/typesupport_helpers.hpp"
 #include "rosidl_typesupport_introspection_cpp/message_introspection.hpp"
 
 #include <PlotJuggler/plotdata.h>
