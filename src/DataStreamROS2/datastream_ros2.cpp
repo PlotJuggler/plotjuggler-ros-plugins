@@ -134,8 +134,8 @@ bool DataStreamROS2::start(QStringList* selected_datasources)
       auto topic_name = QString::fromStdString(topic.first);
       auto type_name = QString::fromStdString(topic.second[0]);
       dialog_topics.push_back({ topic_name, type_name });
-      dialog.updateTopicList(dialog_topics);
     }
+    dialog.updateTopicList(dialog_topics);
   };
 
   getTopicsFromNode();
