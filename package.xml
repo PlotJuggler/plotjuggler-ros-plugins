@@ -14,6 +14,7 @@
     <!-- ROS2 dependencies -->
     <buildtool_depend>ament_cmake</buildtool_depend>
 
+    <depend>ros_environment</depend>
     <depend>rclcpp</depend>
     <depend>rcpputils</depend>
     <depend>rosbag2_transport</depend>

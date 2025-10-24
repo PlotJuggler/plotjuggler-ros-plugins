@@ -47,7 +47,7 @@ target_link_libraries( TopicPublisherROS2 commonROS)
 message("AMENT_PREFIX_PATH = ${AMENT_PREFIX_PATH}")
 message("ROS_DISTRO (env) = $ENV{ROS_DISTRO}")
 
-if("${AMENT_PREFIX_PATH}" STREQUAL "/opt/ros/humble" OR "$ENV{ROS_DISTRO}" STREQUAL "humble")
+if("$ENV{ROS_DISTRO}" STREQUAL "humble")
         message(STATUS "Detected Humble")
         target_compile_definitions(DataLoadROS2 PUBLIC ROS_HUMBLE)
         target_compile_definitions(TopicPublisherROS2 PUBLIC ROS_HUMBLE)
