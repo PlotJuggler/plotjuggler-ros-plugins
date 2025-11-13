@@ -172,8 +172,7 @@ void TopicPublisherROS2::filterDialog()
               {
                 dialog->ui()->listTopics->selectRow(row);
               }
-            }
-          });
+            } });
   connect(dialog->ui()->pushButtonDeselect, &QPushButton::pressed, dialog->ui()->listTopics,
           &QAbstractItemView::clearSelection);
 
@@ -189,7 +188,7 @@ void TopicPublisherROS2::filterDialog()
       _topics_to_publish.insert({info.topic_name, false});
     }
 
-    foreach (QModelIndex index, selected_indexes)
+    for (const QModelIndex &index : selected_indexes)
     {
       if (index.column() == 0)
       {
