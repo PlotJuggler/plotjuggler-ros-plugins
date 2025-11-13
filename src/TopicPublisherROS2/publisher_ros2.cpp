@@ -5,6 +5,7 @@
 #include <QFormLayout>
 #include <QCheckBox>
 #include <QLabel>
+#include <QLineEdit>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
@@ -155,6 +156,7 @@ void TopicPublisherROS2::filterDialog()
   std::map<std::string, QCheckBox*> checkbox;
 
   std::map<std::string, QCheckBox *> checkbox;
+  std::map<std::string, std::pair<QLabel *, QCheckBox *>> topic_widgets;
 
   for (const TopicInfo &info : sorted_topics)
   {
@@ -170,13 +172,22 @@ void TopicPublisherROS2::filterDialog()
       cb->setChecked(filter_it->second);
     }
     cb->setFocusPolicy(Qt::NoFocus);
-    dialog->ui()->formLayout->addRow(new QLabel(QString::fromStdString(topic_name)), cb);
+    auto label = new QLabel();
+    label->setTextFormat(Qt::RichText);
+    label->setText(QString("<a href=\"#\">%1</a>").arg(QString::fromStdString(topic_name)));
+    label->setOpenExternalLinks(false);
+    dialog->ui()->formLayout->addRow(label, cb);
     checkbox.insert(std::make_pair(topic_name, cb));
+    topic_widgets.insert(std::make_pair(topic_name, std::make_pair(label, cb)));
+    connect(label, &QLabel::linkActivated, [cb]()
+            { cb->toggle(); });
     connect(dialog->ui()->pushButtonSelect, &QPushButton::pressed, [cb]()
             { cb->setChecked(true); });
     connect(dialog->ui()->pushButtonDeselect, &QPushButton::pressed, [cb]()
             { cb->setChecked(false); });
   }
+
+  dialog->setTopicWidgets(topic_widgets);
 
   dialog->exec();
 
