@@ -2,20 +2,11 @@
 
 #include <QDebug>
 #include <QDialog>
-#include <QFormLayout>
-#include <QCheckBox>
-#include <QLabel>
-#include <QLineEdit>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QDialogButtonBox>
-#include <QScrollArea>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QAbstractItemView>
 #include <QPushButton>
-#include <QSettings>
-#include <QRadioButton>
-#include <unordered_map>
 #include <algorithm>
-#include <QMessageBox>
 #include <tf2_ros/qos.hpp>
 #include <rosbag2_cpp/types.hpp>
 #include <rmw/rmw.h>
@@ -155,48 +146,56 @@ void TopicPublisherROS2::filterDialog()
 
   std::map<std::string, QCheckBox*> checkbox;
 
-  std::map<std::string, QCheckBox *> checkbox;
-  std::map<std::string, std::pair<QLabel *, QCheckBox *>> topic_widgets;
+  dialog->ui()->listTopics->setRowCount(sorted_topics.size());
 
-  for (const TopicInfo &info : sorted_topics)
+  for (size_t i = 0; i < sorted_topics.size(); i++)
   {
-    const std::string topic_name = info.topic_name;
-    auto cb = new QCheckBox(dialog);
+    const std::string topic_name = sorted_topics[i].topic_name;
+    auto item = new QTableWidgetItem(QString::fromStdString(topic_name));
+    item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+    dialog->ui()->listTopics->setItem(i, 0, item);
+
     auto filter_it = _topics_to_publish.find(topic_name);
-    if (filter_it == _topics_to_publish.end())
+    if (filter_it == _topics_to_publish.end() || filter_it->second)
     {
-      cb->setChecked(true);
+      dialog->ui()->listTopics->selectRow(i);
     }
-    else
-    {
-      cb->setChecked(filter_it->second);
-    }
-    cb->setFocusPolicy(Qt::NoFocus);
-    auto label = new QLabel();
-    label->setTextFormat(Qt::RichText);
-    label->setText(QString("<a href=\"#\">%1</a>").arg(QString::fromStdString(topic_name)));
-    label->setOpenExternalLinks(false);
-    dialog->ui()->formLayout->addRow(label, cb);
-    checkbox.insert(std::make_pair(topic_name, cb));
-    topic_widgets.insert(std::make_pair(topic_name, std::make_pair(label, cb)));
-    connect(label, &QLabel::linkActivated, [cb]()
-            { cb->toggle(); });
-    connect(dialog->ui()->pushButtonSelect, &QPushButton::pressed, [cb]()
-            { cb->setChecked(true); });
-    connect(dialog->ui()->pushButtonDeselect, &QPushButton::pressed, [cb]()
-            { cb->setChecked(false); });
   }
 
-  dialog->setTopicWidgets(topic_widgets);
+  dialog->ui()->listTopics->sortByColumn(0, Qt::AscendingOrder);
+
+  connect(dialog->ui()->pushButtonSelect, &QPushButton::pressed, [dialog]()
+          {
+            for (int row = 0; row < dialog->ui()->listTopics->rowCount(); row++)
+            {
+              if (!dialog->ui()->listTopics->isRowHidden(row))
+              {
+                dialog->ui()->listTopics->selectRow(row);
+              }
+            }
+          });
+  connect(dialog->ui()->pushButtonDeselect, &QPushButton::pressed, dialog->ui()->listTopics,
+          &QAbstractItemView::clearSelection);
 
   dialog->exec();
 
   if (dialog->result() == QDialog::Accepted)
   {
     _topics_to_publish.clear();
-    for (const auto &it : checkbox)
+    QModelIndexList selected_indexes = dialog->ui()->listTopics->selectionModel()->selectedIndexes();
+
+    for (const auto &info : sorted_topics)
     {
-      _topics_to_publish.insert({it.first, it.second->isChecked()});
+      _topics_to_publish.insert({info.topic_name, false});
+    }
+
+    foreach (QModelIndex index, selected_indexes)
+    {
+      if (index.column() == 0)
+      {
+        std::string topic_name = index.data(Qt::DisplayRole).toString().toStdString();
+        _topics_to_publish[topic_name] = true;
+      }
     }
 
     updatePublishers();
