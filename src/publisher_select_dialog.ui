@@ -58,40 +58,56 @@
         </layout>
       </item>
       <item>
-        <widget class="QScrollArea" name="scrollArea">
-          <property name="widgetResizable">
+        <widget class="QTableWidget" name="listTopics">
+          <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+            </sizepolicy>
+          </property>
+          <property name="sizeAdjustPolicy">
+            <enum>QAbstractScrollArea::AdjustIgnored</enum>
+          </property>
+          <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="showDropIndicator" stdset="0">
+            <bool>false</bool>
+          </property>
+          <property name="dragDropOverwriteMode">
+            <bool>false</bool>
+          </property>
+          <property name="selectionMode">
+            <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="textElideMode">
+            <enum>Qt::ElideRight</enum>
+          </property>
+          <property name="sortingEnabled">
             <bool>true</bool>
           </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents">
-            <property name="geometry">
-              <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>380</width>
-                <height>158</height>
-              </rect>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-              <property name="spacing">
-                <number>0</number>
-              </property>
-              <property name="leftMargin">
-                <number>0</number>
-              </property>
-              <property name="topMargin">
-                <number>0</number>
-              </property>
-              <property name="rightMargin">
-                <number>0</number>
-              </property>
-              <property name="bottomMargin">
-                <number>0</number>
-              </property>
-              <item>
-                <layout class="QFormLayout" name="formLayout" />
-              </item>
-            </layout>
-          </widget>
+          <property name="columnCount">
+            <number>1</number>
+          </property>
+          <attribute name="horizontalHeaderDefaultSectionSize">
+            <number>300</number>
+          </attribute>
+          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+            <bool>true</bool>
+          </attribute>
+          <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+            <number>18</number>
+          </attribute>
+          <attribute name="verticalHeaderDefaultSectionSize">
+            <number>21</number>
+          </attribute>
+          <column/>
         </widget>
       </item>
       <item>
