@@ -14,6 +14,7 @@ add_library( commonROS STATIC
     dialog_select_ros_topics.cpp
     dialog_with_itemlist.h
     publisher_select_dialog.h
+    publisher_select_dialog.cpp
     parser_configuration.cpp
     parser_configuration.h
     ros_parsers/ros2_parser.cpp
