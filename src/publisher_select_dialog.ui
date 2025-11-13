@@ -107,7 +107,7 @@
           <attribute name="verticalHeaderDefaultSectionSize">
             <number>21</number>
           </attribute>
-          <column/>
+          <column />
         </widget>
       </item>
       <item>
