@@ -14,6 +14,7 @@
 #include <QRadioButton>
 #include <unordered_map>
 #include <QMessageBox>
+#include <algorithm>
 #include <tf2_ros/qos.hpp>
 #include <rosbag2_cpp/types.hpp>
 #include <rmw/rmw.h>
@@ -153,7 +154,7 @@ void TopicPublisherROS2::filterDialog()
 
   std::map<std::string, QCheckBox*> checkbox;
 
-  for (const TopicInfo& info : _topics_info)
+  for (const TopicInfo& info : sorted_topics)
   {
     const std::string topic_name = info.topic_name;
     auto cb = new QCheckBox(dialog);

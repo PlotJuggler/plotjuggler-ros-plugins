@@ -2,6 +2,25 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix CI
+* fail to compile
+* fix
+* add pre-commit step
+* new formatting rules
+* add formatting consistent with plotjuggler App
+* Fix O(n^2) complexity in ROS2 topic selection dialog. (`#106 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/106>`_)
+* Depend on ros_environment for Humble detection (`#107 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/107>`_)
+  PR `#98 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/98>`_ mistakenly removed ros_environment from package.xml. This broke
+  Humble detection, which had to be worked around in 9b03f97 ("try
+  detecting Humble in the build farm", 2025-06-10).
+  This PR adds ros_environment dependency back and removes the Humble
+  detection workaround.
+  This also helps with building the package using the Nix package
+  manager.
+* Contributors: Davide Faconti, Michal Sojka, ksuszka
+
 2.2.0 (2025-05-21)
 ------------------
 * jazzy+
