@@ -44,7 +44,7 @@ void TopicPublisherROS2::updatePublishers()
   {
     return;
   }
-  for (const auto &info : _topics_info)
+  for (const auto& info : _topics_info)
   {
     auto to_publish = _topics_to_publish.find(info.topic_name);
     if (to_publish == _topics_to_publish.end() || to_publish->second == false)
@@ -55,7 +55,7 @@ void TopicPublisherROS2::updatePublishers()
     auto publisher_it = _publishers.find(info.topic_name);
     if (publisher_it == _publishers.end())
     {
-      _publishers.insert({info.topic_name, GenericPublisher::create(*_node, info.topic_name, info.type)});
+      _publishers.insert({ info.topic_name, GenericPublisher::create(*_node, info.topic_name, info.type) });
     }
   }
 
@@ -164,15 +164,15 @@ void TopicPublisherROS2::filterDialog()
 
   dialog->ui()->listTopics->sortByColumn(0, Qt::AscendingOrder);
 
-  connect(dialog->ui()->pushButtonSelect, &QPushButton::pressed, [dialog]()
-          {
-            for (int row = 0; row < dialog->ui()->listTopics->rowCount(); row++)
-            {
-              if (!dialog->ui()->listTopics->isRowHidden(row))
-              {
-                dialog->ui()->listTopics->selectRow(row);
-              }
-            } });
+  connect(dialog->ui()->pushButtonSelect, &QPushButton::pressed, [dialog]() {
+    for (int row = 0; row < dialog->ui()->listTopics->rowCount(); row++)
+    {
+      if (!dialog->ui()->listTopics->isRowHidden(row))
+      {
+        dialog->ui()->listTopics->selectRow(row);
+      }
+    }
+  });
   connect(dialog->ui()->pushButtonDeselect, &QPushButton::pressed, dialog->ui()->listTopics,
           &QAbstractItemView::clearSelection);
 
@@ -183,12 +183,12 @@ void TopicPublisherROS2::filterDialog()
     _topics_to_publish.clear();
     QModelIndexList selected_indexes = dialog->ui()->listTopics->selectionModel()->selectedIndexes();
 
-    for (const auto &info : sorted_topics)
+    for (const auto& info : sorted_topics)
     {
-      _topics_to_publish.insert({info.topic_name, false});
+      _topics_to_publish.insert({ info.topic_name, false });
     }
 
-    for (const QModelIndex &index : selected_indexes)
+    for (const QModelIndex& index : selected_indexes)
     {
       if (index.column() == 0)
       {
@@ -203,12 +203,12 @@ void TopicPublisherROS2::filterDialog()
 
 constexpr long NSEC_PER_SEC = 1000000000;
 
-rcutils_time_point_value_t Convert(const builtin_interfaces::msg::Time &stamp)
+rcutils_time_point_value_t Convert(const builtin_interfaces::msg::Time& stamp)
 {
   return stamp.nanosec + NSEC_PER_SEC * stamp.sec;
 }
 
-builtin_interfaces::msg::Time Convert(const rcutils_time_point_value_t &time_stamp)
+builtin_interfaces::msg::Time Convert(const rcutils_time_point_value_t& time_stamp)
 {
   builtin_interfaces::msg::Time stamp;
   stamp.sec = static_cast<int32_t>(time_stamp / NSEC_PER_SEC);
@@ -330,14 +330,14 @@ void TopicPublisherROS2::updateState(double current_time)
   auto data_it = _datamap->user_defined.find("plotjuggler::rosbag2_cpp::consecutive_messages");
   if (data_it != _datamap->user_defined.end())
   {
-    const PJ::PlotDataAny &continuous_msgs = data_it->second;
+    const PJ::PlotDataAny& continuous_msgs = data_it->second;
     _previous_play_index = continuous_msgs.getIndexFromX(current_time);
   }
 
-  for (const auto &data_it : _datamap->user_defined)
+  for (const auto& data_it : _datamap->user_defined)
   {
-    const std::string &topic_name = data_it.first;
-    const PJ::PlotDataAny &plot_any = data_it.second;
+    const std::string& topic_name = data_it.first;
+    const PJ::PlotDataAny& plot_any = data_it.second;
 
     if (topic_name == "/tf" || topic_name == "tf_static")
     {
@@ -356,11 +356,11 @@ void TopicPublisherROS2::updateState(double current_time)
       continue;
     }
 
-    const auto &any_value = plot_any.at(last_index).y;
+    const auto& any_value = plot_any.at(last_index).y;
 
     if (any_value.type() == typeid(MessageRefPtr))
     {
-      const auto &msg_instance = std::any_cast<MessageRefPtr>(any_value);
+      const auto& msg_instance = std::any_cast<MessageRefPtr>(any_value);
       publisher_it->second->publish(msg_instance->serialized_data);
     }
   }
@@ -378,7 +378,7 @@ void TopicPublisherROS2::play(double current_time)
   {
     return;
   }
-  const PJ::PlotDataAny &continuous_msgs = data_it->second;
+  const PJ::PlotDataAny& continuous_msgs = data_it->second;
   int current_index = continuous_msgs.getIndexFromX(current_time);
 
   if (_previous_play_index > current_index)
@@ -389,13 +389,13 @@ void TopicPublisherROS2::play(double current_time)
   }
   else
   {
-    const PJ::PlotDataAny &consecutive_msg = data_it->second;
+    const PJ::PlotDataAny& consecutive_msg = data_it->second;
     for (int index = _previous_play_index + 1; index <= current_index; index++)
     {
-      const auto &any_value = consecutive_msg.at(index).y;
+      const auto& any_value = consecutive_msg.at(index).y;
       if (any_value.type() == typeid(MessageRefPtr))
       {
-        const auto &msg_instance = std::any_cast<MessageRefPtr>(any_value);
+        const auto& msg_instance = std::any_cast<MessageRefPtr>(any_value);
 
         auto publisher_it = _publishers.find(msg_instance->topic_name);
         if (publisher_it == _publishers.end())

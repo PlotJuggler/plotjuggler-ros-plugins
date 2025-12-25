@@ -3,7 +3,7 @@
 #include <QTableWidgetItem>
 #include <QAbstractItemView>
 
-void PublisherSelectDialog::on_lineEditFilter_textChanged(const QString &search_string)
+void PublisherSelectDialog::on_lineEditFilter_textChanged(const QString& search_string)
 {
   QStringList spaced_items = search_string.split(' ');
 
@@ -13,7 +13,7 @@ void PublisherSelectDialog::on_lineEditFilter_textChanged(const QString &search_
     QString name = item->text();
     bool toHide = false;
 
-    for (const auto &item : spaced_items)
+    for (const auto& item : spaced_items)
     {
       if (!name.contains(item, Qt::CaseInsensitive))
       {

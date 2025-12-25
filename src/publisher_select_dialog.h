@@ -6,14 +6,14 @@
 
 namespace Ui
 {
-  class Ui_PublisherSelect;
+class Ui_PublisherSelect;
 }
 
 class PublisherSelectDialog : public QDialog
 {
   Q_OBJECT
 private:
-  Ui::PublisherSelect *_ui;
+  Ui::PublisherSelect* _ui;
 
 public:
   explicit PublisherSelectDialog(QWidget* parent = nullptr) : QDialog(parent), _ui(new Ui::PublisherSelect)
