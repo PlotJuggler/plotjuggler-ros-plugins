@@ -10,13 +10,14 @@ QT5_WRAP_UI ( COMMON_UI_SRC
 
 
 add_library( commonROS STATIC
-   dialog_select_ros_topics.h
+    dialog_select_ros_topics.h
     dialog_select_ros_topics.cpp
     dialog_with_itemlist.h
     publisher_select_dialog.h
     parser_configuration.cpp
     parser_configuration.h
     ros_parsers/ros2_parser.cpp
+    typesupport_wrapper.cpp
     ${COMMON_UI_SRC}
 )
 
@@ -51,6 +52,7 @@ if("$ENV{ROS_DISTRO}" STREQUAL "humble")
         message(STATUS "Detected Humble")
         target_compile_definitions(DataLoadROS2 PUBLIC ROS_HUMBLE)
         target_compile_definitions(TopicPublisherROS2 PUBLIC ROS_HUMBLE)
+        target_compile_definitions(commonROS PUBLIC ROS_HUMBLE)
 endif()
 
 #######################################################################
