@@ -10,14 +10,14 @@
 #include "rcpputils/shared_library.hpp"
 #include "rosidl_runtime_cpp/message_type_support_decl.hpp"
 
-namespace wrapper {
-    std::shared_ptr<rcpputils::SharedLibrary>
-    get_typesupport_library(const std::string & type, const std::string & typesupport_identifier);
+namespace wrapper
+{
+std::shared_ptr<rcpputils::SharedLibrary> get_typesupport_library(const std::string& type,
+                                                                  const std::string& typesupport_identifier);
 
-    const rosidl_message_type_support_t *
-    get_message_typesupport_handle(const std::string &type,
-                                   const std::string &typesupport_identifier,
-                                   std::shared_ptr<rcpputils::SharedLibrary> library);
-}
+const rosidl_message_type_support_t* get_message_typesupport_handle(const std::string& type,
+                                                                    const std::string& typesupport_identifier,
+                                                                    std::shared_ptr<rcpputils::SharedLibrary> library);
+}  // namespace wrapper
 
-#endif //TYPESUPPORT_WRAPPER_H
+#endif  // TYPESUPPORT_WRAPPER_H
