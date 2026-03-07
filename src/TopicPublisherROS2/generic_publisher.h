@@ -28,7 +28,8 @@ public:
 #ifdef ROS_HUMBLE
     : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options())
 #else
-    : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options(), callbacks_, true)
+    : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options(),
+                            rclcpp::PublisherEventCallbacks{}, true)
 #endif
   {
   }
@@ -53,10 +54,6 @@ public:
 
     return std::make_shared<GenericPublisher>(node.get_node_base_interface().get(), topic_name, *type_support);
   }
-
-#ifndef ROS_HUMBLE
-  rclcpp::PublisherEventCallbacks callbacks_;
-#endif
 };
 
 #endif  // GENERIC_PUBLISHER_H
