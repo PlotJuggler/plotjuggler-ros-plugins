@@ -10,6 +10,8 @@
 #include <rosidl_typesupport_introspection_cpp/identifier.hpp>
 #include <fmt/core.h>
 
+#include "typesupport_wrapper.h"
+
 bool TypeHasHeader(const rosidl_message_type_support_t* type_support)
 {
   auto members = static_cast<const rosidl_typesupport_introspection_cpp::MessageMembers*>(type_support->data);
@@ -35,17 +37,15 @@ bool TypeHasHeader(const rosidl_message_type_support_t* type_support)
 std::string CreateSchema(const std::string& base_type)
 {
   std::string schema;
-  using TypeSupport = rosidl_message_type_support_t;
   using namespace rosidl_typesupport_introspection_cpp;
 
   std::set<std::string> secondary_types_pending;
   std::set<std::string> secondary_types_done;
 
   auto addTypeToSchema = [&](const std::string& type_name, bool add_header) {
-    auto introspection_library =
-        rosbag2_cpp::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
-    auto introspection_support =
-        rosbag2_cpp::get_typesupport_handle(type_name, "rosidl_typesupport_introspection_cpp", introspection_library);
+    auto introspection_library = wrapper::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
+    auto introspection_support = wrapper::get_message_typesupport_handle(
+        type_name, "rosidl_typesupport_introspection_cpp", introspection_library);
 
     if (add_header)
     {
@@ -147,13 +147,13 @@ TopicInfo CreateTopicInfo(const std::string& topic_name, const std::string& type
   info.topic_name = topic_name;
   info.type = type_name;
 
-  info.introspection_library = rosbag2_cpp::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
-  info.introspection_support = rosbag2_cpp::get_typesupport_handle(type_name, "rosidl_typesupport_introspection_cpp",
-                                                                   info.introspection_library);
+  info.introspection_library = wrapper::get_typesupport_library(type_name, "rosidl_typesupport_introspection_cpp");
+  info.introspection_support = wrapper::get_message_typesupport_handle(
+      type_name, "rosidl_typesupport_introspection_cpp", info.introspection_library);
 
   auto identifier = rosidl_typesupport_cpp::typesupport_identifier;
-  info.support_library = rosbag2_cpp::get_typesupport_library(type_name, identifier);
-  info.type_support = rosbag2_cpp::get_typesupport_handle(type_name, identifier, info.support_library);
+  info.support_library = wrapper::get_typesupport_library(type_name, identifier);
+  info.type_support = wrapper::get_message_typesupport_handle(type_name, identifier, info.support_library);
 
   info.has_header_stamp = TypeHasHeader(info.introspection_support);
   return info;
