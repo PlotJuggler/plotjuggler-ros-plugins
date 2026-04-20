@@ -20,6 +20,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/publisher_base.hpp>
 
+#include "typesupport_wrapper.h"
+
 class GenericPublisher : public rclcpp::PublisherBase
 {
 public:
@@ -49,8 +51,8 @@ public:
   static std::shared_ptr<GenericPublisher> create(rclcpp::Node& node, const std::string& topic_name,
                                                   const std::string& topic_type)
   {
-    auto library = std::move(rosbag2_cpp::get_typesupport_library(topic_type, "rosidl_typesupport_cpp"));
-    auto type_support = rosbag2_cpp::get_typesupport_handle(topic_type, "rosidl_typesupport_cpp", library);
+    auto library = std::move(wrapper::get_typesupport_library(topic_type, "rosidl_typesupport_cpp"));
+    auto type_support = wrapper::get_message_typesupport_handle(topic_type, "rosidl_typesupport_cpp", library);
 
     return std::make_shared<GenericPublisher>(node.get_node_base_interface().get(), topic_name, *type_support);
   }

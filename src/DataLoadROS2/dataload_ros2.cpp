@@ -17,7 +17,6 @@
 #include <rosidl_typesupport_introspection_cpp/message_introspection.hpp>
 #include <rosidl_typesupport_introspection_cpp/field_types.hpp>
 #include <rosidl_typesupport_cpp/identifier.hpp>
-#include <rosbag2_cpp/typesupport_helpers.hpp>
 #include <rosbag2_cpp/types/introspection_message.hpp>
 #include <unordered_map>
 #include <rclcpp/rclcpp.hpp>
@@ -94,7 +93,6 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& 
     all_topics_qt.push_back({ QString::fromStdString(topic.name), QString::fromStdString(topic.type) });
     topicTypesByName.emplace(topic.name, topic.type);
 
-    const auto& typesupport_identifier = rosidl_typesupport_cpp::typesupport_identifier;
     try
     {
       topics_info.emplace_back(CreateTopicInfo(topic.name, topic.type));
