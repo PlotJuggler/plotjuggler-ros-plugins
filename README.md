@@ -1,4 +1,6 @@
-[![ros2](https://github.com/PlotJuggler/plotjuggler-ros-plugins/actions/workflows/ros2.yaml/badge.svg)](https://github.com/PlotJuggler/plotjuggler-ros-plugins/actions/workflows/ros2.yaml)
+[![ROS2 Humble](https://github.com/PlotJuggler/plotjuggler-ros-plugins/actions/workflows/ros-humble.yaml/badge.svg)](https://github.com/PlotJuggler/plotjuggler-ros-plugins/actions/workflows/ros-humble.yaml)
+[![ROS2 Jazzy](https://github.com/PlotJuggler/plotjuggler-ros-plugins/actions/workflows/ros-jazzy.yaml/badge.svg)](https://github.com/PlotJuggler/plotjuggler-ros-plugins/actions/workflows/ros-jazzy.yaml)
+[![ROS2 Rolling](https://github.com/PlotJuggler/plotjuggler-ros-plugins/actions/workflows/ros-rolling.yaml/badge.svg)](https://github.com/PlotJuggler/plotjuggler-ros-plugins/actions/workflows/ros-rolling.yaml)
 
 # ROS plugins for PlotJuggler
 
