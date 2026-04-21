@@ -45,11 +45,10 @@ target_link_libraries( DataStreamROS2  commonROS)
 add_library( TopicPublisherROS2 SHARED TopicPublisherROS2/publisher_ros2.cpp)
 target_link_libraries( TopicPublisherROS2 commonROS)
 
-message("AMENT_PREFIX_PATH = ${AMENT_PREFIX_PATH}")
-message("ROS_DISTRO (env) = $ENV{ROS_DISTRO}")
-
-if("$ENV{ROS_DISTRO}" STREQUAL "humble")
-        message(STATUS "Detected Humble")
+# rclcpp < 17 corresponds to Humble; newer distros expose the renamed
+# typesupport helpers and rosbag2 message fields used in the #else branches.
+if(rclcpp_VERSION VERSION_LESS "17")
+        message(STATUS "Detected Humble (rclcpp ${rclcpp_VERSION})")
         target_compile_definitions(DataLoadROS2 PUBLIC ROS_HUMBLE)
         target_compile_definitions(TopicPublisherROS2 PUBLIC ROS_HUMBLE)
         target_compile_definitions(commonROS PUBLIC ROS_HUMBLE)
