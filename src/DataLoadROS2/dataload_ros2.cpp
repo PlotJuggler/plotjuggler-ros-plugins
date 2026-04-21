@@ -20,6 +20,7 @@
 #include <rosbag2_cpp/types/introspection_message.hpp>
 #include <unordered_map>
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp/version.h>
 #include <rmw/rmw.h>
 
 #include "dialog_select_ros_topics.h"
@@ -188,11 +189,12 @@ bool DataLoadROS2::readDataFromFile(PJ::FileLoadInfo* info, PJ::PlotDataMapRef& 
       continue;
     }
 
-#ifdef ROS_HUMBLE
-    const double msg_timestamp = 1e-9 * double(msg->time_stamp);  // nanoseconds to seconds
-#else
-    // from jazzy and later
+    // rosbag2 split SerializedBagMessage::time_stamp into recv_timestamp /
+    // send_timestamp in Jazzy (rclcpp 28.x).
+#if RCLCPP_VERSION_GTE(28, 0, 0)
     const double msg_timestamp = 1e-9 * double(msg->send_timestamp);  // nanoseconds to seconds
+#else
+    const double msg_timestamp = 1e-9 * double(msg->time_stamp);  // nanoseconds to seconds
 #endif
 
     //------ progress dialog --------------

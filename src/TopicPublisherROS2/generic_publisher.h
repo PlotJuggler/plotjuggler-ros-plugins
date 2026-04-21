@@ -19,6 +19,7 @@
 #include <string>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/publisher_base.hpp>
+#include <rclcpp/version.h>
 
 #include "typesupport_wrapper.h"
 
@@ -27,10 +28,11 @@ class GenericPublisher : public rclcpp::PublisherBase
 public:
   GenericPublisher(rclcpp::node_interfaces::NodeBaseInterface* node_base, const std::string& topic_name,
                    const rosidl_message_type_support_t& type_support)
-#ifdef ROS_HUMBLE
-    : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options())
-#else
+  // The rclcpp::PublisherBase constructor grew event-callback parameters after Humble (rclcpp 16.x).
+#if RCLCPP_VERSION_GTE(17, 0, 0)
     : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options(), callbacks_, true)
+#else
+    : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options())
 #endif
   {
   }
@@ -56,7 +58,7 @@ public:
     return std::make_shared<GenericPublisher>(node.get_node_base_interface().get(), topic_name, *type_support);
   }
 
-#ifndef ROS_HUMBLE
+#if RCLCPP_VERSION_GTE(17, 0, 0)
   rclcpp::PublisherEventCallbacks callbacks_;
 #endif
 };
