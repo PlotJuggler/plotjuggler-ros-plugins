@@ -30,7 +30,8 @@ public:
                    const rosidl_message_type_support_t& type_support)
   // The rclcpp::PublisherBase constructor grew event-callback parameters after Humble (rclcpp 16.x).
 #if RCLCPP_VERSION_GTE(17, 0, 0)
-    : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options(), callbacks_, true)
+    : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options(),
+                            rclcpp::PublisherEventCallbacks{}, true)
 #else
     : rclcpp::PublisherBase(node_base, topic_name, type_support, rcl_publisher_get_default_options())
 #endif
@@ -58,9 +59,6 @@ public:
     return std::make_shared<GenericPublisher>(node.get_node_base_interface().get(), topic_name, *type_support);
   }
 
-#if RCLCPP_VERSION_GTE(17, 0, 0)
-  rclcpp::PublisherEventCallbacks callbacks_;
-#endif
 };
 
 #endif  // GENERIC_PUBLISHER_H

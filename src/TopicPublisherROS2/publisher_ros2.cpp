@@ -111,15 +111,6 @@ void TopicPublisherROS2::setEnabled(bool to_enable)
 
     updatePublishers();
 
-    if (!_tf_broadcaster)
-    {
-      _tf_broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*_node);
-    }
-    if (!_tf_static_broadcaster)
-    {
-      _tf_static_broadcaster = std::make_unique<tf2_ros::StaticTransformBroadcaster>(*_node);
-    }
-
     _previous_play_index = std::numeric_limits<int>::max();
   }
   else
@@ -293,10 +284,18 @@ void TopicPublisherROS2::broadcastTF(double current_time)
     }
     if (transforms_ptr == &transforms)
     {
+      if (!_tf_broadcaster)
+      {
+        _tf_broadcaster = std::make_shared<tf2_ros::TransformBroadcaster>(*_node);
+      }
       _tf_broadcaster->sendTransform(transforms_vector);
     }
     else
     {
+      if (!_tf_static_broadcaster)
+      {
+        _tf_static_broadcaster = std::make_shared<tf2_ros::StaticTransformBroadcaster>(*_node);
+      }
       _tf_static_broadcaster->sendTransform(transforms_vector);
     }
   }
