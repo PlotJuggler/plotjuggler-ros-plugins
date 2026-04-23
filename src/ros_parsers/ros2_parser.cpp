@@ -102,7 +102,15 @@ std::string CreateSchema(const std::string& base_type)
         case ROS_TYPE_MESSAGE: {
           auto type_info = reinterpret_cast<const MessageMembers*>(member.members_->data);
           std::string package = type_info->message_namespace_;
-          package = package.substr(0, package.size() - 5);  // remove "::msg"
+          for (const std::string& suffix : { "::msg", "::srv", "::action" })
+          {
+            if (package.size() >= suffix.size() &&
+                package.compare(package.size() - suffix.size(), suffix.size(), suffix) == 0)
+            {
+              package.resize(package.size() - suffix.size());
+              break;
+            }
+          }
           const std::string field_type = fmt::format("{}/{}", package, type_info->message_name_);
           schema += field_type;
           if (secondary_types_done.count(field_type) == 0)
