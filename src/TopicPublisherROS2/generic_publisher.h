@@ -58,7 +58,6 @@ public:
 
     return std::make_shared<GenericPublisher>(node.get_node_base_interface().get(), topic_name, *type_support);
   }
-
 };
 
 #endif  // GENERIC_PUBLISHER_H
