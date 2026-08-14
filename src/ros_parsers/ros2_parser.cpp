@@ -1,4 +1,5 @@
 #include "ros2_parser.h"
+#include <fmt/format.h>
 
 #include <set>
 
